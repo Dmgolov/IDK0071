@@ -21,8 +21,8 @@ Iterations
   - Frontend (interface creation, creating interface for using basic game functionality and templates creation)
   - Create basic account system (players are defined by nickname and do not have password)
   - Creating possibility for templates creation and storage (different people behaviours can be created and saved as templates for further using or sharing with other people)
-  - Game logic full implementation (game functionality is fully created and works fine, excluding interface);
-Graphical depiction of game process
+  - Game logic full implementation (game functionality is fully created and works fine, excluding interface)
+  - Graphical depiction of game process
 - Iteration III 
   - Optimization of account system (password implementation, maybe something else)
   - Interface functionality is completed (is added advanced people template editing, maybe something else)
