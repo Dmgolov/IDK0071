@@ -13,7 +13,7 @@ Valentin Stennikov - vasten
 Iteratsioonid
 -------------
 
-- Iteratsioon I - Mänguloogika, funktsionaalne liides
+- Iteratsioon I - Mänguloogika, funktsionaalne liides, interface mock-up
 - Iteratsioon II - Player interface, Backend ja Frontend liidestus
 - Iteratsioon III -
 
