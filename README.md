@@ -1,6 +1,8 @@
 # Empires
 
-The Empires game is based on 'cellular automaton' idea.
+The Empires game is based on 'cellular automaton' idea. In this game you can create you Empire and conquer the land. Wo
+The world is made up of cells through which people can move and capturing cells. Each person has different stats (age, 
+strenght, reproduction points).
 
 Students
 ------------
