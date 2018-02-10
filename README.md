@@ -1,23 +1,32 @@
-# GameOfLife
+# Empires
 
-The Game of Life used 'cellular automaton'.
+The Empires game is based on 'cellular automaton' idea.
 
-Tudengid
---------
+Students
+------------
 Dmitri Golovatš - dmgolo
 
 Imre Gretsi - imgret
 
 Valentin Stennikov - vasten
 
-Iteratsioonid
--------------
+Iterations
+------------
 
-1. Iteratsioon I - Mänguloogika, interface mock-up
-    1.  
+- Iteration I - 
+Basic game logic creation (map creation and its processing, people logic implementation);
+Interface mock-up (interface sketches);
+Create rules for game (how people will behave in different situations);
+- Iteration II - 
+Frontend (interface creation, creating interface for using basic game functionality and templates creation);
+Create basic account system (players are defined by nickname and do not have password);
+Creating possibility for templates creation and storage (different people behaviours can be created and saved as templates for further using or sharing with other people);
+Game logic full implementation (game functionality is fully created and works fine, excluding interface);
+Graphical depiction of game process;
+- Iteration III - 
+Optimization of account system (password implementation, maybe something else);
+Interface functionality is completed (is added advanced people template editing, maybe something else);
 
-- Iteratsioon II - Player interface, Backend ja Frontend liidestus
-- Iteratsioon III - 
 
 
 
