@@ -8,6 +8,8 @@ Dmitri Golovatš - dmgolo
 
 Imre Gretsi - imgret
 
+Valentin Stennikov - vasten
+
 Iteratsioonid
 -------------
 
