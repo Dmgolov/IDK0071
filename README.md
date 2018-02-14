@@ -19,6 +19,7 @@ Iterations
   - Basic game logic creation (map creation and its processing, people logic implementation)
   - Interface mock-up (interface sketches)
   - Create rules for game (how people will behave in different situations)
+  - Frontend prototype
 - Iteration II 
   - Frontend (interface creation, creating interface for using basic game functionality and templates creation)
   - Create basic account system (players are defined by nickname and do not have password)
