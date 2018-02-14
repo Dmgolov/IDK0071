@@ -28,6 +28,8 @@ Iterations
 - Iteration III 
   - Optimization of account system (password implementation, maybe something else)
   - Interface functionality is completed (is added advanced people template editing, maybe something else)
+  - Create competitive multiplayer mode
+  - Allow save multiplayer game result
 
 
 
