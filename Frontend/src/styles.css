@@ -1,3 +1,6 @@
 .content-container {
   color: red;
+  background-color: #00f;
+  width: 100px;
+  height: 100px;
 }
