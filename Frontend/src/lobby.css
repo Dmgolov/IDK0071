@@ -1,0 +1,22 @@
+.main-container {
+
+}
+.gameOptions-container {
+}
+.gameMode-container {
+  text-align: center;
+}
+.players-container {
+
+}
+.nationOptions-container {
+
+}
+.prelaunch-container {
+  display: block;
+}
+.prelaunch-button {
+  display: block;
+  width: 300px;
+  margin: auto;
+}
