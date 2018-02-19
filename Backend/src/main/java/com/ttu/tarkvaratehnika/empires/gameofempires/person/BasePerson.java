@@ -6,12 +6,13 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 //Abstract base for another types of person.
 abstract class BasePerson implements Person {
 
-    private int health;
+    private int vitality;
     private int speed;
     private int strength;
-    private int agility;
+    private int dexterity;
     private int intelligence;
-    private int reproduction;
+    private int growthRate;
+    private int luck;
 
     private InGameObject effectedBy;
 
@@ -23,12 +24,12 @@ abstract class BasePerson implements Person {
         effectedBy = null;
     }
 
-    public int getHealth() {
-        return health;
+    public int getVitality() {
+        return vitality;
     }
 
-    public void setHealth(int health) {
-        this.health = health;
+    public void setVitality(int vitality) {
+        this.vitality = vitality;
     }
 
     public int getSpeed() {
@@ -47,12 +48,12 @@ abstract class BasePerson implements Person {
         this.strength = strength;
     }
 
-    public int getAgility() {
-        return agility;
+    public int getDexterity() {
+        return dexterity;
     }
 
-    public void setAgility(int agility) {
-        this.agility = agility;
+    public void setDexterity(int dexterity) {
+        this.dexterity = dexterity;
     }
 
     public int getIntelligence() {
@@ -63,15 +64,23 @@ abstract class BasePerson implements Person {
         this.intelligence = intelligence;
     }
 
-    public int getReproduction() {
-        return reproduction;
+    public int getGrowthRate() {
+        return growthRate;
     }
 
-    public void setReproduction(int reproduction) {
-        this.reproduction = reproduction;
+    public void setGrowthRate(int growthRate) {
+        this.growthRate = growthRate;
     }
 
     public InGameObject getEffectedBy() {
         return effectedBy;
+    }
+
+    public int getLuck() {
+        return luck;
+    }
+
+    public void setLuck(int luck) {
+        this.luck = luck;
     }
 }

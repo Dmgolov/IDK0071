@@ -5,7 +5,7 @@ import java.awt.*;
 //TODO: add more functionality, if required
 //Instance of user, created for a game session, deleted after match end or leaving session
 //Currently uses Colors for distinction, maybe use something else
-public class Player {
+public class Nation {
 
     private final long id;
     private final String name;
@@ -13,7 +13,7 @@ public class Player {
 
     private long sessionId;
 
-    public Player(long id, String name, Color team) {
+    public Nation(long id, String name, Color team) {
         this.id = id;
         this.name = name;
         this.team = team;
