@@ -4,7 +4,7 @@
 .content-container {
   width: 1000px;
   margin: auto;
-  background-color: blue;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 .game-options-container {
 
@@ -17,14 +17,15 @@
   width: 457px;
 }
 .players-container {
-  width: 200px;
-  background-color: red;
   float: left;
+  /* background-color: red; */
 }
 .player-cell {
   width: 150px;
+  padding-left: 10px;
 }
 .ready-button-cell {
+  padding: 0px 4px;
 }
 .ready-button-cell button {
   width: 50px;
@@ -33,9 +34,28 @@
   border-radius: 25px;
 }
 .nation-options-container {
-  width: 800px;
-  background-color: green;
   float: right;
+  /* background-color: green; */
+  text-align: center;
+}
+.nation-options-container table {
+  width: 775px;
+  padding-top: 10px;
+}
+.nation-options-container table tr td {
+  padding: 10px 0px;
+}
+.nation-options-container table tr td span {
+  width: 200px;
+  display: inline-block;
+}
+.nation-options-container table tr td button {
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+}
+.nation-points-cell {
+
 }
 .prelaunch-container {
   display: block;
