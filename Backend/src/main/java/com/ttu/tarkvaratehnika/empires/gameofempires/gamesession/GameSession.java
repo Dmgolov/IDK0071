@@ -2,7 +2,7 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 
 import com.ttu.tarkvaratehnika.empires.gameofempires.controller.SessionController;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
-import com.ttu.tarkvaratehnika.empires.gameofempires.player.Nation;
+import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 
 import java.util.*;
 
@@ -23,6 +23,18 @@ public class GameSession {
     public GameSession(SessionController controller) {
         this.controller = controller;
         sessionId = id++;
+    }
+
+    public boolean setNationStats(long id, int vitality, int dexterity, int intelligence,
+                                  int growthRate, int strength, int luck) {
+        Optional<Nation> chosen = nations.stream().filter(nation -> nation.getId() == id).findFirst();
+        return chosen.isPresent()
+                && chosen.get().setPersonWithStats(vitality, dexterity, intelligence, growthRate, strength, luck);
+    }
+
+    public boolean setNationStatsByTemplate(long id, String templateName) {
+        Optional<Nation> chosen = nations.stream().filter(nation -> nation.getId() == id).findFirst();
+        return chosen.isPresent() && chosen.get().useTemplateForPerson(templateName);
     }
 
     public void calculateGameState() {

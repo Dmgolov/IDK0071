@@ -1,8 +1,8 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamefield;
 
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
-import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
-import com.ttu.tarkvaratehnika.empires.gameofempires.player.Nation;
+import com.ttu.tarkvaratehnika.empires.gameofempires.person.BasicPerson;
+import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +12,7 @@ import java.util.Map;
 public class GameField {
 
     private long sessionId;
+    private String mapName;
 
     private InGameObject[][] field;
     private Map<Nation, Integer> teamTroops = new HashMap<>();
@@ -21,7 +22,7 @@ public class GameField {
 
     }
 
-    public boolean addPersonToCell(Person person, int x, int y) {
+    public boolean addPersonToCell(BasicPerson basicPerson, int x, int y) {
         return false;
     }
 
@@ -31,5 +32,13 @@ public class GameField {
 
     public int getTroopsCountForPlayer(Nation nation) {
         return teamTroops.get(nation);
+    }
+
+    public String getMapName() {
+        return mapName;
+    }
+
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
     }
 }
