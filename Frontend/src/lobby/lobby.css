@@ -13,6 +13,7 @@
   text-align: center;
 }
 .game-mode-container button {
+  display: inline;
   width: 457px;
 }
 .players-container {
