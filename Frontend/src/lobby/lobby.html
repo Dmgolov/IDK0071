@@ -1,21 +1,63 @@
 <template>
-  <require from="../lobby.css"></require>
+  <require from="../lobby/lobby.css"></require>
   <div class="main-container">
-    <div class="gameMode-container">
-      <button>Single</button>
-      <span>Game mode</span>
-      <button>Multiplayer</button>
-    </div>
-    <div class="gameOptions-container">
-      <div class="players-container">
-
+    <div class="content-container">
+      <div class="game-mode-container">
+        <button>Single</button>
+        <span>Game mode</span>
+        <button>Multiplayer</button>
       </div>
-      <div class="nationOptions-container">
+      <div class="game-options-container">
+        <div class="players-container">
+          <table>
+            <tr>
+              <td class="player-cell">Player A</td>
+              <td class="ready-button-cell">
+                <button>Ready</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="player-cell">Player B</td>
+              <td class="ready-button-cell">
+                <button>Ready</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="player-cell">Player C</td>
+              <td class="ready-button-cell">
+                <button>Ready</button>
+              </td>
+            </tr>
+            <tr>
+              <td class="player-cell">Player D</td>
+              <td class="ready-button-cell">
+                <button>Ready</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="nation-options-container">
+          <table>
+            <tr>
+              <td colspan="2">Nation points: 20</td>
+            </tr>
+            <tr>
+              <td>Vitality</td><td>Growth rate</td>
+            </tr>
+            <tr>
+              <td></td><td></td>
+            </tr>
+            <tr>
+              <td></td><td></td>
+            </tr>
+          </table>
+        </div>
       </div>
-    </div>
-    <div class="prelaunch-container">
-      <button class="prelaunch-button">Choose map</button>
-      <button class="prelaunch-button">Start</button>
+      <div class="prelaunch-container">
+        <button class="prelaunch-button">Load nation options from template</button>
+        <button class="prelaunch-button">Choose map</button>
+        <button class="prelaunch-button">Start</button>
+      </div>
     </div>
   </div>
 </template>
