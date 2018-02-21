@@ -2,8 +2,9 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.person;
 
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 
-//TODO: implement methods from interface. Create persons based on this class
-//Abstract base for another types of person.
+import java.util.Random;
+
+//TODO: improve methods from interface.
 public class Person implements BasicPerson {
 
     private int vitality;
@@ -14,6 +15,25 @@ public class Person implements BasicPerson {
     private int luck;
 
     private InGameObject effectedBy;
+
+    private Random random = new Random();
+
+    @Override
+    public boolean reproduce() {
+        int result = random.nextInt(PersonValues.REPRODUCTION_CHANCE);
+        return growthRate >= result;
+    }
+
+    @Override
+    public boolean resistDisease() {
+        int result = random.nextInt(PersonValues.DISEASE_CHANCE);
+        return luck >= result;
+    }
+
+    @Override
+    public Person fight(Person another) {
+        return strength > another.getStrength() ? this : another;
+    }
 
     public void addEffect(InGameObject inGameObject) {
         this.effectedBy = inGameObject;

@@ -6,4 +6,9 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 //Interface for person
 public interface BasicPerson extends InGameObject {
 
+    boolean reproduce();
+
+    boolean resistDisease();
+
+    Person fight(Person another);
 }

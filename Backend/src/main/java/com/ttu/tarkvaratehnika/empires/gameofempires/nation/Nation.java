@@ -1,27 +1,29 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.nation;
 
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.BasicPerson;
 
-import java.awt.*;
+public class Nation implements Runnable {
 
-//TODO: add more functionality, if required
-//Instance of user, created for a game session, deleted after match end or leaving session
-//Currently uses Colors for distinction, maybe use something else
-public class Nation {
-
-    private final long id;
     private final String username;
-    private final Color team;
+    private final String teamColor;
 
-    private long sessionId;
+    private final GameLobby session;
 
     private BasicPerson person;
+    private int numOfPeople = 0;
+    private boolean ready;
 
-    public Nation(long id, String username, Color team) {
-        this.id = id;
+    public Nation(String username, String teamColor, GameLobby session) {
         this.username = username;
-        this.team = team;
+        this.teamColor = teamColor;
+        this.session = session;
+    }
+
+    //TODO: implement spread function for calculating new state of the nation
+    public void spread() {
+
     }
 
     public boolean setPerson(BasicPerson person) {
@@ -44,23 +46,53 @@ public class Nation {
         return false;
     }
 
-    public long getId() {
-        return id;
+    public boolean setDefault() {
+        return false;
+    }
+
+    public boolean hasSelectedPersonType() {
+        return person == null;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public Color getTeam() {
-        return team;
+    public String getTeamColor() {
+        return teamColor;
     }
 
-    public long getSessionId() {
-        return sessionId;
+    public GameLobby getSession() {
+        return session;
     }
 
-    public void setSessionId(long sessionId) {
-        this.sessionId = sessionId;
+    public int getNumOfPeople() {
+        return numOfPeople;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
+    }
+
+    public boolean isReady() {
+        return ready;
+    }
+
+    @Override
+    public void run() {
+        while (numOfPeople > 0) {
+            spread();
+            try {
+                synchronized (session) {
+                    session.endTurn();
+                    session.wait();
+                }
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        synchronized (session) {
+            session.endTurn();
+        }
     }
 }
