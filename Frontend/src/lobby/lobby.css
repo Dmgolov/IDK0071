@@ -18,7 +18,11 @@
 }
 .players-container {
   float: left;
+<<<<<<< HEAD
   /* background-color: red; --- */
+=======
+  background-color: red; 
+>>>>>>> 11160e68fbed930a0bc9ac9efd1527d65a39cde9
 }
 .player-cell {
   width: 150px;
