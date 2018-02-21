@@ -18,7 +18,7 @@
 }
 .players-container {
   float: left;
-  /* background-color: red; */
+  /* background-color: red; --- */
 }
 .player-cell {
   width: 150px;
