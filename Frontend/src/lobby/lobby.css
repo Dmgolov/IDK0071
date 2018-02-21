@@ -35,7 +35,7 @@
 }
 .nation-options-container {
   float: right;
-  /* background-color: green; */
+  background-color: green;
   text-align: center;
 }
 .nation-options-container table {
