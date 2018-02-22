@@ -32,27 +32,26 @@ public class RequestController {
 
     //TODO: later change pass to some kind of token
     @RequestMapping(path = "/lobby/new")
-    public @ResponseBody String createNewLobby(@RequestParam String username, @RequestParam String pass,
+    public @ResponseBody long createNewLobby(@RequestParam String username, @RequestParam String pass,
                                  @RequestParam String lobbyName, @RequestParam String lobbyPass) {
         if (accountProcessor.isLoggedIn(username, pass)) {
-            boolean result =  sessionController.createLobby(username, lobbyName, lobbyPass);
-            return result ? "Created lobby" : "Failed to create a lobby";
+            return sessionController.createLobby(username, lobbyName, lobbyPass);
         } else {
-            return "Log in first";
+            return 0;
         }
     }
 
     //TODO: check how to send back lists (as json?)
     @RequestMapping(path = "/lobby/all")
     public @ResponseBody List<String> getActiveLobbies(@RequestParam String filter) {
-        return sessionController.getSessionNames(filter);
+        return sessionController.getLobbyNames(filter);
     }
 
     @RequestMapping(path = "/lobby/connect")
     public @ResponseBody String connectToLobby(@RequestParam String username, @RequestParam String pass,
-                                               @RequestParam String lobbyName, @RequestParam String lobbyPass) {
+                                               @RequestParam long lobbyId, @RequestParam String lobbyPass) {
         if (accountProcessor.isLoggedIn(username, pass)) {
-            boolean result = sessionController.connectToLobby(username, lobbyName, lobbyPass);
+            boolean result = sessionController.connectToLobby(username, lobbyId, lobbyPass);
             return result ? "Connected" : "Failed to connect";
         } else {
             return "Log in first";
@@ -60,9 +59,16 @@ public class RequestController {
     }
 
     @RequestMapping(path = "/lobby/ready")
-    public @ResponseBody String readyCheck(@RequestParam String username, @RequestParam long sessionId) {
-        boolean result = sessionController.readyCheck(username, sessionId);
-        return result ? "Ready" : "Failed to ready";
+    public @ResponseBody String readyCheck(@RequestParam String username, @RequestParam long lobbyId,
+                                           @RequestParam boolean ready) {
+        sessionController.readyCheck(username, lobbyId, ready);
+        return "Ready";
+    }
+
+    @RequestMapping(path = "/lobby/start")
+    public @ResponseBody String startGame(@RequestParam long lobbyId) {
+        boolean result = sessionController.startLobby(lobbyId);
+        return result ? "Started" : "Failed to start";
     }
 
     //TODO: change depending on how templates will be implemented

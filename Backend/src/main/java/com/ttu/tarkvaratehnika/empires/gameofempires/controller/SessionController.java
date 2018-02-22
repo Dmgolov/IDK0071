@@ -1,41 +1,55 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 
-import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameSession;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 //TODO: implement
-//Handles sessions
+//Handles lobbies
 public class SessionController {
 
-    private Set<GameSession> sessions = new HashSet<>();
+    private Set<GameLobby> lobbies = new HashSet<>();
 
-    public boolean createLobby(String username, String lobbyName, String lobbyPass) {
-        return false;
+    public long createLobby(String username, String lobbyName, String lobbyPass) {
+        GameLobby session = new GameLobby(this);
+        lobbies.add(session);
+        session.setLobbyName(lobbyName);
+        session.setLobbyPass(lobbyPass);
+        session.enterSession(username);
+        return session.getLobbyId();
     }
 
-    public boolean connectToLobby(String username, String lobbyName, String lobbyPass) {
-        return false;
+    public boolean connectToLobby(String username, long lobbyId, String lobbyPass) {
+        Optional<GameLobby> searchedSession = lobbies.stream()
+                .filter(session -> session.getLobbyId() == lobbyId && session.getLobbyPass().equals(lobbyPass))
+                .findFirst();
+        return searchedSession.isPresent() && searchedSession.get().enterSession(username);
     }
 
-    public boolean readyCheck(String username, long sessionId) {
-        return false;
+    public void readyCheck(String username, long lobbyId, boolean ready) {
+        lobbies.stream()
+                .filter(session -> session.getLobbyId() == lobbyId)
+                .findFirst().ifPresent(session -> session.readyCheck(username, ready));
     }
 
-    public List<String> getSessionNames(String filter) {
-        return sessions.stream().map(GameSession::getSessionName)
+    public List<String> getLobbyNames(String filter) {
+        return lobbies.stream().map(GameLobby::getLobbyName)
                 .filter(name -> name.contains(filter))
                 .collect(Collectors.toList());
     }
 
-    public boolean startSession() {
-        return false;
+    public boolean startLobby(long lobbyId) {
+        Optional<GameLobby> searchedSession = lobbies.stream()
+                .filter(session -> session.getLobbyId() == lobbyId)
+                .findFirst();
+        return searchedSession.isPresent() && searchedSession.get().startSession();
     }
 
-    public boolean endSession() {
-        return false;
+    public void sendSessionResult(String winnerName, long lobbyId) {
+
     }
 }
