@@ -1,0 +1,102 @@
+/* Home page CSS */
+.home-main-container {
+
+}
+.home-content-container {
+  width: 300px;
+  margin: auto;
+  margin-top: 100px;
+}
+.home-buttons-container {
+  color: red;
+  text-align: center;
+}
+.home-buttons-container button {
+  text-align: center;
+  display: block;
+  width: 300px;
+  margin: auto;
+}
+.home-buttons-container .home-account-button {
+  float: left;
+  width: 150px;
+}
+.home-buttons-container input {
+  text-align: center;
+  width: 296px;
+}
+.home-logo-container{
+  font-size: 35px;
+  text-align: center;
+  padding-bottom: 50px;
+}
+.home-logo-container p {
+  margin: 0px;
+}
+
+/* Lobby page CSS */
+.lobby-main-container {
+
+}
+.lobby-content-container {
+  width: 1000px;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.lobby-game-options-container {
+
+}
+.lobby-gamemode-container {
+  text-align: center;
+}
+.lobby-gamemode-container button {
+  display: inline;
+  width: 457px;
+}
+.lobby-players-container {
+  float: left;
+}
+.lobby-player-cell {
+  width: 150px;
+  padding-left: 10px;
+}
+.lobby-ready-button-cell {
+  padding: 0px 4px;
+}
+.lobby-ready-button-cell button {
+  width: 50px;
+  height: 50px;
+  padding: 0px;
+  border-radius: 25px;
+}
+.lobby-nation-options-container {
+  float: right;
+  text-align: center;
+}
+.lobby-nation-options-container table {
+  width: 775px;
+  padding-top: 10px;
+}
+.lobby-nation-options-container table tr td {
+  padding: 10px 0px;
+}
+.lobby-nation-options-container table tr td span {
+  width: 200px;
+  display: inline-block;
+}
+.lobby-nation-options-container table tr td button {
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+}
+.lobby-nation-points-cell {
+
+}
+.lobby-prelaunch-container {
+  display: block;
+}
+.lobby-prelaunch-button {
+  display: block;
+  width: 1000px;
+  margin: auto;
+}

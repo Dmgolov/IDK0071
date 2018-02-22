@@ -18,11 +18,7 @@
 }
 .players-container {
   float: left;
-<<<<<<< HEAD
-  /* background-color: red; --- */
-=======
-  background-color: red; 
->>>>>>> 11160e68fbed930a0bc9ac9efd1527d65a39cde9
+  /* background-color: red;  */
 }
 .player-cell {
   width: 150px;
@@ -39,7 +35,7 @@
 }
 .nation-options-container {
   float: right;
-  background-color: green;
+  /* background-color: green; */
   text-align: center;
 }
 .nation-options-container table {
