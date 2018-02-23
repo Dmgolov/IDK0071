@@ -80,7 +80,7 @@
 .lobby-nation-options-container table tr td {
   padding: 10px 0px;
 }
-.lobby-nation-options-container table tr td span {
+.lobby-nation-options-container table tr td div {
   width: 200px;
   display: inline-block;
 }

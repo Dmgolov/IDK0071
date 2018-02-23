@@ -21,13 +21,13 @@
         <div class="lobby-nation-options-container">
           <table>
             <tr>
-              <td colspan="2" class="lobby-nation-points-cell">Nation points: 20</td>
+              <td colspan="2" class="lobby-nation-points-cell">Nation points: ${nationPoints}</td>
             </tr>
             <tr repeat.for="row of nationAttributes">
               <td repeat.for="attribute of row">
-                <button>-</button>
-                <span>${attribute}</span>
-                <button>+</button>
+                <button click.trigger="changeNationAttributeValue(attribute.name, -1)">-</button>
+                <div>${attribute.name}<p>${attribute.points}</p></div>
+                <button click.trigger="changeNationAttributeValue(attribute.name, 1)">+</button>
               </td>
             </tr>
           </table>
