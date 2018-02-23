@@ -10,26 +10,8 @@
       <div class="lobby-game-options-container">
         <div class="lobby-players-container">
           <table>
-            <tr>
-              <td class="lobby-player-cell">Player A</td>
-              <td class="lobby-ready-button-cell">
-                <button>Ready</button>
-              </td>
-            </tr>
-            <tr>
-              <td class="lobby-player-cell">Player B</td>
-              <td class="lobby-ready-button-cell">
-                <button>Ready</button>
-              </td>
-            </tr>
-            <tr>
-              <td class="lobby-player-cell">Player C</td>
-              <td class="lobby-ready-button-cell">
-                <button>Ready</button>
-              </td>
-            </tr>
-            <tr>
-              <td class="lobby-player-cell">Player D</td>
+            <tr repeat.for="player of players">
+              <td class="lobby-player-cell">${player}</td>
               <td class="lobby-ready-button-cell">
                 <button>Ready</button>
               </td>
@@ -41,39 +23,10 @@
             <tr>
               <td colspan="2" class="lobby-nation-points-cell">Nation points: 20</td>
             </tr>
-            <tr>
-              <td>
+            <tr repeat.for="row of nationAttributes">
+              <td repeat.for="attribute of row">
                 <button>-</button>
-                <span>Vitality</span>
-                <button>+</button>
-              </td>
-              <td>
-                <button>-</button>
-                <span>Growth rate</span>
-                <button>+</button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <button>-</button>
-                <span>Strength</span>
-                <button>+</button>
-              </td>
-              <td>
-                <button>-</button>
-                <span>Intelligence</span>
-                <button>+</button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <button>-</button>
-                <span>Luck</span>
-                <button>+</button>
-              </td>
-              <td>
-                <button>-</button>
-                <span>Dexterity</span>
+                <span>${attribute}</span>
                 <button>+</button>
               </td>
             </tr>
