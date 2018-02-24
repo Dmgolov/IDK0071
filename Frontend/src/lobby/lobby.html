@@ -13,7 +13,7 @@
             <tr repeat.for="player of players">
               <td class="lobby-player-cell">${player}</td>
               <td class="lobby-ready-button-cell">
-                <button>Ready</button>
+                <button click.trigger="sendReadyStateInfo('Player C')" disabled.bind="authPlayer !== player">Ready</button>
               </td>
             </tr>
           </table>
