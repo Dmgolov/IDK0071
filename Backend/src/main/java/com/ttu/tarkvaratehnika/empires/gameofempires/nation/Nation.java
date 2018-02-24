@@ -3,6 +3,11 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.nation;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.BasicPerson;
+import com.ttu.tarkvaratehnika.empires.gameofempires.person.PersonValues;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Nation implements Runnable {
 
@@ -15,6 +20,8 @@ public class Nation implements Runnable {
     private int numOfPeople = 0;
     private boolean ready;
 
+    private List<Person> people = new ArrayList<>();
+
     public Nation(String username, String teamColor, GameLobby session) {
         this.username = username;
         this.teamColor = teamColor;
@@ -26,32 +33,33 @@ public class Nation implements Runnable {
 
     }
 
-    public boolean setPerson(BasicPerson person) {
-        this.person = person;
-        return true;
+    public void addPerson(Person person) {
+        people.add(person);
     }
 
-    public boolean setPersonWithStats(int vitality, int dexterity, int intelligence, int growthRate, int strength, int luck) {
-        Person person = new Person();
+    public void setPersonWithStats(Map<String, Integer> stats) {
+        person = new Person(this, session.getGameField(), stats);
+    }
+
+    public void setPersonWithStats(int vitality, int dexterity, int intelligence, int growthRate, int strength, int luck) {
+        Person person = new Person(this, session.getGameField());
         person.setVitality(vitality);
         person.setDexterity(dexterity);
         person.setIntelligence(intelligence);
         person.setGrowthRate(growthRate);
         person.setStrength(strength);
         person.setLuck(luck);
-        return setPerson(person);
+        this.person = person;
     }
 
-    public boolean useTemplateForPerson(String templateName) {
-        return false;
-    }
+    public void useTemplateForPerson(String templateName) {}
 
-    public boolean setDefault() {
-        return false;
+    public void setDefaultPerson() {
+        this.person = new Person(this, session.getGameField(), PersonValues.DEFAULT_STATS);
     }
 
     public boolean hasSelectedPersonType() {
-        return person == null;
+        return person != null;
     }
 
     public String getUsername() {

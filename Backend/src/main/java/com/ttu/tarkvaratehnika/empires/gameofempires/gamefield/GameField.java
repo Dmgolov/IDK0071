@@ -14,6 +14,10 @@ public class GameField {
     private String mapName;
     private InGameObject[][] field;
 
+    public InGameObject checkCell(int x, int y) {
+        return field[x][y];
+    }
+
     public boolean addPersonToCell(BasicPerson basicPerson, int x, int y) {
         return false;
     }

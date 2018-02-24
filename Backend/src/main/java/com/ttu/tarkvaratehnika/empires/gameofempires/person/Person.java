@@ -1,11 +1,19 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.person;
 
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
+import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 
+import java.util.Map;
 import java.util.Random;
 
 //TODO: improve methods from interface.
 public class Person implements BasicPerson {
+
+    private Nation nation;
+    private GameField field;
+
+    private int positionX, positionY;
 
     private int vitality;
     private int strength;
@@ -17,6 +25,27 @@ public class Person implements BasicPerson {
     private InGameObject effectedBy;
 
     private Random random = new Random();
+
+    public Person(Nation nation, GameField field) {
+        this.nation = nation;
+        this.field = field;
+        nation.addPerson(this);
+    }
+
+    public Person(Nation nation, GameField field, Map<String, Integer> stats) {
+        this(nation, field);
+        vitality = stats.get("Vitality");
+        strength = stats.get("Strength");
+        dexterity = stats.get("Dexterity");
+        intelligence = stats.get("Intelligence");
+        growthRate = stats.get("Reproduction");
+        luck = stats.get("Luck");
+    }
+
+    @Override
+    public void move() {
+
+    }
 
     @Override
     public boolean reproduce() {
@@ -41,6 +70,10 @@ public class Person implements BasicPerson {
 
     private void removeEffect() {
         effectedBy = null;
+    }
+
+    public void setNation(Nation nation) {
+        this.nation = nation;
     }
 
     public int getVitality() {

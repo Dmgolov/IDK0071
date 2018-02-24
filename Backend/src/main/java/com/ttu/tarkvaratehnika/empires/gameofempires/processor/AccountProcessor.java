@@ -20,7 +20,7 @@ public class AccountProcessor {
         return false;
     }
 
-    public boolean isLoggedIn(String name, String pass) {
+    public boolean isLoggedIn(String name) {
         return true;
     }
 }

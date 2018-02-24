@@ -36,7 +36,7 @@ public class GameLobby {
 
     public boolean startSession() {
         if (nations.stream().filter(Nation::isReady).count() == SessionSettings.DEFAULT_MAX_USERS) {
-            nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefault);
+            nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
             nations.forEach(Nation::run);
             return true;
         } else {
@@ -44,16 +44,23 @@ public class GameLobby {
         }
     }
 
+    public boolean setNationStats(String username, Map<String, Integer> stats) {
+        nations.stream().filter(nation -> nation.getUsername().equals(username)).findFirst()
+                .ifPresent(nation -> nation.setPersonWithStats(stats));
+        return true;
+    }
+
     public boolean setNationStats(String username, int vitality, int dexterity, int intelligence,
                                   int growthRate, int strength, int luck) {
-        Optional<Nation> chosen = nations.stream().filter(nation -> nation.getUsername().equals(username)).findFirst();
-        return chosen.isPresent()
-                && chosen.get().setPersonWithStats(vitality, dexterity, intelligence, growthRate, strength, luck);
+        nations.stream().filter(nation -> nation.getUsername().equals(username)).findFirst()
+                .ifPresent(nation -> nation.setPersonWithStats(vitality, dexterity, intelligence, growthRate, strength, luck));
+        return true;
     }
 
     public boolean setNationStatsByTemplate(String username, String templateName) {
-        Optional<Nation> chosen = nations.stream().filter(nation -> nation.getUsername().equals(username)).findFirst();
-        return chosen.isPresent() && chosen.get().useTemplateForPerson(templateName);
+        nations.stream().filter(nation -> nation.getUsername().equals(username)).findFirst()
+                .ifPresent(nation -> nation.useTemplateForPerson(templateName));
+        return true;
     }
 
     public Optional<Nation> checkWinner() {
@@ -79,11 +86,23 @@ public class GameLobby {
         return false;
     }
 
-    public void readyCheck(String username, boolean ready) {
+    public void readyCheck(String username, boolean ready, Map<String, Integer> stats) {
         nations.stream()
                 .filter(nation -> nation.getUsername().equals(username))
-                .findFirst().ifPresent(nation -> nation.setReady(ready));
+                .findFirst().ifPresent(nation -> {nation.setReady(ready);
+                nation.setPersonWithStats(stats);});
 
+    }
+
+    public List<Map<String, Object>> checkPlayerState() {
+        List<Map<String, Object>> data = new ArrayList<>();
+        nations.forEach(nation -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("isReady", nation.isReady());
+            map.put("name", nation.getUsername());
+            data.add(map);
+        });
+        return data;
     }
 
     public void endTurn() {
