@@ -7,13 +7,12 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountProcessor;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.TemplateProcessor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO: implement
-//Handles incoming requests and calls required classes/methods
 @RestController
+@CrossOrigin(origins = "http://localhost:9000")
 public class RequestController {
 
     private Gson gson = new Gson();
@@ -35,7 +34,6 @@ public class RequestController {
     }
 
     //TODO: later change pass to some kind of token
-    @CrossOrigin(origins = "http://localhost:9000")
     @RequestMapping(path = "/lobby/new")
     public @ResponseBody long createNewLobby(@RequestParam(required = false) String username,
                                              @RequestParam String lobbyName, @RequestParam(required = false) String lobbyPass) {
@@ -51,7 +49,6 @@ public class RequestController {
         return gson.toJson(sessionController.getLobbyNames(filter));
     }
 
-    @CrossOrigin(origins = "http://localhost:9000")
     @RequestMapping(path = "/lobby/connect")
     public @ResponseBody String connectToLobby(@RequestParam(required = false) String username,
                                                @RequestParam long lobbyId, @RequestParam(required = false) String lobbyPass) {
@@ -63,8 +60,7 @@ public class RequestController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:9000")
-    @PostMapping(path = "/lobby/ready", consumes = "text/plain")
+    @PostMapping(path = "/lobby/ready", consumes = "application/json")
     public @ResponseBody String readyCheck(@RequestBody String data) {
         JsonObject json = gson.fromJson(data, JsonObject.class);
         Map<String, Integer> stats = gson
@@ -72,11 +68,11 @@ public class RequestController {
         JsonObject jsonObject = gson.fromJson(json.get("player"), JsonObject.class);
         sessionController.readyCheck(jsonObject.get("name").toString(), 1,
                 jsonObject.get("isReady").getAsBoolean(), stats);
-        return "Ready";
+        Map<String, String> map = new HashMap<>();
+        map.put("status", "ready");
+        return gson.toJson(map);
     }
 
-    //TODO: Return json of players and their state
-    @CrossOrigin(origins = "http://localhost:9000")
     @RequestMapping(path = "/lobby/check")
     public @ResponseBody String checkPlayerState(@RequestParam long lobbyId) {
         return gson.toJson(sessionController.checkPlayerState(lobbyId));
