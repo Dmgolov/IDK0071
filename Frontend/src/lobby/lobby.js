@@ -19,7 +19,7 @@ export class Lobby {
       [new Attribute("Dexterity", 0), new Attribute("Luck", 0)]
     ];
 
-    this.timerId = setInterval(this.updatePlayersStateInfo, 1000);
+    this.timerId = setInterval(this.updatePlayersStateInfo, 5000);
 
   }
 
@@ -53,7 +53,13 @@ export class Lobby {
 
     client.fetch("http://localhost:8080/lobby/ready", {
       "method": "POST",
-      "body": json(info)
+      "body": json(info),
+      // "mode": "no-cors"
+      headers: {
+        'Origin': 'http://localhost:8080',
+        'Content-Type': 'application/json'
+      }
+
     })
       .then(response => response.json())
       .then(data => {
@@ -67,7 +73,7 @@ export class Lobby {
   updatePlayersStateInfo() {
     let client = new HttpClient();
 
-    client.fetch("http://localhost:8080/lobby/check?lobbyId=1")
+    client.fetch("http://localhost:8080/lobby/check?lobbyId=1"/*, {'mode': 'no-cors'}*/)
       .then(response => response.json())
       .then(data => {
         console.log(data);
