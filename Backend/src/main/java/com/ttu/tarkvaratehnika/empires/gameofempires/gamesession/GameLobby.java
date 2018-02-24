@@ -89,9 +89,9 @@ public class GameLobby {
     public void readyCheck(String username, boolean ready, Map<String, Integer> stats) {
         nations.stream()
                 .filter(nation -> nation.getUsername().equals(username))
-                .findFirst().ifPresent(nation -> {nation.setReady(ready);
-                nation.setPersonWithStats(stats);});
-
+                .findFirst().ifPresent(nation -> { nation.setReady(ready);
+                nation.setPersonWithStats(stats);
+                });
     }
 
     public List<Map<String, Object>> checkPlayerState() {

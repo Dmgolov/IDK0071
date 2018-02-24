@@ -38,7 +38,7 @@ public class RequestController {
     @CrossOrigin(origins = "http://localhost:9000")
     @RequestMapping(path = "/lobby/new")
     public @ResponseBody long createNewLobby(@RequestParam(required = false) String username,
-                                 @RequestParam String lobbyName, @RequestParam(required = false) String lobbyPass) {
+                                             @RequestParam String lobbyName, @RequestParam(required = false) String lobbyPass) {
         if (accountProcessor.isLoggedIn(username)) {
             return sessionController.createLobby(username, lobbyName, "");
         } else {
@@ -64,11 +64,12 @@ public class RequestController {
     }
 
     @CrossOrigin(origins = "http://localhost:9000")
-    @PostMapping(path = "/lobby/ready")
-    public @ResponseBody String readyCheck(HttpServletRequest request) {
+    @PostMapping(path = "/lobby/ready", consumes = "text/plain")
+    public @ResponseBody String readyCheck(@RequestBody String data) {
+        JsonObject json = gson.fromJson(data, JsonObject.class);
         Map<String, Integer> stats = gson
-                .fromJson(request.getParameter("nationAttributes"), new TypeToken<Map<String, Object>>(){}.getType());
-        JsonObject jsonObject = gson.fromJson(request.getParameter("player"), JsonObject.class);
+                .fromJson(json.get("nationAttributes").toString(), new TypeToken<Map<String, Object>>(){}.getType());
+        JsonObject jsonObject = gson.fromJson(json.get("player"), JsonObject.class);
         sessionController.readyCheck(jsonObject.get("name").toString(), 1,
                 jsonObject.get("isReady").getAsBoolean(), stats);
         return "Ready";
