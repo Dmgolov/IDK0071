@@ -1,6 +1,7 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountProcessor;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.TemplateProcessor;
@@ -36,10 +37,10 @@ public class RequestController {
     //TODO: later change pass to some kind of token
     @CrossOrigin(origins = "http://localhost:9000")
     @RequestMapping(path = "/lobby/new")
-    public @ResponseBody long createNewLobby(@RequestParam String username,
-                                 @RequestParam String lobbyName, @RequestParam String lobbyPass) {
+    public @ResponseBody long createNewLobby(@RequestParam(required = false) String username,
+                                 @RequestParam String lobbyName, @RequestParam(required = false) String lobbyPass) {
         if (accountProcessor.isLoggedIn(username)) {
-            return sessionController.createLobby(username, lobbyName, lobbyPass);
+            return sessionController.createLobby(username, lobbyName, "");
         } else {
             return 0;
         }
@@ -52,10 +53,10 @@ public class RequestController {
 
     @CrossOrigin(origins = "http://localhost:9000")
     @RequestMapping(path = "/lobby/connect")
-    public @ResponseBody String connectToLobby(@RequestParam String username,
-                                               @RequestParam long lobbyId, @RequestParam String lobbyPass) {
+    public @ResponseBody String connectToLobby(@RequestParam(required = false) String username,
+                                               @RequestParam long lobbyId, @RequestParam(required = false) String lobbyPass) {
         if (accountProcessor.isLoggedIn(username)) {
-            boolean result = sessionController.connectToLobby(username, lobbyId, lobbyPass);
+            boolean result = sessionController.connectToLobby(username, lobbyId, "");
             return result ? "Connected" : "Failed to connect";
         } else {
             return "Log in first";
@@ -64,11 +65,12 @@ public class RequestController {
 
     @CrossOrigin(origins = "http://localhost:9000")
     @PostMapping(path = "/lobby/ready")
-    public @ResponseBody String readyCheck(@RequestParam String player, @RequestParam long lobbyId,
-                                           @RequestParam boolean ready, @RequestParam String nationAttributes) {
+    public @ResponseBody String readyCheck(HttpServletRequest request) {
         Map<String, Integer> stats = gson
-                .fromJson(nationAttributes, new TypeToken<Map<String, Object>>(){}.getType());
-        sessionController.readyCheck(player, lobbyId, ready, stats);
+                .fromJson(request.getParameter("nationAttributes"), new TypeToken<Map<String, Object>>(){}.getType());
+        JsonObject jsonObject = gson.fromJson(request.getParameter("player"), JsonObject.class);
+        sessionController.readyCheck(jsonObject.get("name").toString(), 1,
+                jsonObject.get("isReady").getAsBoolean(), stats);
         return "Ready";
     }
 
