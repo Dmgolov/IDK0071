@@ -2,13 +2,9 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-//TODO: implement
 //Handles lobbies
 public class SessionController {
 
@@ -30,10 +26,17 @@ public class SessionController {
         return searchedSession.isPresent() && searchedSession.get().enterSession(username);
     }
 
-    public void readyCheck(String username, long lobbyId, boolean ready) {
+    //TODO: add nation stats
+    public void readyCheck(String username, long lobbyId, boolean ready, Map<String, Integer> stats) {
         lobbies.stream()
                 .filter(session -> session.getLobbyId() == lobbyId)
-                .findFirst().ifPresent(session -> session.readyCheck(username, ready));
+                .findFirst().ifPresent(session -> session.readyCheck(username, ready, stats));
+    }
+
+    public List<Map<String, Object>> checkPlayerState(long lobbyId) {
+        Optional<GameLobby> gameLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
+                .findAny();
+        return gameLobby.isPresent() ? gameLobby.get().checkPlayerState() : null;
     }
 
     public List<String> getLobbyNames(String filter) {

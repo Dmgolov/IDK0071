@@ -1,18 +1,21 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountProcessor;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.TemplateProcessor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 //TODO: implement
 //Handles incoming requests and calls required classes/methods
 @RestController
 public class RequestController {
+
+    private Gson gson = new Gson();
 
     private SessionController sessionController = new SessionController();
     private AccountProcessor accountProcessor = new AccountProcessor();
@@ -27,30 +30,29 @@ public class RequestController {
     @RequestMapping(path = "/login")
     public @ResponseBody String signIn(@RequestParam String username, @RequestParam String pass) {
         boolean result = accountProcessor.logIn(username, pass);
-        return result ? "Logged in" : "Failed to log in";
+        return result ? username : "";
     }
 
     //TODO: later change pass to some kind of token
     @RequestMapping(path = "/lobby/new")
-    public @ResponseBody long createNewLobby(@RequestParam String username, @RequestParam String pass,
+    public @ResponseBody long createNewLobby(@RequestParam String username,
                                  @RequestParam String lobbyName, @RequestParam String lobbyPass) {
-        if (accountProcessor.isLoggedIn(username, pass)) {
+        if (accountProcessor.isLoggedIn(username)) {
             return sessionController.createLobby(username, lobbyName, lobbyPass);
         } else {
             return 0;
         }
     }
 
-    //TODO: check how to send back lists (as json?)
     @RequestMapping(path = "/lobby/all")
-    public @ResponseBody List<String> getActiveLobbies(@RequestParam String filter) {
-        return sessionController.getLobbyNames(filter);
+    public @ResponseBody String getActiveLobbies(@RequestParam String filter) {
+        return gson.toJson(sessionController.getLobbyNames(filter));
     }
 
     @RequestMapping(path = "/lobby/connect")
-    public @ResponseBody String connectToLobby(@RequestParam String username, @RequestParam String pass,
+    public @ResponseBody String connectToLobby(@RequestParam String username,
                                                @RequestParam long lobbyId, @RequestParam String lobbyPass) {
-        if (accountProcessor.isLoggedIn(username, pass)) {
+        if (accountProcessor.isLoggedIn(username)) {
             boolean result = sessionController.connectToLobby(username, lobbyId, lobbyPass);
             return result ? "Connected" : "Failed to connect";
         } else {
@@ -58,11 +60,19 @@ public class RequestController {
         }
     }
 
-    @RequestMapping(path = "/lobby/ready")
-    public @ResponseBody String readyCheck(@RequestParam String username, @RequestParam long lobbyId,
-                                           @RequestParam boolean ready) {
-        sessionController.readyCheck(username, lobbyId, ready);
+    @PostMapping(path = "/lobby/ready")
+    public @ResponseBody String readyCheck(@RequestParam String player, @RequestParam long lobbyId,
+                                           @RequestParam boolean ready, @RequestParam String nationAttributes) {
+        Map<String, Integer> stats = gson
+                .fromJson(nationAttributes, new TypeToken<Map<String, Object>>(){}.getType());
+        sessionController.readyCheck(player, lobbyId, ready, stats);
         return "Ready";
+    }
+
+    //TODO: Return json of players and their state
+    @RequestMapping(path = "/lobby/check")
+    public @ResponseBody String checkPlayerState(@RequestParam long lobbyId) {
+        return gson.toJson(sessionController.checkPlayerState(lobbyId));
     }
 
     @RequestMapping(path = "/lobby/start")
@@ -75,7 +85,7 @@ public class RequestController {
     @RequestMapping(path = "/template/new")
     public @ResponseBody String uploadTemplate(@RequestParam String username, @RequestParam String pass,
                                                @RequestParam String template) {
-        if (accountProcessor.isLoggedIn(username, pass)) {
+        if (accountProcessor.isLoggedIn(username)) {
             boolean result = templateProcessor.addNewTemplate(username, template);
             return result ? "Saved template" : "Failed to save template";
         } else {
