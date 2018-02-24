@@ -34,6 +34,7 @@ public class RequestController {
     }
 
     //TODO: later change pass to some kind of token
+    @CrossOrigin(origins = "http://localhost:9000")
     @RequestMapping(path = "/lobby/new")
     public @ResponseBody long createNewLobby(@RequestParam String username,
                                  @RequestParam String lobbyName, @RequestParam String lobbyPass) {
@@ -49,6 +50,7 @@ public class RequestController {
         return gson.toJson(sessionController.getLobbyNames(filter));
     }
 
+    @CrossOrigin(origins = "http://localhost:9000")
     @RequestMapping(path = "/lobby/connect")
     public @ResponseBody String connectToLobby(@RequestParam String username,
                                                @RequestParam long lobbyId, @RequestParam String lobbyPass) {
@@ -60,6 +62,7 @@ public class RequestController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:9000")
     @PostMapping(path = "/lobby/ready")
     public @ResponseBody String readyCheck(@RequestParam String player, @RequestParam long lobbyId,
                                            @RequestParam boolean ready, @RequestParam String nationAttributes) {
@@ -70,6 +73,7 @@ public class RequestController {
     }
 
     //TODO: Return json of players and their state
+    @CrossOrigin(origins = "http://localhost:9000")
     @RequestMapping(path = "/lobby/check")
     public @ResponseBody String checkPlayerState(@RequestParam long lobbyId) {
         return gson.toJson(sessionController.checkPlayerState(lobbyId));
