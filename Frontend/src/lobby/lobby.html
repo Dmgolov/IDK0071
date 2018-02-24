@@ -11,9 +11,9 @@
         <div class="lobby-players-container">
           <table>
             <tr repeat.for="player of players">
-              <td class="lobby-player-cell">${player}</td>
+              <td class="lobby-player-cell">${player.name}</td>
               <td class="lobby-ready-button-cell">
-                <button click.trigger="sendReadyStateInfo('Player C')" disabled.bind="authPlayer !== player">Ready</button>
+                <button click.trigger="sendReadyStateInfo()" disabled.bind="authPlayer.name !== player.name" css="background-color: ${player.readyColor}">Ready</button>
               </td>
             </tr>
           </table>
@@ -25,9 +25,9 @@
             </tr>
             <tr repeat.for="row of nationAttributes">
               <td repeat.for="attribute of row">
-                <button click.trigger="changeNationAttributeValue(attribute.name, -1)">-</button>
+                <button click.trigger="changeNationAttributeValue(attribute.name, -1)" disabled.bind="authPlayer.isReady">-</button>
                 <div>${attribute.name}<p>${attribute.points}</p></div>
-                <button click.trigger="changeNationAttributeValue(attribute.name, 1)">+</button>
+                <button click.trigger="changeNationAttributeValue(attribute.name, 1)" disabled.bind="authPlayer.isReady">+</button>
               </td>
             </tr>
           </table>
