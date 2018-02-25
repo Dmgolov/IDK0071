@@ -1,0 +1,44 @@
+<template>
+  <require from="../styles.css"></require>
+  <div class="game-main-container">
+    <div class="game-content-container">
+      <div class="game-playfield-container">
+        <canvas id='gameMap' ref="gameMap" class="game-map" width="901" height="501">
+      </div>
+      <div class="game-stats-container">
+        <div class="game-playtime-container">
+          <span>Age</span>
+        </div>
+        <div class="game-players-container">
+          <table class="game-playerTable">
+            <tr>
+              <td>Players</td>
+              <td>Points</td>
+              <td>Natiop Power</td>
+            </tr>
+            <tr>
+              <td>Player 1</td>
+              <td>100</td>
+              <td>20</td>
+            </tr>
+            <tr>
+              <td>Player 2</td>
+              <td>80</td>
+              <td>12</td>
+            </tr>
+            <tr>
+              <td>Player 3</td>
+              <td>79</td>
+              <td>20</td>
+            </tr>
+            <tr>
+              <td>Player 4</td>
+              <td>30</td>
+              <td>10</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

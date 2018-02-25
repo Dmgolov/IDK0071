@@ -100,3 +100,30 @@
   width: 1000px;
   margin: auto;
 }
+.game-playerTable td{
+  opacity: 0.5;
+  border: 1px solid #333;
+  padding: 5px;
+}
+.game-playerTable:hover td{
+  opacity: 100;
+}
+.game-content-container {
+  text-align: center;
+}
+.game-stats-container {
+  top: 320px;
+
+  position: absolute;
+}
+.game-playtime-container {
+  font-size: 25px;
+}
+.game-playfield-container {
+  background-color: none;
+}
+.game-map {
+  width: 901px;
+  height: 501px;
+  border: 1px solid red;
+}

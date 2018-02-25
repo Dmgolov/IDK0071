@@ -5,6 +5,7 @@ export class App {
         config.map([
           { route: ['', 'home'], name: 'home', moduleId: 'home/index' },
           { route: 'lobby', name: 'lobby', moduleId: 'lobby/lobby', nav: true, title: 'Lobby' },
+          { route: 'game', name: 'game', moduleId: 'game/game', nav: true, title: 'Game'},
         ]);
       }
 }
