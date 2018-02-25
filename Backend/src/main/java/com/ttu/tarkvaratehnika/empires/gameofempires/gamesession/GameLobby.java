@@ -1,6 +1,6 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 
-import com.ttu.tarkvaratehnika.empires.gameofempires.controller.SessionController;
+import com.ttu.tarkvaratehnika.empires.gameofempires.controller.LobbyController;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 
@@ -10,7 +10,7 @@ public class GameLobby {
 
     private static long id = 0;
 
-    private SessionController controller;
+    private LobbyController controller;
     private final long lobbyId;
 
     private GameField gameField;
@@ -21,7 +21,7 @@ public class GameLobby {
     private List<String> availableColors = new ArrayList<>(Arrays.asList("yellow", "red", "purple", "brown"));
     private int waiting = 0;
 
-    public GameLobby(SessionController controller) {
+    public GameLobby(LobbyController controller) {
         this.controller = controller;
         lobbyId = ++id;
     }
@@ -105,11 +105,12 @@ public class GameLobby {
         return data;
     }
 
+    //TODO: redo checking winner and saving game state
     public void endTurn() {
         waiting++;
         if (waiting >= 4) {
             if (checkWinner().isPresent()) {
-                controller.sendSessionResult(checkWinner().get().getUsername(), lobbyId);
+                controller.sendSessionResult(lobbyId);
                 return;
             }
             waiting = 0;
