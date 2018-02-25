@@ -4,8 +4,9 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameTemplateRepo
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
-//TODO: implement (?)
+//TODO: implement
 //Handles templates creation, loading, saving
 @Service
 public class TemplateService {
@@ -17,6 +18,10 @@ public class TemplateService {
     }
 
     public List<String> findTemplates(String filter) {
+        return null;
+    }
+
+    public Map<String, Integer> findTemplate(String templateName) {
         return null;
     }
 }

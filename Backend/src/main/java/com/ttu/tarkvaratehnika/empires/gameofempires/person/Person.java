@@ -7,7 +7,6 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 import java.util.Map;
 import java.util.Random;
 
-//TODO: improve methods from interface.
 public class Person implements BasicPerson {
 
     private Nation nation;
@@ -42,9 +41,23 @@ public class Person implements BasicPerson {
         luck = stats.get("Luck");
     }
 
+    //Copy-constructor
+    public Person(Person another) {
+        this(another.nation, another.field);
+        vitality = another.vitality;
+        strength = another.strength;
+        dexterity = another.dexterity;
+        intelligence = another.intelligence;
+        growthRate = another.growthRate;
+        luck = another.luck;
+    }
+
+    //TODO: implement move method for making a move of this person (check neighbour cells, reproduce, etc.)
     @Override
     public void move() {
-
+        //check surrounding cells, call reproduce(), resistDisease() and other functions, if needed.
+        //if new person is added to another cell, call nation.addPosition(new Coordinates(positionX, positionY))
+        //if person is removed from cell (eg. person dies), call nation.removePerson(new Coordinates(positionX, positionY))
     }
 
     @Override
@@ -64,12 +77,39 @@ public class Person implements BasicPerson {
         return strength > another.getStrength() ? this : another;
     }
 
+    public void setStartingLocation() {
+        positionX = random.nextInt(field.getMapWidth());
+        positionY = random.nextInt(field.getMapHeight());
+        while (field.checkCell(positionX, positionY) instanceof Person) {
+            positionX = random.nextInt(field.getMapWidth());
+            positionY = random.nextInt(field.getMapHeight());
+        }
+    }
+
     public void addEffect(InGameObject inGameObject) {
         this.effectedBy = inGameObject;
     }
 
-    private void removeEffect() {
+    public InGameObject removeEffect() {
+        InGameObject effect = effectedBy;
         effectedBy = null;
+        return effect;
+    }
+
+    public void setPositionX(int positionX) {
+        this.positionX = positionX;
+    }
+
+    public int getPositionX() {
+        return positionX;
+    }
+
+    public void setPositionY(int positionY) {
+        this.positionY = positionY;
+    }
+
+    public int getPositionY() {
+        return positionY;
     }
 
     public void setNation(Nation nation) {

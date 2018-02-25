@@ -1,11 +1,14 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.nation;
 
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
-import com.ttu.tarkvaratehnika.empires.gameofempires.person.BasicPerson;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.PersonValues;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,22 +18,45 @@ public class Nation implements Runnable {
     private final String teamColor;
 
     private final GameLobby session;
+    private final GameField field;
 
-    private BasicPerson person;
+    private Person person;
     private int numOfPeople = 0;
     private boolean ready;
 
     private List<Person> people = new ArrayList<>();
+    private Map<Coordinates, Person> updatedPositions = new HashMap<>();
 
     public Nation(String username, String teamColor, GameLobby session) {
         this.username = username;
         this.teamColor = teamColor;
         this.session = session;
+        field = session.getGameField();
     }
 
     //TODO: implement spread function for calculating new state of the nation
     public void spread() {
+        //here initiates finding new positions for people
+        //[CODE]
+        //this shares data about nation updated state to the map
+        session.addUpdatedState(updatedPositions);
+        updatedPositions.clear();
+    }
 
+    public void addNewPerson(Coordinates coordinates) {
+        Person person = new Person(this.person);
+        person.setPositionX(coordinates.getX());
+        person.setPositionY(coordinates.getY());
+        people.add(person);
+        updatedPositions.put(coordinates, person);
+    }
+
+    public void removePerson(Coordinates coordinates) {
+        InGameObject object = field.checkCell(coordinates.getX(),coordinates.getY());
+        if (object instanceof Person) {
+            people.remove(object);
+            updatedPositions.put(coordinates, null);
+        }
     }
 
     public void addPerson(Person person) {
@@ -38,28 +64,19 @@ public class Nation implements Runnable {
     }
 
     public void setPersonWithStats(Map<String, Integer> stats) {
-        person = new Person(this, session.getGameField(), stats);
+        person = new Person(this, field, stats.isEmpty() ? PersonValues.DEFAULT_STATS : stats);
     }
-
-    public void setPersonWithStats(int vitality, int dexterity, int intelligence, int growthRate, int strength, int luck) {
-        Person person = new Person(this, session.getGameField());
-        person.setVitality(vitality);
-        person.setDexterity(dexterity);
-        person.setIntelligence(intelligence);
-        person.setGrowthRate(growthRate);
-        person.setStrength(strength);
-        person.setLuck(luck);
-        this.person = person;
-    }
-
-    public void useTemplateForPerson(String templateName) {}
 
     public void setDefaultPerson() {
-        this.person = new Person(this, session.getGameField(), PersonValues.DEFAULT_STATS);
+        this.person = new Person(this, field, PersonValues.DEFAULT_STATS);
     }
 
     public boolean hasSelectedPersonType() {
         return person != null;
+    }
+
+    public Person getPerson() {
+        return person;
     }
 
     public String getUsername() {

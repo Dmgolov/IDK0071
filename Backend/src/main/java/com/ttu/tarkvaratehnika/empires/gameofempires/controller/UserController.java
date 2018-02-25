@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:9000")
@@ -47,5 +48,10 @@ public class UserController {
     @RequestMapping(path = "/template/browse")
     public @ResponseBody List<String> findTemplates(String filter) {
         return templateService.findTemplates(filter);
+    }
+
+    @RequestMapping(path = "/template/load")
+    public @ResponseBody Map<String, Integer> loadTemplate(@RequestParam String templateName) {
+        return templateService.findTemplate(templateName);
     }
 }

@@ -1,8 +1,10 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 
 import com.ttu.tarkvaratehnika.empires.gameofempires.controller.LobbyController;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
+import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
 import java.util.*;
 
@@ -18,6 +20,7 @@ public class GameLobby {
     private String lobbyName;
     private String lobbyPass;
     private Set<Nation> nations = new HashSet<>();
+    private Map<Coordinates, Person> updatedCells = new HashMap<>();
     private List<String> availableColors = new ArrayList<>(Arrays.asList("yellow", "red", "purple", "brown"));
     private int waiting = 0;
 
@@ -37,30 +40,12 @@ public class GameLobby {
     public boolean startSession() {
         if (nations.stream().filter(Nation::isReady).count() == SessionSettings.DEFAULT_MAX_USERS) {
             nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
+            nations.forEach(nation -> nation.getPerson().setStartingLocation());
             nations.forEach(Nation::run);
             return true;
         } else {
             return false;
         }
-    }
-
-    public boolean setNationStats(String username, Map<String, Integer> stats) {
-        nations.stream().filter(nation -> nation.getUsername().equals(username)).findFirst()
-                .ifPresent(nation -> nation.setPersonWithStats(stats));
-        return true;
-    }
-
-    public boolean setNationStats(String username, int vitality, int dexterity, int intelligence,
-                                  int growthRate, int strength, int luck) {
-        nations.stream().filter(nation -> nation.getUsername().equals(username)).findFirst()
-                .ifPresent(nation -> nation.setPersonWithStats(vitality, dexterity, intelligence, growthRate, strength, luck));
-        return true;
-    }
-
-    public boolean setNationStatsByTemplate(String username, String templateName) {
-        nations.stream().filter(nation -> nation.getUsername().equals(username)).findFirst()
-                .ifPresent(nation -> nation.useTemplateForPerson(templateName));
-        return true;
     }
 
     public Optional<Nation> checkWinner() {
@@ -105,7 +90,11 @@ public class GameLobby {
         return data;
     }
 
-    //TODO: redo checking winner and saving game state
+    public synchronized void addUpdatedState(Map<Coordinates, Person> nationUpdate) {
+        updatedCells.putAll(nationUpdate);
+    }
+
+    //TODO: think of a way to save lobby winner and notify users about it before terminating this lobby
     public void endTurn() {
         waiting++;
         if (waiting >= 4) {
@@ -113,6 +102,8 @@ public class GameLobby {
                 controller.sendSessionResult(lobbyId);
                 return;
             }
+            gameField.updateMap(updatedCells);
+            updatedCells.clear();
             waiting = 0;
             synchronized (this) {
                 this.notifyAll();
