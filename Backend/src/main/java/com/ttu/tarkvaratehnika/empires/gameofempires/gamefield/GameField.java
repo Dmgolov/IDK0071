@@ -1,11 +1,8 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamefield;
 
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
-import com.ttu.tarkvaratehnika.empires.gameofempires.person.BasicPerson;
-import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class GameField {

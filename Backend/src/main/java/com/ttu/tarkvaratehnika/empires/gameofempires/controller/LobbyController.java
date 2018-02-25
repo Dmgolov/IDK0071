@@ -18,7 +18,8 @@ import java.util.stream.Collectors;
 public class LobbyController {
 
     private Set<GameLobby> lobbies = new HashSet<>();
-    Gson gson = new Gson();
+    private Map<Long, String> results = new HashMap<>();
+    private Gson gson = new Gson();
 
     private AccountService accountService;
     private TemplateService templateService;
@@ -46,25 +47,30 @@ public class LobbyController {
     @RequestMapping(path = "/connect")
     public @ResponseBody boolean connectToLobby(@RequestParam String username, @RequestParam long lobbyId,
                                   @RequestParam String lobbyPass) {
-        Optional<GameLobby> searchedSession = lobbies.stream()
-                .filter(session -> session.getLobbyId() == lobbyId && session.getLobbyPass().equals(lobbyPass))
+        Optional<GameLobby> searchedLobby = lobbies.stream()
+                .filter(lobby -> lobby.getLobbyId() == lobbyId && lobby.getLobbyPass().equals(lobbyPass))
                 .findFirst();
-        return searchedSession.isPresent() && searchedSession.get().enterSession(username);
+        return searchedLobby.isPresent() && searchedLobby.get().enterSession(username);
+    }
+
+    @RequestMapping(path = "/leave")
+    public @ResponseBody boolean leaveLobby(@RequestParam String username, @RequestParam long lobbyId) {
+        Optional<GameLobby> searchedLobby = lobbies.stream()
+                .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
+        return searchedLobby.isPresent() && searchedLobby.get().leaveSession(username);
     }
 
     @PostMapping(path = "/ready", consumes = "application/json")
     public @ResponseBody String readyCheck(@RequestBody String data) {
         JsonObject json = gson.fromJson(data, JsonObject.class);
         Map<String, Integer> stats = gson
-                .fromJson(json.get("nationAttributes").toString(), new TypeToken<Map<String, Object>>(){}.getType());
+                .fromJson(json.get("nationAttributes").toString(), new TypeToken<Map<String, Integer>>(){}.getType());
         JsonObject jsonObject = gson.fromJson(json.get("player"), JsonObject.class);
         lobbies.stream()
-                .filter(session -> session.getLobbyId() == 1)
-                .findFirst().ifPresent(session -> session.readyCheck(jsonObject.get("name").toString(),
+                .filter(lobby -> lobby.getLobbyId() == 1)
+                .findFirst().ifPresent(lobby -> lobby.readyCheck(jsonObject.get("name").getAsString(),
                 jsonObject.get("isReady").getAsBoolean(), stats));
-        Map<String, String> map = new HashMap<>();
-        map.put("status", "ready");
-        return gson.toJson(map);
+        return "{\"status\":\"ready\"}";
     }
 
     @RequestMapping(path = "/check")
@@ -82,15 +88,27 @@ public class LobbyController {
     }
 
     @RequestMapping(path = "/start")
-    public @ResponseBody boolean startLobby(@RequestParam long lobbyId) {
-        Optional<GameLobby> searchedSession = lobbies.stream()
-                .filter(session -> session.getLobbyId() == lobbyId)
+    public @ResponseBody boolean startLobby(@RequestParam long lobbyId, @RequestParam String mode) {
+        Optional<GameLobby> searchedLobby = lobbies.stream()
+                .filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findFirst();
-        return searchedSession.isPresent() && searchedSession.get().startSession();
+        return searchedLobby.isPresent() && (mode.equals("single") ? searchedLobby.get()
+                .startSinglePlayerSession() : searchedLobby.get().startSession());
     }
 
     @RequestMapping(path = "/state")
-    public @ResponseBody String sendSessionResult(@RequestParam long lobbyId) {
-        return null;
+    public @ResponseBody String getGameState(@RequestParam long lobbyId) {
+        Optional<GameLobby> searchedLobby = lobbies.stream()
+                .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
+        if (!searchedLobby.isPresent()) {
+            return results.getOrDefault(lobbyId, "{\"status\":\"notFound\"}");
+        }
+        return gson.toJson(searchedLobby.get().getUpdatedState());
+    }
+
+    //TODO: would be good, if results would be cleared from map after some time
+    public void terminateLobby(GameLobby lobby, String winner) {
+        lobbies.remove(lobby);
+        results.put(lobby.getLobbyId(), winner);
     }
 }

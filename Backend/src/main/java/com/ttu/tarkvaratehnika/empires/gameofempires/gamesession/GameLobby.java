@@ -57,9 +57,12 @@ public class GameLobby {
     }
 
     public boolean enterSession(String username) {
-        Nation nation = new Nation(username, availableColors.get(0), this);
-        availableColors.remove(0);
-        return nations.add(nation);
+        if (nations.size() < SessionSettings.DEFAULT_MAX_USERS) {
+            Nation nation = new Nation(username, availableColors.get(0), this);
+            availableColors.remove(0);
+            return nations.add(nation);
+        }
+        return false;
     }
 
     public boolean leaveSession(String username) {
@@ -94,12 +97,17 @@ public class GameLobby {
         updatedCells.putAll(nationUpdate);
     }
 
+    //TODO: save map with updated game state separately and return in this function call
+    public Map<Coordinates, Person> getUpdatedState() {
+        return null;
+    }
+
     //TODO: think of a way to save lobby winner and notify users about it before terminating this lobby
     public void endTurn() {
         waiting++;
         if (waiting >= 4) {
             if (checkWinner().isPresent()) {
-                controller.sendSessionResult(lobbyId);
+                controller.terminateLobby(this, checkWinner().get().getUsername());
                 return;
             }
             gameField.updateMap(updatedCells);
