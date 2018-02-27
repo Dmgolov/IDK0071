@@ -118,10 +118,16 @@ public class GameLobby {
             Set<Coordinates> overlappingKeys = cellsToUpdate.keySet().stream()
                     .filter(key -> cellsToUpdate.get(key) != null).collect(Collectors.toSet());
             overlappingKeys.retainAll(nationUpdate.keySet());
-            // Removes person from nation list if it's overwritten by another nation
-            // TODO: probably can think of a better and faster way to do this
+            // Compares 2 people and removes one of them
+            // TODO: check, if works fast enough
             for (Coordinates key : overlappingKeys) {
-                cellsToUpdate.get(key).getNation().removePerson(cellsToUpdate.get(key));
+                Person person1 = cellsToUpdate.get(key);
+                Person person2 = nationUpdate.get(key);
+                if (person1.captureCell(person2)) {
+                    person1.getNation().removePerson(person1);
+                } else {
+                    person2.getNation().removePerson(person2);
+                }
             }
         }
         cellsToUpdate.putAll(nationUpdate);

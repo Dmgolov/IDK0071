@@ -72,9 +72,10 @@ public class Person implements BasicPerson {
         return luck >= result;
     }
 
+    //TODO: implement better way to compare stats
     @Override
-    public Person fight(Person another) {
-        return strength > another.getStrength() ? this : another;
+    public boolean captureCell(Person another) {
+        return strength > another.getStrength();
     }
 
     public void setStartingLocation() {

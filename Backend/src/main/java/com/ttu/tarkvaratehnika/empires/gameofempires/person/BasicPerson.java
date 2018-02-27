@@ -10,5 +10,5 @@ public interface BasicPerson extends InGameObject {
 
     boolean resistDisease();
 
-    Person fight(Person another);
+    boolean captureCell(Person another);
 }
