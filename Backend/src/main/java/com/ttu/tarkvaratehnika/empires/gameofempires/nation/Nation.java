@@ -59,8 +59,8 @@ public class Nation implements Runnable {
         }
     }
 
-    public boolean isExtinct() {
-        return numOfPeople <= 0;
+    public boolean isActive() {
+        return numOfPeople > 0;
     }
 
     public void removePerson(Person person) {
@@ -113,7 +113,7 @@ public class Nation implements Runnable {
 
     @Override
     public void run() {
-        while (numOfPeople > 0) {
+        while (isActive()) {
             spread();
             try {
                 synchronized (session) {

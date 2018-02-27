@@ -52,9 +52,9 @@ public class GameLobby {
     }
 
     public Optional<Nation> checkWinner() {
-        long active = nations.stream().filter(Nation::isExtinct).count();
+        long active = nations.stream().filter(Nation::isActive).count();
         if (active == 1) {
-            return nations.stream().filter(Nation::isExtinct).findFirst();
+            return nations.stream().filter(Nation::isActive).findFirst();
         } else if (active == 0) {
             return Optional.of(new Nation("none", null, this));
         } else if (numOfTurns >= SessionSettings.MAX_TURNS) {
@@ -139,7 +139,7 @@ public class GameLobby {
 
     public void endTurn() {
         waiting++;
-        if (waiting >= 4) {
+        if (waiting >= nations.stream().filter(Nation::isActive).count()) {
             sendUpdateToMap();
             if (checkWinner().isPresent()) {
                 controller.terminateLobby(this, checkWinner().get().getUsername());

@@ -19,14 +19,6 @@ public class GameField {
         return field[x][y];
     }
 
-    //TODO: optimise map update this way, so each nation's list of people corresponded to the actual game state
-    /*
-    Right now if person of one nation acquires new cell or loses old cell, it can add/remove a person to/from its list.
-    However, if another nation also does anything with this cell, and later overwrites value for coordinates key, then values
-    in first nation list will not correspond to the actual game state
-    Example: new person saved in cell (3, 3). Another nation overwrites it with its own person in cell (3, 3).
-    First nation thinks it still has person there, but it is actually not there.
-     */
     public void updateMap(Map<Coordinates, Person> updatedCells) {
         for (Coordinates key : updatedCells.keySet()) {
             if (updatedCells.get(key) != null) {
