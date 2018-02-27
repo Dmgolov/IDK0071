@@ -109,17 +109,18 @@
   opacity: 100;
 }
 .game-content-container {
-  text-align: center;
+  position: relative;
 }
 .game-stats-container {
-  top: 320px;
-
   position: absolute;
+  top: 310px;
 }
 .game-playtime-container {
   font-size: 25px;
 }
 .game-playfield-container {
+  position: absolute;
+  left: 225px;
   background-color: none;
 }
 .game-map {
