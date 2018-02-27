@@ -111,12 +111,12 @@ public class GameLobby {
         cellsToUpdate.clear();
     }
 
-
     public synchronized void addUpdatedState(Map<Coordinates, Person> nationUpdate) {
         // Checks for overlapping keys with non-null values
-        if (!Collections.disjoint(cellsToUpdate.keySet().stream().filter(Objects::nonNull)
+        if (!Collections.disjoint(cellsToUpdate.keySet().stream().filter(key -> cellsToUpdate.get(key) != null)
                 .collect(Collectors.toSet()), nationUpdate.keySet())) {
-            Set<Coordinates> overlappingKeys = new HashSet<>(cellsToUpdate.keySet());
+            Set<Coordinates> overlappingKeys = cellsToUpdate.keySet().stream()
+                    .filter(key -> cellsToUpdate.get(key) != null).collect(Collectors.toSet());
             overlappingKeys.retainAll(nationUpdate.keySet());
             // Removes person from nation list if it's overwritten by another nation
             // TODO: probably can think of a better and faster way to do this
