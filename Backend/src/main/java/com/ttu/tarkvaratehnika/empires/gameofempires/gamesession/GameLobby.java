@@ -7,10 +7,12 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameLobby {
 
     private static long id = 0;
+    private int numOfTurns = 0;
 
     private LobbyController controller;
     private final long lobbyId;
@@ -20,7 +22,8 @@ public class GameLobby {
     private String lobbyName;
     private String lobbyPass;
     private Set<Nation> nations = new HashSet<>();
-    private Map<Coordinates, Person> updatedCells = new HashMap<>();
+    private Map<Coordinates, Person> cellsToUpdate = new HashMap<>();
+    private Map<Coordinates, Person> lastUpdate = new HashMap<>();
     private List<String> availableColors = new ArrayList<>(Arrays.asList("yellow", "red", "purple", "brown"));
     private int waiting = 0;
 
@@ -49,9 +52,13 @@ public class GameLobby {
     }
 
     public Optional<Nation> checkWinner() {
-        long active = nations.stream().filter(nation -> nation.getNumOfPeople() > 0).count();
+        long active = nations.stream().filter(Nation::isExtinct).count();
         if (active == 1) {
-            return nations.stream().filter(nation -> nation.getNumOfPeople() > 0).findFirst();
+            return nations.stream().filter(Nation::isExtinct).findFirst();
+        } else if (active == 0) {
+            return Optional.of(new Nation("none", null, this));
+        } else if (numOfTurns >= SessionSettings.MAX_TURNS) {
+            return nations.stream().max(Comparator.comparingInt(Nation::getNumOfPeople));
         }
         return Optional.empty();
     }
@@ -69,7 +76,11 @@ public class GameLobby {
         Optional<Nation> nation = nations.stream().filter(active -> active.getUsername().equals(username)).findFirst();
         if (nation.isPresent()) {
             availableColors.add(nation.get().getTeamColor());
-            return nations.remove(nation.get());
+            nations.remove(nation.get());
+            if (nations.size() == 0) {
+                controller.terminateLobby(this, null);
+            }
+            return true;
         }
         return false;
     }
@@ -93,26 +104,43 @@ public class GameLobby {
         return data;
     }
 
+    public void sendUpdateToMap(){
+        gameField.updateMap(cellsToUpdate);
+        lastUpdate.clear();
+        lastUpdate.putAll(cellsToUpdate);
+        cellsToUpdate.clear();
+    }
+
+
     public synchronized void addUpdatedState(Map<Coordinates, Person> nationUpdate) {
-        updatedCells.putAll(nationUpdate);
+        // Checks for overlapping keys with non-null values
+        if (!Collections.disjoint(cellsToUpdate.keySet().stream().filter(Objects::nonNull)
+                .collect(Collectors.toSet()), nationUpdate.keySet())) {
+            Set<Coordinates> overlappingKeys = new HashSet<>(cellsToUpdate.keySet());
+            overlappingKeys.retainAll(nationUpdate.keySet());
+            // Removes person from nation list if it's overwritten by another nation
+            // TODO: probably can think of a better and faster way to do this
+            for (Coordinates key : overlappingKeys) {
+                cellsToUpdate.get(key).getNation().removePerson(cellsToUpdate.get(key));
+            }
+        }
+        cellsToUpdate.putAll(nationUpdate);
     }
 
-    //TODO: save map with updated game state separately and return in this function call
-    public Map<Coordinates, Person> getUpdatedState() {
-        return null;
+    public Map<Coordinates, Person> getLastUpdate() {
+        return lastUpdate;
     }
 
-    //TODO: think of a way to save lobby winner and notify users about it before terminating this lobby
     public void endTurn() {
         waiting++;
         if (waiting >= 4) {
+            sendUpdateToMap();
             if (checkWinner().isPresent()) {
                 controller.terminateLobby(this, checkWinner().get().getUsername());
                 return;
             }
-            gameField.updateMap(updatedCells);
-            updatedCells.clear();
             waiting = 0;
+            numOfTurns++;
             synchronized (this) {
                 this.notifyAll();
             }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
+import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +78,7 @@ public class LobbyController {
     public @ResponseBody String checkPlayerState(@RequestParam long lobbyId) {
         Optional<GameLobby> gameLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findAny();
-        return gameLobby.isPresent() ? gson.toJson(gameLobby.get().checkPlayerState()) : null;
+        return gameLobby.isPresent() ? gson.toJson(gameLobby.get().checkPlayerState()) : "{\"status\":\"notFound\"}";
     }
 
     @RequestMapping(path = "/all")
@@ -103,7 +104,7 @@ public class LobbyController {
         if (!searchedLobby.isPresent()) {
             return results.getOrDefault(lobbyId, "{\"status\":\"notFound\"}");
         }
-        return gson.toJson(searchedLobby.get().getUpdatedState());
+        return gson.toJson(searchedLobby.get().getLastUpdate());
     }
 
     //TODO: would be good, if results would be cleared from map after some time

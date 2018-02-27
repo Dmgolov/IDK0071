@@ -112,6 +112,10 @@ public class Person implements BasicPerson {
         return positionY;
     }
 
+    public Nation getNation() {
+        return nation;
+    }
+
     public void setNation(Nation nation) {
         this.nation = nation;
     }

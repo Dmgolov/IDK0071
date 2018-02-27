@@ -59,6 +59,14 @@ public class Nation implements Runnable {
         }
     }
 
+    public boolean isExtinct() {
+        return numOfPeople <= 0;
+    }
+
+    public void removePerson(Person person) {
+        people.remove(person);
+    }
+
     public void addPerson(Person person) {
         people.add(person);
     }
