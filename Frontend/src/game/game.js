@@ -8,9 +8,11 @@ export class Game {
       "Player 4"
     ];
     this.fillCell = 0.5;
-    let cells = [];
-    console.log();
-    console.log(cells);
+    this.cells = [
+      [],
+      []
+    ];
+    this.createMap();
   }
 
   updateMap(){
@@ -26,44 +28,76 @@ export class Game {
     this.fillCell += 1;
   }
 
-  attached(){
-    const context = this.gameMap.getContext('2d');
+  createMap() {
     var mapSizeX = 901;
     var mapSizeY = 501;
-    var cellSize = 50;
+    var cellSize = 1;
     let cells = [];
+    let nation = "";
+    let nationColor = "";
     for (let i = 0; i < mapSizeX - 1; i += cellSize) {
       let row = new Array();
       for (let j = 0; j < mapSizeY - 1; j += cellSize) {
-        // cells.push({
-        //   x: i,
-        //   y: j,
-        //   nation: "Green"
-        // });
-        row.push({x: i, y: j, nation: "Green"});
-
+        if (Math.random() < 0.5){
+          row.push({x: i, y: j, nation: "green", nationColor: "#0F0"});
+        } else {
+          row.push({x: i, y: j, nation: "red", nationColor: "#F00"});
+        }
       }
       cells.push(row);
     }
     console.log(cells);
-    for (var x = 0.5; x < mapSizeX; x += cellSize) {
-      for (var y = 0.5; y < mapSizeY; y += cellSize) {
-      context.moveTo(x, 0);
-      context.lineTo(x, mapSizeY - 1);
-      context.moveTo(0, y);
-      context.lineTo(mapSizeX - 1, y);
-    }
-      context.stroke();
-    }
-    //setInterval(this.updateMap(), 10);
-    for (let row of cells){
-      for (let cell of row){
-        if (cell.nation == "Green"){
-          console.log("IS GREEN PLACE");
-        }
-      }
-    }
+    this.cells = cells;
   }
+
+  // attached(){
+  //   // var mapSizeX = 901;
+  //   // var mapSizeY = 501;
+  //   // var cellSize = 1;
+  //   // let cells = [];
+  //   // let nation = "";
+  //   // let nationColor = "";
+  //   // for (let i = 0; i < mapSizeX - 1; i += cellSize) {
+  //   //   let row = new Array();
+  //   //   for (let j = 0; j < mapSizeY - 1; j += cellSize) {
+  //   //     if (Math.random() < 0.5){
+  //   //       row.push({x: i, y: j, nation: "green", nationColor: "#0F0"});
+  //   //     } else {
+  //   //       row.push({x: i, y: j, nation: "red", nationColor: "#F00"});
+  //   //
+  //   //     }
+  //   //   }
+  //   //   cells.push(row);
+  //   // }
+  //   // console.log(cells);
+  //   const context = this.gameMap.getContext('2d');
+  //   for (var x = 0.5; x < mapSizeX; x += cellSize) {
+  //     for (var y = 0.5; y < mapSizeY; y += cellSize) {
+  //     context.moveTo(x, 0);
+  //     context.lineTo(x, mapSizeY - 1);
+  //     context.moveTo(0, y);
+  //     context.lineTo(mapSizeX - 1, y);
+  //   }
+  //     context.stroke();
+  //   }
+  //   setInterval(this.updateMap(), 10);
+  //   for (let row of cells){
+  //     for (let cell of row){
+  //       if (cell.nation == "red"){
+  //         //console.log("THIS PLACE BELONG TO " + cell.nation);
+  //         context.fillStyle = cell.nationColor;
+  //         context.fillRect(cell.x, cell.y, cellSize, cellSize);
+  //         // context.fill();
+  //       } else if (cell.nation == "green") {
+  //         context.fillStyle = cell.nationColor;
+  //         context.fillRect(cell.x, cell.y, cellSize, cellSize);
+  //         // context.rect(cell.x, cell.y, cellSize, cellSize);
+  //         // context.fillStyle = cell.nationColor;
+  //         // context.fill();
+  //       }
+  //     }
+  //   }
+  // }
   fullRandom() {
 
   }
