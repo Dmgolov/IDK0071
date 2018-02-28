@@ -11,7 +11,7 @@ export class Game {
     this.map = {
       height: 500,
       width: 900,
-      cellSize: 1,
+      cellSize: 5,
       context: null
     };
   }

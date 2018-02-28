@@ -1,9 +1,11 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.person;
 
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 
+import javax.swing.text.Position;
 import java.util.Map;
 import java.util.Random;
 
@@ -58,6 +60,15 @@ public class Person implements BasicPerson {
         //check surrounding cells, call reproduce(), resistDisease() and other functions, if needed.
         //if new person is added to another cell, call nation.addPosition(new Coordinates(positionX, positionY))
         //if person is removed from cell (eg. person dies), call nation.removePerson(new Coordinates(positionX, positionY))
+        //if near cell is empty, than move person on this cell and remove from current cell.
+        //if near cell is captured, than star fight for this cell, than check the fight result.
+        if (true) { //check the near cells.
+            field.removePersonFromCell(getPositionX(), getPositionY());
+            nation.removePerson(new Coordinates(getPositionX(), getPositionY()));
+            positionX = getPositionX() + (random.nextInt() * 2 - 1);
+            positionY = getPositionY() + (random.nextInt() * 2 - 1);
+            field.addPersonToCell(this, positionX, positionY);
+        }
     }
 
     @Override

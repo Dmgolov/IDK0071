@@ -77,9 +77,8 @@ export class Lobby {
       .then(response => response.json())
       .then(data => {
         console.log(data);
-        let updatedPlayers = JSON.parse(data);
-        for(let updatedPlayer of updatedPlayers) {
-          for (let player of this.players) {
+        for(let updatedPlayer of data) {
+          for(let player of this.players) {
             if (updatedPlayer.name === player.name) {
               player.isReady = updatedPlayer.isReady;
               player.readyColor = player.isReady ? 'green' : '';
