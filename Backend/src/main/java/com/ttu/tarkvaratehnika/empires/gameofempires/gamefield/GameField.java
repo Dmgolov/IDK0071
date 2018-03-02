@@ -1,5 +1,7 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamefield;
 
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Land;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
@@ -7,12 +9,16 @@ import java.util.Map;
 
 public class GameField {
 
-    private String mapName;
+    private GameMap gameMap;
     private InGameObject[][] field;
 
-    //TODO: load a map by name
     public void loadField() {
-
+        field = new InGameObject[gameMap.getMapWidth()][gameMap.getMapHeight()];
+        for (int row = 0; row < getMapWidth(); row++) {
+            for (int col = 0; col < getMapHeight(); col++) {
+                field[row][col] = new Land();
+            }
+        }
     }
 
     public InGameObject getObjectInCell(int x, int y) {
@@ -29,7 +35,8 @@ public class GameField {
         }
     }
 
-    public void addPersonToCell(Person person, int x, int y) {
+    // private in order to restrict modification simultaneously from multiple threads
+    private void addPersonToCell(Person person, int x, int y) {
         InGameObject object = field[x][y];
         if (object instanceof Person) {
             object = ((Person) object).removeEffect();
@@ -38,11 +45,16 @@ public class GameField {
         field[x][y] = person;
     }
 
-    public void removePersonFromCell(int x, int y) {
+    // private in order to restrict modification simultaneously from multiple threads
+    private void removePersonFromCell(int x, int y) {
         InGameObject object = field[x][y];
         if (object instanceof Person) {
             field[x][y] = ((Person) object).getEffectedBy();
         }
+    }
+
+    public String getMapName() {
+        return gameMap.getMapName();
     }
 
     public int getMapWidth() {
@@ -53,11 +65,15 @@ public class GameField {
         return field.length;
     }
 
-    public String getMapName() {
-        return mapName;
+    public boolean isMapSet() {
+        return gameMap != null;
     }
 
-    public void setMapName(String mapName) {
-        this.mapName = mapName;
+    public GameMap getGameMap() {
+        return gameMap;
+    }
+
+    public void setGameMap(GameMap gameMap) {
+        this.gameMap = gameMap;
     }
 }

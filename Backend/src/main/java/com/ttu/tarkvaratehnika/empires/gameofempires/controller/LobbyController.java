@@ -36,10 +36,10 @@ public class LobbyController {
         if (accountService.isLoggedIn(username)) {
             GameLobby lobby = new GameLobby(this);
             switch (mode) {
-                case SessionSettings.SINGLEPLAYER:
+                case SessionSettings.SINGLE_PLAYER:
                     lobby.setSingleMode(true);
                     break;
-                case SessionSettings.MULTIPLAYER:
+                case SessionSettings.MULTI_PLAYER:
                     lobby.setSingleMode(false);
                     break;
                 default:
@@ -59,9 +59,9 @@ public class LobbyController {
         Optional<GameLobby> searchedLobby = lobbies.stream()
                 .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
         if (searchedLobby.isPresent()) {
-            if (mode.equals(SessionSettings.SINGLEPLAYER)) {
+            if (mode.equals(SessionSettings.SINGLE_PLAYER)) {
                 searchedLobby.get().setSingleMode(true);
-            } else if (mode.equals(SessionSettings.MULTIPLAYER)) {
+            } else if (mode.equals(SessionSettings.MULTI_PLAYER)) {
                 searchedLobby.get().setSingleMode(false);
             }
             return "{ \"status\":\"changed\" }";

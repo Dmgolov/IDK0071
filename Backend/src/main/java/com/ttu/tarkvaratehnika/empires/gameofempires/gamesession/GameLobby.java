@@ -17,7 +17,7 @@ public class GameLobby {
     private LobbyController controller;
     private final long lobbyId;
 
-    private GameField gameField;
+    private GameField gameField = new GameField();
 
     private String lobbyName;
     private String lobbyPass;
@@ -44,6 +44,8 @@ public class GameLobby {
         if (singleMode) startSinglePlayerSession();
         if (nations.stream().filter(Nation::isReady).count() == SessionSettings.DEFAULT_MAX_USERS) {
             nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
+            if (!gameField.isMapSet()) gameField.setGameMap(SessionSettings.DEFAULT_MAP);
+            gameField.loadField();
             nations.forEach(nation -> nation.getPerson().setStartingLocation());
             nations.forEach(Nation::run);
             return true;

@@ -5,7 +5,6 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 
-import javax.swing.text.Position;
 import java.util.*;
 
 public class Person implements BasicPerson {
