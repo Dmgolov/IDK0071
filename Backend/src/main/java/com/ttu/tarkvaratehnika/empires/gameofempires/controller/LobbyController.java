@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
-import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:9000")
 @RequestMapping(path = "/lobby")
 public class LobbyController {
 

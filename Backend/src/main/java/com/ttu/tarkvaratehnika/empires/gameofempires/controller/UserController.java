@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:9000")
 public class UserController {
 
     private AccountService accountService;

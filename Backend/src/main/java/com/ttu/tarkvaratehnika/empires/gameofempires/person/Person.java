@@ -6,8 +6,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 
 import javax.swing.text.Position;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Person implements BasicPerson {
 
@@ -54,21 +53,45 @@ public class Person implements BasicPerson {
         luck = another.luck;
     }
 
-    //TODO: implement move method for making a move of this person (check neighbour cells, reproduce, etc.)
     @Override
-    public void move() {
-        //check surrounding cells, call reproduce(), resistDisease() and other functions, if needed.
-        //if new person is added to another cell, call nation.addPosition(new Coordinates(positionX, positionY))
-        //if person is removed from cell (eg. person dies), call nation.removePerson(new Coordinates(positionX, positionY))
-        //if near cell is empty, than move person on this cell and remove from current cell.
-        //if near cell is captured, than star fight for this cell, than check the fight result.
-        if (true) { //check the near cells.
-            field.removePersonFromCell(getPositionX(), getPositionY());
-            nation.removePerson(new Coordinates(getPositionX(), getPositionY()));
-            positionX = getPositionX() + (random.nextInt() * 2 - 1);
-            positionY = getPositionY() + (random.nextInt() * 2 - 1);
-            field.addPersonToCell(this, positionX, positionY);
+    public void act() {
+        if (!resistDisease()) { // if person dies, remove
+            nation.removePersonFromCoordinates(positionX, positionY);
         }
+        List<Coordinates> neighbourCells = getFreeNeighbourCells();
+        if (hasFreeNeighbourCells(neighbourCells)) { //check near cells.
+            Coordinates newLocation = neighbourCells.get(random.nextInt(neighbourCells.size()));
+            if (reproduce()) { // if can reproduce, add new person to new cell
+                nation.setPersonToCoordinates(newLocation.getX(), newLocation.getY());
+            } else { // if cannot reproduce, move to new cell
+                nation.removePersonFromCoordinates(positionX, positionY);
+                nation.setPersonToCoordinates(newLocation.getX(), newLocation.getY());
+            }
+        }
+    }
+
+    @Override
+    public List<Coordinates> getFreeNeighbourCells() {
+        List<Coordinates> freeCells = new ArrayList<>();
+        for (int x = -1; x < 2; x++) {
+            for (int y = -1; y < 2; y++) {
+                if (x == 0 && y == 0) {
+                    continue;
+                }
+                int newX = positionX + x % field.getMapWidth();
+                int newY = positionY + y % field.getMapHeight();
+                InGameObject object = field
+                        .getObjectInCell(newX, newY);
+                if (!(object instanceof Person && ((Person) object).getNation() == nation)) {
+                    freeCells.add(new Coordinates(newX, newY));
+                }
+            }
+        }
+        return freeCells;
+    }
+
+    public boolean hasFreeNeighbourCells(List<Coordinates> neighbourCells) {
+        return !neighbourCells.isEmpty();
     }
 
     @Override
@@ -92,7 +115,7 @@ public class Person implements BasicPerson {
     public void setStartingLocation() {
         positionX = random.nextInt(field.getMapWidth());
         positionY = random.nextInt(field.getMapHeight());
-        while (field.checkCell(positionX, positionY) instanceof Person) {
+        while (field.getObjectInCell(positionX, positionY) instanceof Person) {
             positionX = random.nextInt(field.getMapWidth());
             positionY = random.nextInt(field.getMapHeight());
         }

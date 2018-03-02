@@ -15,7 +15,7 @@ public class GameField {
 
     }
 
-    public InGameObject checkCell(int x, int y) {
+    public InGameObject getObjectInCell(int x, int y) {
         return field[x][y];
     }
 

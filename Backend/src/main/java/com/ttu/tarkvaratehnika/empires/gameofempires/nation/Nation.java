@@ -34,28 +34,29 @@ public class Nation implements Runnable {
         field = session.getGameField();
     }
 
-    //TODO: implement spread function for calculating new state of the nation
     public void spread() {
         //here initiates finding new positions for people
-        //[CODE]
+        for (Person person : people) {
+            person.act();
+        }
         //this shares data about nation updated state to the map
         session.addUpdatedState(updatedPositions);
         updatedPositions.clear();
     }
 
-    public void addNewPerson(Coordinates coordinates) {
+    public void setPersonToCoordinates(int x, int y) {
         Person person = new Person(this.person);
-        person.setPositionX(coordinates.getX());
-        person.setPositionY(coordinates.getY());
+        person.setPositionX(x);
+        person.setPositionY(y);
         people.add(person);
-        updatedPositions.put(coordinates, person);
+        updatedPositions.put(new Coordinates(x, y), person);
     }
 
-    public void removePerson(Coordinates coordinates) {
-        InGameObject object = field.checkCell(coordinates.getX(),coordinates.getY());
+    public void removePersonFromCoordinates(int positionX, int positionY) {
+        InGameObject object = field.getObjectInCell(positionX,positionY);
         if (object instanceof Person) {
             people.remove(object);
-            updatedPositions.put(coordinates, null);
+            updatedPositions.put(new Coordinates(positionX, positionY), null);
         }
     }
 
