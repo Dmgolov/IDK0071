@@ -78,10 +78,6 @@ export class Lobby {
       .then(data => {
         console.log(data);
         for(let updatedPlayer of data) {
-<<<<<<< HEAD
-=======
-          console.log(updatedPlayer);
->>>>>>> 0b3ca82def2c3a207ec7d97f8c1001d86f462fb0
           for(let player of this.players) {
             if (updatedPlayer.name === player.name) {
               player.isReady = updatedPlayer.isReady;
