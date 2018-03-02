@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,19 @@ public class LobbyController {
 
     @RequestMapping(path = "/new")
     public @ResponseBody long createLobby(@RequestParam String username, @RequestParam String lobbyName,
-                                          @RequestParam String lobbyPass) {
+                                          @RequestParam String lobbyPass, @RequestParam String mode) {
         if (accountService.isLoggedIn(username)) {
             GameLobby lobby = new GameLobby(this);
+            switch (mode) {
+                case SessionSettings.SINGLEPLAYER:
+                    lobby.setSingleMode(true);
+                    break;
+                case SessionSettings.MULTIPLAYER:
+                    lobby.setSingleMode(false);
+                    break;
+                default:
+                    return 0;
+            }
             lobbies.add(lobby);
             lobby.setLobbyName(lobbyName);
             lobby.setLobbyPass(lobbyPass);
@@ -41,6 +52,21 @@ public class LobbyController {
             return lobby.getLobbyId();
         }
         return 0;
+    }
+
+    @RequestMapping(path = "/mode")
+    public @ResponseBody String changeMode(@RequestParam String mode, @RequestParam long lobbyId) {
+        Optional<GameLobby> searchedLobby = lobbies.stream()
+                .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
+        if (searchedLobby.isPresent()) {
+            if (mode.equals(SessionSettings.SINGLEPLAYER)) {
+                searchedLobby.get().setSingleMode(true);
+            } else if (mode.equals(SessionSettings.MULTIPLAYER)) {
+                searchedLobby.get().setSingleMode(false);
+            }
+            return "{ \"status\":\"changed\" }";
+        }
+        return "{ \"status\":\"failed\"}";
     }
 
     @RequestMapping(path = "/connect")
@@ -87,12 +113,11 @@ public class LobbyController {
     }
 
     @RequestMapping(path = "/start")
-    public @ResponseBody boolean startLobby(@RequestParam long lobbyId, @RequestParam String mode) {
+    public @ResponseBody boolean startLobby(@RequestParam long lobbyId) {
         Optional<GameLobby> searchedLobby = lobbies.stream()
                 .filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findFirst();
-        return searchedLobby.isPresent() && (mode.equals("single") ? searchedLobby.get()
-                .startSinglePlayerSession() : searchedLobby.get().startSession());
+        return searchedLobby.isPresent() && searchedLobby.get().startSession();
     }
 
     @RequestMapping(path = "/state")

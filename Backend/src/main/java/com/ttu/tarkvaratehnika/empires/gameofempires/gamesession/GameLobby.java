@@ -26,21 +26,22 @@ public class GameLobby {
     private Map<Coordinates, Person> lastUpdate = new HashMap<>();
     private List<String> availableColors = new ArrayList<>(Arrays.asList("yellow", "red", "purple", "brown"));
     private int waiting = 0;
+    private boolean singleMode;
 
     public GameLobby(LobbyController controller) {
         this.controller = controller;
         lobbyId = ++id;
     }
 
-    public boolean startSinglePlayerSession() {
+    public void startSinglePlayerSession() {
         for (int i = 1; i <= 3; i++) {
             enterSession("bot" + i);
-            nations.forEach(nation -> nation.setReady(true));
+            getNations().forEach(nation -> nation.setReady(true));
         }
-        return startSession();
     }
 
     public boolean startSession() {
+        if (singleMode) startSinglePlayerSession();
         if (nations.stream().filter(Nation::isReady).count() == SessionSettings.DEFAULT_MAX_USERS) {
             nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
             nations.forEach(nation -> nation.getPerson().setStartingLocation());
@@ -153,6 +154,10 @@ public class GameLobby {
         }
     }
 
+    public Set<Nation> getNations() {
+        return nations;
+    }
+
     public GameField getGameField() {
         return gameField;
     }
@@ -179,5 +184,13 @@ public class GameLobby {
 
     public long getLobbyId() {
         return lobbyId;
+    }
+
+    public boolean isSingleMode() {
+        return singleMode;
+    }
+
+    public void setSingleMode(boolean singleMode) {
+        this.singleMode = singleMode;
     }
 }
