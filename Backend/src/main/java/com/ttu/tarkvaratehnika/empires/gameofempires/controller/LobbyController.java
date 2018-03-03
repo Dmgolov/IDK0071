@@ -58,6 +58,7 @@ public class LobbyController {
             if (mode.equals(SessionSettings.SINGLE_PLAYER)) {
                 searchedLobby.get().changeToSinglePlayer();
             } else if (mode.equals(SessionSettings.MULTI_PLAYER)) {
+                // TODO: change or remove, when multiplayer will be finished
                 searchedLobby.get().setSingleMode(false);
             }
             return "{\"status\":\"changed\"}";
@@ -70,7 +71,7 @@ public class LobbyController {
         Optional<GameLobby> searchedLobby = lobbies.stream()
                 .filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findFirst();
-        return searchedLobby.isPresent() && searchedLobby.get().enterSession(username);
+        return searchedLobby.isPresent() && searchedLobby.get().enterSession(username).isPresent();
     }
 
     @RequestMapping(path = "/leave")

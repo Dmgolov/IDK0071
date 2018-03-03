@@ -63,19 +63,20 @@ public class GameLobby {
 
     public void changeToSinglePlayer() {
         singleMode = true;
-        for (int i = 1; i <= 4 - nations.size(); i++) {
-            enterSession("bot" + i);
-            getNations().forEach(nation -> nation.setReady(true));
+        for (int i = 1; !isLobbyFull(); i++) {
+            Optional<Nation> nation = enterSession("bot" + i);
+            nation.ifPresent(team -> team.setReady(true));
         }
     }
 
-    public boolean enterSession(String username) {
-        if (nations.size() < SessionSettings.DEFAULT_MAX_USERS) {
+    public Optional<Nation> enterSession(String username) {
+        if (!isLobbyFull()) {
             Nation nation = new Nation(username, availableColors.get(0), this);
             availableColors.remove(0);
-            return nations.add(nation);
+            nations.add(nation);
+            return Optional.of(nation);
         }
-        return false;
+        return Optional.empty();
     }
 
     public boolean leaveSession(String username) {
@@ -151,7 +152,8 @@ public class GameLobby {
             JsonObject nationJson = new JsonObject();
             JsonArray array = new JsonArray();
             nationJson.addProperty("color", nation.getTeamColor());
-            for (Person person : nation.getPeople()) {
+            Set<Person> people = new HashSet<>(nation.getPeople());
+            for (Person person : people) {
                 JsonObject personJson = new JsonObject();
                 personJson.addProperty("x", person.getPositionX());
                 personJson.addProperty("y", person.getPositionY());
@@ -187,6 +189,10 @@ public class GameLobby {
         } else {
             System.out.println("more nations to wait");
         }
+    }
+
+    public boolean isLobbyFull() {
+        return nations.size() >= SessionSettings.DEFAULT_MAX_USERS;
     }
 
     public boolean hasNewTurnStarted() {
