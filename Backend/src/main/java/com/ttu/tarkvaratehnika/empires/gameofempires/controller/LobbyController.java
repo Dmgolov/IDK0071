@@ -37,15 +37,16 @@ public class LobbyController {
             GameLobby lobby = new GameLobby(this);
             lobbies.add(lobby);
             lobby.setLobbyName("");
-            lobby.setLobbyPass("");
             lobby.enterSession(username);
             return "{\"lobbyId\":" + lobby.getLobbyId() + "}";
         }
         return "{\"lobbyId\":0}";
     }
 
-    @RequestMapping(path = "/mode")
-    public @ResponseBody String changeMode(@RequestParam String mode, @RequestParam long lobbyId) {
+    @PostMapping(path = "/mode", consumes = "application/json")
+    public @ResponseBody String changeMode(@RequestBody String data) {
+        String mode = gson.fromJson(data, JsonObject.class).get("mode").getAsString();
+        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
         Optional<GameLobby> searchedLobby = lobbies.stream()
                 .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
         if (searchedLobby.isPresent()) {
@@ -54,16 +55,15 @@ public class LobbyController {
             } else if (mode.equals(SessionSettings.MULTI_PLAYER)) {
                 searchedLobby.get().setSingleMode(false);
             }
-            return "{ \"status\":\"changed\" }";
+            return "{\"status\":\"changed\"}";
         }
-        return "{ \"status\":\"failed\"}";
+        return "{\"status\":\"failed\"}";
     }
 
     @RequestMapping(path = "/connect")
-    public @ResponseBody boolean connectToLobby(@RequestParam String username, @RequestParam long lobbyId,
-                                  @RequestParam String lobbyPass) {
+    public @ResponseBody boolean connectToLobby(@RequestParam String username, @RequestParam long lobbyId) {
         Optional<GameLobby> searchedLobby = lobbies.stream()
-                .filter(lobby -> lobby.getLobbyId() == lobbyId && lobby.getLobbyPass().equals(lobbyPass))
+                .filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findFirst();
         return searchedLobby.isPresent() && searchedLobby.get().enterSession(username);
     }
@@ -76,13 +76,13 @@ public class LobbyController {
     }
 
     @PostMapping(path = "/ready", consumes = "application/json")
-    public @ResponseBody String readyCheck(@RequestBody String data) {
+    public @ResponseBody String setPlayerReadyState(@RequestBody String data) {
         JsonObject json = gson.fromJson(data, JsonObject.class);
         Map<String, Integer> stats = gson
                 .fromJson(json.get("nationAttributes").toString(), new TypeToken<Map<String, Integer>>(){}.getType());
         JsonObject jsonObject = gson.fromJson(json.get("player"), JsonObject.class);
         lobbies.stream()
-                .filter(lobby -> lobby.getLobbyId() == 1)
+                .filter(lobby -> lobby.getLobbyId() == json.get("lobbyId").getAsLong())
                 .findFirst().ifPresent(lobby -> lobby.readyCheck(jsonObject.get("name").getAsString(),
                 jsonObject.get("isReady").getAsBoolean(), stats));
         return "{\"status\":\"ready\"}";
