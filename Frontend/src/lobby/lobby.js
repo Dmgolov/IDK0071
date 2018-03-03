@@ -8,13 +8,10 @@ export class Lobby {
   constructor(lobbyInfo, router) {
     this.lobbyInfo = lobbyInfo;
     this.router = router;
-    this.canDisplayNationOptions = this.lobbyInfo.gameMode !== "";
 
     console.log(this.lobbyInfo);
 
-    // this.players = [
-    //   new Player(this.lobbyInfo.playerName, false)
-    // ];
+    this.canDisplayNationOptions = this.lobbyInfo.gameMode !== "";
 
     this.players;
     this.authPlayer;  // here will be written authenticated player
@@ -29,7 +26,10 @@ export class Lobby {
       [new Attribute("Dexterity", 0), new Attribute("Luck", 0)]
     ];
 
-    this.timerId = setInterval(this.updatePlayers.bind(this), 5000);
+    this.gameStartMessage;
+    this.setGameStartMessage(false);
+
+    this.timerId = setInterval(this.updatePlayers.bind(this), 1000);
 
   }
 
@@ -87,6 +87,7 @@ export class Lobby {
       .then(response => response.json())
       .then(data => {
         console.log(json(data));
+        let playersAreReady = true;
         for(let updatedPlayer of data) {
           let addNewPlayer = true;
           for(let player of this.players) {
@@ -101,6 +102,14 @@ export class Lobby {
             temporaryPlayer.readyColor = updatedPlayer.isReady ? 'green' : '';
             this.players.push(temporaryPlayer);
           }
+          if(updatedPlayer.isReady === false) {
+            playersAreReady = false;
+          }
+        }
+        if(playersAreReady) {
+          this.setGameStartMessage(true);
+          clearInterval(this.timerId);
+          this.router.navigate("game");
         }
     });
   }
@@ -146,8 +155,31 @@ export class Lobby {
   }
 
   sendGameMode(mode) {
+    let client = new HttpClient();
+
     this.lobbyInfo.gameMode = mode;
     this.canDisplayNationOptions = this.lobbyInfo.gameMode !== "";
+
+    client.fetch("http://localhost:8080/lobby/mode", {
+      "method": "POST",
+      "body": json({'mode': mode, 'lobbyId': this.lobbyInfo.lobbyId}),
+      headers: {
+        'Origin': 'http://localhost:8080',
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(json(data));
+    });
+  }
+
+  setGameStartMessage(ready) {
+    if(ready) {
+      this.gameStartMessage = "Game is starting";
+    } else {
+      this.gameStartMessage = "Waiting players";
+    }
   }
 
 }
