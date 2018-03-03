@@ -11,9 +11,10 @@ export class Game {
     this.map = {
       height: 500,
       width: 900,
-      cellSize: 5,
+      cellSize: 25,
       context: null
     };
+    this.stepCounter = 0;
   }
 
   attached(){
@@ -68,6 +69,22 @@ export class Game {
     }
     console.log(cells);
     return cells;
+  }
+
+  clearMap(cells, cellSize){
+    const context = this.map.context;
+    for (let row of cells){
+      for (let cell of row){
+        context.clearRect(cell.x, cell.y, cellSize, cellSize);
+      }
+    }
+  }
+
+  nextStep(){
+    this.stepCounter += 1;
+    let cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);;
+    this.map.context = this.gameMap.getContext('2d');
+    this.clearMap(cells, this.map.cellSize);
   }
 
 }
