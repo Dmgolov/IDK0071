@@ -1,15 +1,25 @@
+import {inject} from "aurelia-framework";
 import {HttpClient, json} from "aurelia-fetch-client";
+import {Router} from 'aurelia-router';
+import {LobbyInfo} from "../lobby/lobbyInfo";
 
+@inject(LobbyInfo, Router)
 export class Lobby {
-  constructor() {
+  constructor(lobbyInfo, router) {
+    this.lobbyInfo = lobbyInfo;
+    this.router = router;
+    this.test = 111;
+
+    console.log(this.lobbyInfo);
+
     this.players = [
-      new Player("Player_A", false),
-      new Player("Player_B", false),
-      new Player("Player_C", false),
-      new Player("Player_D", false)
+      new Player(this.lobbyInfo.playerName, false),
+      new Player("", false)
     ];
 
-    this.authPlayer = this.players[2];  // here will be written authenticated player
+    this.authPlayer = this.getAuthPlayer();  // here will be written authenticated player
+
+    console.log(this.authPlayer);
 
     this.nationPoints = 20;  // will be asked from server
 
@@ -19,8 +29,16 @@ export class Lobby {
       [new Attribute("Dexterity", 0), new Attribute("Luck", 0)]
     ];
 
-    this.timerId = setInterval(this.updatePlayersStateInfo, 5000);
+    this.timerId = setInterval(this.updatePlayersStateInfo.bind(this), 5000);
 
+  }
+
+  getAuthPlayer() {
+    for(let player of this.players) {
+      if(player.name === this.lobbyInfo.playerName) {
+        return player;
+      }
+    }
   }
 
   changeNationAttributeValue(name, points) {
@@ -54,7 +72,6 @@ export class Lobby {
     client.fetch("http://localhost:8080/lobby/ready", {
       "method": "POST",
       "body": json(info),
-      // "mode": "no-cors"
       headers: {
         'Origin': 'http://localhost:8080',
         'Content-Type': 'application/json'
@@ -73,7 +90,7 @@ export class Lobby {
   updatePlayersStateInfo() {
     let client = new HttpClient();
 
-    client.fetch("http://localhost:8080/lobby/check?lobbyId=1"/*, {'mode': 'no-cors'}*/)
+    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
         console.log(data);
@@ -87,6 +104,7 @@ export class Lobby {
         }
     });
   }
+
 }
 
 class Player {

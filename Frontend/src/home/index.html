@@ -11,8 +11,8 @@
       <div class="home-buttons-container">
         <!-- <button class="home-account-button" type="submit">Sing In</button>
         <button class="home-account-button" type="submit">Sing Up</button> -->
-        <input placeholder="Player name">
-        <button>Create Lobby</button>
+        <input placeholder="Player name" value.bind="lobbyInfo.playerName">
+        <button click.trigger="createLobby()">Create Lobby</button>
         <button>Connect to lobby</button>
         <input placeholder="Lobby ID">
         <button>Upload map template</button>
