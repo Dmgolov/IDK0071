@@ -29,16 +29,8 @@ export class Lobby {
       [new Attribute("Dexterity", 0), new Attribute("Luck", 0)]
     ];
 
-    this.timerId = setInterval(this.updatePlayersStateInfo.bind(this), 5000);
+    this.timerId = setInterval(this.updatePlayers.bind(this), 5000);
 
-  }
-
-  getAuthPlayer() {
-    for(let player of this.players) {
-      if(player.name === this.lobbyInfo.playerName) {
-        return player;
-      }
-    }
   }
 
   changeNationAttributeValue(name, points) {
@@ -88,22 +80,37 @@ export class Lobby {
 
   }
 
-  updatePlayersStateInfo() {
+  updatePlayers() {
     let client = new HttpClient();
 
     client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
-        console.log(json(data));
+        console.log(data);
         for(let updatedPlayer of data) {
+          let addNewPlayer = true;
           for(let player of this.players) {
             if (updatedPlayer.name === player.name) {
               player.isReady = updatedPlayer.isReady;
-              player.readyColor = player.isReady ? 'green' : '';
+              player.readyColor = updatedPlayer.isReady ? 'green' : '';
+              addNewPlayer = false;
             }
+          }
+          if(addThisPlayer) {
+            let temporaryPlayer = new Player(updatedPlayer.name, updatedPlayer.isReady);
+            temporaryPlayer.readyColor = updatedPlayer.isReady ? 'green' : '';
+            this.players.push(temporaryPlayer);
           }
         }
     });
+  }
+
+  getAuthPlayer() {
+    for(let player of this.players) {
+      if(player.name === this.lobbyInfo.playerName) {
+        return player;
+      }
+    }
   }
 
   setPlayers() {
@@ -115,7 +122,8 @@ export class Lobby {
       .then(data => {
         for(let player of data) {
               let readyColor = player.isReady ? 'green' : '';
-              let temporaryPlayer = new Player(player.name, player.isReady, readyColor);
+              let temporaryPlayer = new Player(player.name, player.isReady);
+              temporaryPlayer.readyColor = readyColor;
               players.push(temporaryPlayer);
         }
         this.players = players;
