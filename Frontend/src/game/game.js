@@ -2,25 +2,33 @@ export class Game {
   gameMap: HTMLCanvasElement;
   constructor(){
     this.players = [
-      "Player 1",
-      "Player 2",
-      "Player 3",
-      "Player 4"
+      new Player("Player 1", 0),
+      new Player("Player 2", 0),
+      new Player("Player 3", 0),
+      new Player("Player 4", 0),
+      new Player("Player 5", 0),
     ];
+    this.stortedPayers = [];
     this.fillCell = 0;
     this.map = {
-      height: 500,
-      width: 900,
-      cellSize: 25,
+      height: 100,
+      width: 100,
+      cellSize: 1,
       context: null
     };
     this.stepCounter = 0;
+    this.cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
   }
 
-  attached(){
+  attached() {
+    for (let i = 0; i < this.players.length; i++) {
+      console.log(this.players[i].playerScore);
+    }
     this.map.context = this.gameMap.getContext('2d');
-    let cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
-    this.fillMap(cells, this.map.cellSize);
+    this.fillMap(this.cells, this.map.cellSize);
+    setInterval(function () {
+      console.log("OP");
+    }, 1000);
   }
 
   createGrid() {
@@ -67,11 +75,12 @@ export class Game {
       }
       cells.push(row);
     }
+    console.log(cells[90][5].x);
     console.log(cells);
     return cells;
   }
 
-  clearMap(cells, cellSize){
+  clearMap(cells, cellSize) {
     const context = this.map.context;
     for (let row of cells){
       for (let cell of row){
@@ -80,11 +89,41 @@ export class Game {
     }
   }
 
-  nextStep(){
+  updateMap(cells, cellSize){
+    const context = this.map.context;
+    for (let row of cells) {
+      for (let cell of row) {
+        if (cell.nation == "red"){
+          context.fillStyle = "#0F0";
+          context.fillRect(cell.x, cell.y, cellSize, cellSize);
+        } else if (cell.nation == "green") {
+          context.fillStyle = "#F00";
+          context.fillRect(cell.x, cell.y, cellSize, cellSize);
+        }
+      }
+    }
+  }
+
+  sortTableByScore() {
+    //for (let i = 0; i < this.players.size)
+  }
+
+  nextStep() {
     this.stepCounter += 1;
-    let cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);;
     this.map.context = this.gameMap.getContext('2d');
-    this.clearMap(cells, this.map.cellSize);
+    this.updateMap(this.cells, this.map.cellSize);
+  }
+
+}
+
+class Player {
+  constructor(playerName, playerScore) {
+    this.playerName = playerName;
+    this.playerScore = Math.random() * 100;
+  }
+
+  getPlayerScore() {
+    this.playerScore = Math.random() * 20;
   }
 
 }
