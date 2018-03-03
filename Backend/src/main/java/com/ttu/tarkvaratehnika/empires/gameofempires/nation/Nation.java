@@ -127,17 +127,18 @@ public class Nation implements Runnable {
             System.out.println("Spreading " + username);
             spread();
             System.out.println("Finished spreading " + username);
+            System.out.println("Ending turn " + username);
+            session.endTurn();
             synchronized (session) {
-                try {
-                    System.out.println("accessing session " + username);
-                    System.out.println("Ending turn " + username);
-                    session.endTurn();
-                    while (!session.hasNewTurnStarted()) {
+                if (!session.areAllNationsWaiting()) {
+                    try {
                         System.out.println("Waiting " + username);
                         session.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException e) {
-                    System.out.println(e.getMessage());
+                } else {
+                    session.startNewTurn();
                 }
             }
         }

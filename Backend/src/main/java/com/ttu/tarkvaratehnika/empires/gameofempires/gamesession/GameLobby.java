@@ -27,8 +27,7 @@ public class GameLobby {
     private Map<Coordinates, Person> cellsToUpdate = new HashMap<>();
     private Map<Coordinates, Person> lastUpdate = new HashMap<>();
     private List<String> availableColors = new ArrayList<>(Arrays.asList("yellow", "red", "purple", "brown"));
-    private int waiting = 0;
-    private boolean newTurnStarted = false;
+    private volatile int waiting = 0;
     private boolean singleMode;
 
     public GameLobby(LobbyController controller) {
@@ -68,13 +67,13 @@ public class GameLobby {
 
     public void changeToSinglePlayer() {
         singleMode = true;
-        for (int i = 1; !isLobbyFull(); i++) {
+        for (int i = 1; hasFreeSpaces(); i++) {
             enterSession("bot" + i).ifPresent(nation -> nation.setReady(true));
         }
     }
 
     public Optional<Nation> enterSession(String username) {
-        if (!isLobbyFull()) {
+        if (hasFreeSpaces()) {
             Nation nation = new Nation(username, availableColors.get(0), this);
             availableColors.remove(0);
             nations.add(nation);
@@ -172,41 +171,43 @@ public class GameLobby {
         return objects;
     }
 
-    public void endTurn() {
-        synchronized (this) {
-            newTurnStarted = false;
-            waiting++;
-            System.out.println("Added wait: " + waiting);
-            if (waiting >= nations.stream().filter(Nation::isActive).count()) {
-                newTurnStarted = true;
-                System.out.println("Updating game map");
-                sendUpdateToMap();
-                System.out.println("Checking winner");
-                if (checkWinner().isPresent()) {
-                    System.out.println("Terminating lobby");
-                    controller.terminateLobby(this, checkWinner().get().getUsername());
-                    nations.forEach(nation -> nation.getPeople().clear());
+    public synchronized void endTurn() {
+        waiting++;
+        System.out.println("Added wait: " + waiting);
+    }
+
+    public void startNewTurn() {
+        if (areAllNationsWaiting()) {
+            waiting = 0;
+            numOfTurns++;
+            System.out.println("Turn nr: " + numOfTurns);
+            System.out.println("Updating game map");
+            sendUpdateToMap();
+            System.out.println("Checking winner");
+            if (checkWinner().isPresent()) {
+                System.out.println("Terminating lobby");
+                controller.terminateLobby(this, checkWinner().get().getUsername());
+                nations.forEach(nation -> nation.getPeople().clear());
+                synchronized (this) {
                     notifyAll();
-                    return;
                 }
-                System.out.println("Resetting turn");
-                waiting = 0;
-                numOfTurns++;
-                System.out.println("Waking nations");
-                notifyAll();
-            } else {
-                System.out.println("more nations to wait");
+                return;
             }
+            System.out.println("Waking nations");
+            synchronized (this) {
+                notifyAll();
+            }
+        } else {
+            System.out.println("more nations to wait");
         }
-
     }
 
-    public boolean isLobbyFull() {
-        return nations.size() >= SessionSettings.DEFAULT_MAX_USERS;
+    public boolean areAllNationsWaiting() {
+        return waiting >= nations.stream().filter(Nation::isActive).count();
     }
 
-    public boolean hasNewTurnStarted() {
-        return newTurnStarted;
+    public boolean hasFreeSpaces() {
+        return nations.size() < SessionSettings.DEFAULT_MAX_USERS;
     }
 
     public Set<Nation> getNations() {
