@@ -1,3 +1,5 @@
+import {HttpClient, json} from "aurelia-fetch-client";
+
 export class Game {
   gameMap: HTMLCanvasElement;
   constructor(){
@@ -104,11 +106,7 @@ export class Game {
   }
 
   movePersons(){
-    for (let i = 0; i < this.cells.length; i++){
-      for (let j = 0; j < this.cells[i].length; j++) {
-        console.log("TUT");
-      }
-    }
+
   }
 
   sortTableByScore() {
@@ -120,6 +118,18 @@ export class Game {
     this.map.context = this.gameMap.getContext('2d');
     this.updateMap(this.cells, this.map.cellSize);
     this.movePersons();
+  }
+
+  sendRequestForNextStep(){
+    // here should send every 1 second requset to the server to update map
+  }
+
+  receviedMapData(){
+    // here sould be map update from server by json
+  }
+
+  endGame(){
+    // determinate game winner
   }
 
 
