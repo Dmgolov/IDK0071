@@ -7,7 +7,7 @@ public class PersonValues {
 
     public static final int MAX_STAT = 20;
     public static final int REPRODUCTION_CHANCE = 20;
-    public static final int DISEASE_CHANCE = 26;
+    public static final int DISEASE_CHANCE = 1;
 
     public static final int DEFAULT_VITALITY = 3;
     public static final int DEFAULT_STRENGTH = 4;

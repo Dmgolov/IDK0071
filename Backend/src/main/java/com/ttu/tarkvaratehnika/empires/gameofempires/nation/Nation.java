@@ -7,10 +7,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.PersonValues;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Nation implements Runnable {
 
@@ -21,10 +18,9 @@ public class Nation implements Runnable {
     private final GameField field;
 
     private Person person;
-    private int numOfPeople = 0;
     private boolean ready;
 
-    private List<Person> people = new ArrayList<>();
+    private Set<Person> people = new HashSet<>();
     private Map<Coordinates, Person> updatedPositions = new HashMap<>();
 
     public Nation(String username, String teamColor, GameLobby session) {
@@ -36,7 +32,8 @@ public class Nation implements Runnable {
 
     public void spread() {
         //here initiates finding new positions for people
-        for (Person person : people) {
+        List<Person> tempPeople = new ArrayList<>(people);
+        for (Person person : tempPeople) {
             person.act();
         }
         //this shares data about nation updated state to the map
@@ -52,6 +49,13 @@ public class Nation implements Runnable {
         updatedPositions.put(new Coordinates(x, y), person);
     }
 
+    public void movePersonToCoordinates(Person person, int x, int y) {
+        person.setPositionX(x);
+        person.setPositionY(y);
+        people.add(person);
+        updatedPositions.put(new Coordinates(x, y), person);
+    }
+
     public void removePersonFromCoordinates(int positionX, int positionY) {
         InGameObject object = field.getObjectInCell(positionX,positionY);
         if (object instanceof Person) {
@@ -61,7 +65,7 @@ public class Nation implements Runnable {
     }
 
     public boolean isActive() {
-        return numOfPeople > 0;
+        return people.size() > 0;
     }
 
     public void removePerson(Person person) {
@@ -84,6 +88,10 @@ public class Nation implements Runnable {
         return person != null;
     }
 
+    public Set<Person> getPeople() {
+        return people;
+    }
+
     public Person getPerson() {
         return person;
     }
@@ -101,7 +109,7 @@ public class Nation implements Runnable {
     }
 
     public int getNumOfPeople() {
-        return numOfPeople;
+        return people.size();
     }
 
     public void setReady(boolean ready) {
@@ -115,17 +123,26 @@ public class Nation implements Runnable {
     @Override
     public void run() {
         while (isActive()) {
+            System.out.println("Spreading " + username);
             spread();
+            System.out.println("Finished spreading " + username);
             try {
+                System.out.println("accessing session " + username);
                 synchronized (session) {
+                    System.out.println("Ending turn " + username);
                     session.endTurn();
-                    session.wait();
+                    while (!session.hasNewTurnStarted()) {
+                        System.out.println("Waiting " + username);
+                        session.wait();
+                    }
                 }
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
         }
+        System.out.println("Shutting down " + username);
         synchronized (session) {
+            System.out.println("Stopped " + username);
             session.endTurn();
         }
     }

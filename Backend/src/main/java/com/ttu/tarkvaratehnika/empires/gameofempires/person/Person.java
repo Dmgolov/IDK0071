@@ -54,17 +54,22 @@ public class Person implements BasicPerson {
 
     @Override
     public void act() {
+        String username = nation.getUsername();
         if (!resistDisease()) { // if person dies, remove
             nation.removePersonFromCoordinates(positionX, positionY);
+            System.out.println(username + " person dead");
         }
         List<Coordinates> neighbourCells = getFreeNeighbourCells();
         if (hasFreeNeighbourCells(neighbourCells)) { //check near cells.
+            System.out.println(username + " can act");
             Coordinates newLocation = neighbourCells.get(random.nextInt(neighbourCells.size()));
             if (reproduce()) { // if can reproduce, add new person to new cell
+                System.out.println(username + " has new one born");
                 nation.setPersonToCoordinates(newLocation.getX(), newLocation.getY());
             } else { // if cannot reproduce, move to new cell
+                System.out.println(username + " person is moving");
                 nation.removePersonFromCoordinates(positionX, positionY);
-                nation.setPersonToCoordinates(newLocation.getX(), newLocation.getY());
+                nation.movePersonToCoordinates(this, newLocation.getX(), newLocation.getY());
             }
         }
     }
@@ -77,10 +82,9 @@ public class Person implements BasicPerson {
                 if (x == 0 && y == 0) {
                     continue;
                 }
-                int newX = positionX + x % field.getMapWidth();
-                int newY = positionY + y % field.getMapHeight();
-                InGameObject object = field
-                        .getObjectInCell(newX, newY);
+                int newX = Math.floorMod(positionX + x, field.getMapWidth());
+                int newY = Math.floorMod(positionY + y, field.getMapHeight());
+                InGameObject object = field.getObjectInCell(newX, newY);
                 if (!(object instanceof Person && ((Person) object).getNation() == nation)) {
                     freeCells.add(new Coordinates(newX, newY));
                 }
@@ -118,6 +122,7 @@ public class Person implements BasicPerson {
             positionX = random.nextInt(field.getMapWidth());
             positionY = random.nextInt(field.getMapHeight());
         }
+        nation.addPerson(this);
     }
 
     public void addEffect(InGameObject inGameObject) {

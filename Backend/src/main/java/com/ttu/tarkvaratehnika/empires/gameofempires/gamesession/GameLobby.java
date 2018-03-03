@@ -1,5 +1,7 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.controller.LobbyController;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
@@ -26,6 +28,7 @@ public class GameLobby {
     private Map<Coordinates, Person> lastUpdate = new HashMap<>();
     private List<String> availableColors = new ArrayList<>(Arrays.asList("yellow", "red", "purple", "brown"));
     private int waiting = 0;
+    private boolean newTurnStarted = false;
     private boolean singleMode;
 
     public GameLobby(LobbyController controller) {
@@ -47,7 +50,7 @@ public class GameLobby {
             if (!gameField.isMapSet()) gameField.setGameMap(SessionSettings.DEFAULT_MAP);
             gameField.loadField();
             nations.forEach(nation -> nation.getPerson().setStartingLocation());
-            nations.forEach(Nation::run);
+            nations.forEach(nation -> new Thread(nation).start());
             return true;
         } else {
             return false;
@@ -116,44 +119,78 @@ public class GameLobby {
 
     public synchronized void addUpdatedState(Map<Coordinates, Person> nationUpdate) {
         // Checks for overlapping keys with non-null values
+        System.out.println("Checking multiples");
         if (!Collections.disjoint(cellsToUpdate.keySet().stream().filter(key -> cellsToUpdate.get(key) != null)
                 .collect(Collectors.toSet()), nationUpdate.keySet())) {
+            System.out.println("Getting overlapped");
             Set<Coordinates> overlappingKeys = cellsToUpdate.keySet().stream()
                     .filter(key -> cellsToUpdate.get(key) != null).collect(Collectors.toSet());
             overlappingKeys.retainAll(nationUpdate.keySet());
             // Compares 2 people and removes one of them
             // TODO: check, if works fast enough
+            System.out.println("iterating keys");
             for (Coordinates key : overlappingKeys) {
                 Person person1 = cellsToUpdate.get(key);
                 Person person2 = nationUpdate.get(key);
+                System.out.println("Capturing cell");
                 if (person1.captureCell(person2)) {
                     person1.getNation().removePerson(person1);
+                    nationUpdate.remove(key);
                 } else {
                     person2.getNation().removePerson(person2);
                 }
             }
         }
+        System.out.println("adding cells");
         cellsToUpdate.putAll(nationUpdate);
     }
 
-    public Map<Coordinates, Person> getLastUpdate() {
-        return lastUpdate;
+    public List<JsonObject> getLastUpdate() {
+        List<JsonObject> objects = new ArrayList<>();
+        for (Nation nation : nations) {
+            JsonObject nationJson = new JsonObject();
+            JsonArray array = new JsonArray();
+            nationJson.addProperty("color", nation.getTeamColor());
+            for (Person person : nation.getPeople()) {
+                JsonObject personJson = new JsonObject();
+                personJson.addProperty("x", person.getPositionX());
+                personJson.addProperty("y", person.getPositionY());
+                array.add(personJson);
+            }
+            nationJson.add("people", array);
+            objects.add(nationJson);
+        }
+        return objects;
     }
 
     public void endTurn() {
+        newTurnStarted = false;
         waiting++;
+        System.out.println("Added wait: " + waiting);
         if (waiting >= nations.stream().filter(Nation::isActive).count()) {
+            System.out.println("Updating game map");
             sendUpdateToMap();
+            System.out.println("Checking winner");
             if (checkWinner().isPresent()) {
+                System.out.println("Terminating lobby");
                 controller.terminateLobby(this, checkWinner().get().getUsername());
                 return;
             }
+            System.out.println("Resetting turn");
             waiting = 0;
             numOfTurns++;
+            newTurnStarted = true;
             synchronized (this) {
+                System.out.println("Waking nations");
                 this.notifyAll();
             }
+        } else {
+            System.out.println("more nations to wait");
         }
+    }
+
+    public boolean hasNewTurnStarted() {
+        return newTurnStarted;
     }
 
     public Set<Nation> getNations() {
