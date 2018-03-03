@@ -106,7 +106,7 @@ export class Game {
   }
 
   movePersons(){
-
+    //method for moving persons.
   }
 
   sortTableByScore() {
@@ -120,15 +120,15 @@ export class Game {
     this.movePersons();
   }
 
-  sendRequestForNextStep(){
+  sendRequestForNextStep() {
     // here should send every 1 second requset to the server to update map
   }
 
-  receviedMapData(){
+  receviedMapData() {
     // here sould be map update from server by json
   }
 
-  endGame(){
+  endGame() {
     // determinate game winner
   }
 
