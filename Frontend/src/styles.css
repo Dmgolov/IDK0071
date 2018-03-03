@@ -100,6 +100,11 @@
 .lobby-prelaunch-container {
   display: block;
 }
+.lobby-prelaunch-container p {
+  width: 1000px;
+  text-align: center;
+  padding-bottom: 20px;
+}
 .lobby-prelaunch-button {
   display: block;
   width: 1000px;

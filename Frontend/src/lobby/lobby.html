@@ -15,7 +15,7 @@
               <tr repeat.for="player of players">
                 <td class="lobby-player-cell">${player.name}</td>
                 <td class="lobby-ready-button-cell">
-                  <button click.trigger="sendReadyStateInfo()" disabled.bind="authPlayer.name !== player.name" css="background-color: ${player.readyColor}">Ready</button>
+                  <button click.trigger="sendReadyStateInfo()" disabled.bind="authPlayer.name !== player.name || authPlayer.isReady" css="background-color: ${player.isReady? 'green; color: white' : ''}">Ready</button>
                 </td>
               </tr>
             </table>
@@ -38,7 +38,7 @@
         <div class="lobby-prelaunch-container">
           <button class="lobby-prelaunch-button">Load nation options from template</button>
           <button class="lobby-prelaunch-button">Choose map</button>
-          <button class="lobby-prelaunch-button">Start</button>
+          <p>${gameStartMessage}</p>
         </div>
       </div>
     </div>
