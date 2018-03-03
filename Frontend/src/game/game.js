@@ -6,14 +6,13 @@ export class Game {
       new Player("Player 2", 0),
       new Player("Player 3", 0),
       new Player("Player 4", 0),
-      new Player("Player 5", 0),
     ];
     this.stortedPayers = [];
     this.fillCell = 0;
     this.map = {
       height: 100,
       width: 100,
-      cellSize: 1,
+      cellSize: 25,
       context: null
     };
     this.stepCounter = 0;
@@ -75,7 +74,7 @@ export class Game {
       }
       cells.push(row);
     }
-    console.log(cells[90][5].x);
+    console.log(cells[1][0].x);
     console.log(cells);
     return cells;
   }
@@ -104,6 +103,14 @@ export class Game {
     }
   }
 
+  movePersons(){
+    for (let i = 0; i < this.cells.length; i++){
+      for (let j = 0; j < this.cells[i].length; j++) {
+        console.log("TUT");
+      }
+    }
+  }
+
   sortTableByScore() {
     //for (let i = 0; i < this.players.size)
   }
@@ -112,7 +119,10 @@ export class Game {
     this.stepCounter += 1;
     this.map.context = this.gameMap.getContext('2d');
     this.updateMap(this.cells, this.map.cellSize);
+    this.movePersons();
   }
+
+
 
 }
 
