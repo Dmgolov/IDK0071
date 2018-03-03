@@ -36,15 +36,7 @@ public class GameLobby {
         lobbyId = ++id;
     }
 
-    public void startSinglePlayerSession() {
-        for (int i = 1; i <= 3; i++) {
-            enterSession("bot" + i);
-            getNations().forEach(nation -> nation.setReady(true));
-        }
-    }
-
     public boolean startSession() {
-        if (singleMode) startSinglePlayerSession();
         if (nations.stream().filter(Nation::isReady).count() == SessionSettings.DEFAULT_MAX_USERS) {
             nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
             if (!gameField.isMapSet()) gameField.setGameMap(SessionSettings.DEFAULT_MAP);
@@ -67,6 +59,14 @@ public class GameLobby {
             return nations.stream().max(Comparator.comparingInt(Nation::getNumOfPeople));
         }
         return Optional.empty();
+    }
+
+    public void changeToSinglePlayer() {
+        singleMode = true;
+        for (int i = 1; i <= 4 - nations.size(); i++) {
+            enterSession("bot" + i);
+            getNations().forEach(nation -> nation.setReady(true));
+        }
     }
 
     public boolean enterSession(String username) {
@@ -168,6 +168,7 @@ public class GameLobby {
         waiting++;
         System.out.println("Added wait: " + waiting);
         if (waiting >= nations.stream().filter(Nation::isActive).count()) {
+            newTurnStarted = true;
             System.out.println("Updating game map");
             sendUpdateToMap();
             System.out.println("Checking winner");
@@ -179,7 +180,6 @@ public class GameLobby {
             System.out.println("Resetting turn");
             waiting = 0;
             numOfTurns++;
-            newTurnStarted = true;
             synchronized (this) {
                 System.out.println("Waking nations");
                 this.notifyAll();

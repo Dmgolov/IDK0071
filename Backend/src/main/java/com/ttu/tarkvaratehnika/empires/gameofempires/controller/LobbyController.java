@@ -56,7 +56,7 @@ public class LobbyController {
                 .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
         if (searchedLobby.isPresent()) {
             if (mode.equals(SessionSettings.SINGLE_PLAYER)) {
-                searchedLobby.get().setSingleMode(true);
+                searchedLobby.get().changeToSinglePlayer();
             } else if (mode.equals(SessionSettings.MULTI_PLAYER)) {
                 searchedLobby.get().setSingleMode(false);
             }
