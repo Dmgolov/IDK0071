@@ -11,10 +11,10 @@ import java.util.*;
 
 public class Nation implements Runnable {
 
-    private final String username;
-    private final String teamColor;
+    private String username;
+    private String teamColor;
 
-    private final GameLobby session;
+    private GameLobby session;
     private final GameField field;
 
     private Person person;
@@ -23,7 +23,7 @@ public class Nation implements Runnable {
     private Set<Person> people = new HashSet<>();
     private Map<Coordinates, Person> updatedPositions = new HashMap<>();
 
-    public Nation(String username, String teamColor, GameLobby session) {
+    public Nation(final String username, final String teamColor, final GameLobby session) {
         this.username = username;
         this.teamColor = teamColor;
         this.session = session;
