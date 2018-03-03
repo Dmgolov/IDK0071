@@ -86,7 +86,7 @@ export class Lobby {
     client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        console.log(json(data));
         for(let updatedPlayer of data) {
           let addNewPlayer = true;
           for(let player of this.players) {
@@ -96,7 +96,7 @@ export class Lobby {
               addNewPlayer = false;
             }
           }
-          if(addThisPlayer) {
+          if(addNewPlayer) {
             let temporaryPlayer = new Player(updatedPlayer.name, updatedPlayer.isReady);
             temporaryPlayer.readyColor = updatedPlayer.isReady ? 'green' : '';
             this.players.push(temporaryPlayer);
