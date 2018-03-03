@@ -43,6 +43,11 @@ public class LobbyController {
         return "{\"lobbyId\":0}";
     }
 
+    @GetMapping(path = "/defaultSettings")
+    public @ResponseBody String getDefaultOptions() {
+        return "{\"nationPoints\":" + SessionSettings.NATION_POINTS + "}";
+    }
+
     @PostMapping(path = "/mode", consumes = "application/json")
     public @ResponseBody String changeMode(@RequestBody String data) {
         String mode = gson.fromJson(data, JsonObject.class).get("mode").getAsString();
