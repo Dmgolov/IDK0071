@@ -30,28 +30,18 @@ public class LobbyController {
         this.templateService = templateService;
     }
 
-    @RequestMapping(path = "/new")
-    public @ResponseBody long createLobby(@RequestParam String username, @RequestParam String lobbyName,
-                                          @RequestParam String lobbyPass, @RequestParam String mode) {
+    @PostMapping(path = "/new", consumes = "application/json")
+    public @ResponseBody String createLobby(@RequestBody String data) {
+        String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
         if (accountService.isLoggedIn(username)) {
             GameLobby lobby = new GameLobby(this);
-            switch (mode) {
-                case SessionSettings.SINGLE_PLAYER:
-                    lobby.setSingleMode(true);
-                    break;
-                case SessionSettings.MULTI_PLAYER:
-                    lobby.setSingleMode(false);
-                    break;
-                default:
-                    return 0;
-            }
             lobbies.add(lobby);
-            lobby.setLobbyName(lobbyName);
-            lobby.setLobbyPass(lobbyPass);
+            lobby.setLobbyName("");
+            lobby.setLobbyPass("");
             lobby.enterSession(username);
-            return lobby.getLobbyId();
+            return "{\"lobbyId\":" + lobby.getLobbyId() + "}";
         }
-        return 0;
+        return "{\"lobbyId\":0}";
     }
 
     @RequestMapping(path = "/mode")
