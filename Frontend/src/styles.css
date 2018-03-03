@@ -50,6 +50,11 @@
   display: inline;
   width: 457px;
 }
+.lobby-lobby-id-info {
+  text-align: center;
+  width: 1000px;
+  padding: 25px 0px 10px 0px;
+}
 .lobby-game-options-container {
 
 }

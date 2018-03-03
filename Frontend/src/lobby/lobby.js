@@ -20,7 +20,8 @@ export class Lobby {
     this.authPlayer;  // here will be written authenticated player
     this.setPlayers();
 
-    this.nationPoints = 20;  // will be asked from server
+    this.nationPoints;  // will be asked from server
+    this.setDefaultSettings();
 
     this.nationAttributes = [
       [new Attribute("Vitality", 0), new Attribute("Reproduction", 0)],
@@ -123,6 +124,17 @@ export class Lobby {
         console.log(json(this.authPlayer));
     });
 
+  }
+
+  setDefaultSettings() {
+    let client = new HttpClient();
+
+    client.fetch("http://localhost:8080/lobby/defaultSettings")
+      .then(response => response.json())
+      .then(data => {
+        this.nationPoints = data.nationPoints;
+        console.log(this.nationPoints);
+    });
   }
 
   sendGameMode(mode) {
