@@ -3,40 +3,42 @@
   <div class="lobby-main-container">
     <div class="lobby-content-container">
       <div class="lobby-gamemode-container">
-        <button>Single</button>
+        <button click.trigger="sendGameMode('single')" disabled.bind="canDisplayNationOptions" css="background-color: ${lobbyInfo.gameMode === 'single' ? 'green; color: white' : ''}">Single</button>
         <span>Game mode</span>
-        <button>Multiplayer</button>
+        <button click.trigger="sendGameMode('multi')" disabled.bind="canDisplayNationOptions" css="background-color: ${lobbyInfo.gameMode === 'multi' ? 'green; color: white' : ''}">Multiplayer</button>
       </div>
-      <div class="lobby-game-options-container">
-        <div class="lobby-players-container">
-          <table>
-            <tr repeat.for="player of players">
-              <td class="lobby-player-cell">${player.name}</td>
-              <td class="lobby-ready-button-cell">
-                <button click.trigger="sendReadyStateInfo()" disabled.bind="authPlayer.name !== player.name" css="background-color: ${player.readyColor}">Ready</button>
-              </td>
-            </tr>
-          </table>
+      <div css="display: ${canDisplayNationOptions ? '': 'none'}">
+        <div class="lobby-game-options-container">
+          <div class="lobby-players-container">
+            <table>
+              <tr repeat.for="player of players">
+                <td class="lobby-player-cell">${player.name}</td>
+                <td class="lobby-ready-button-cell">
+                  <button click.trigger="sendReadyStateInfo()" disabled.bind="authPlayer.name !== player.name" css="background-color: ${player.readyColor}">Ready</button>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="lobby-nation-options-container">
+            <table>
+              <tr>
+                <td colspan="2" class="lobby-nation-points-cell">Nation points: ${nationPoints}</td>
+              </tr>
+              <tr repeat.for="row of nationAttributes">
+                <td repeat.for="attribute of row">
+                  <button click.trigger="changeNationAttributeValue(attribute.name, -1)" disabled.bind="authPlayer.isReady">-</button>
+                  <div>${attribute.name}<p>${attribute.points}</p></div>
+                  <button click.trigger="changeNationAttributeValue(attribute.name, 1)" disabled.bind="authPlayer.isReady">+</button>
+                </td>
+              </tr>
+            </table>
+          </div>
         </div>
-        <div class="lobby-nation-options-container">
-          <table>
-            <tr>
-              <td colspan="2" class="lobby-nation-points-cell">Nation points: ${nationPoints}</td>
-            </tr>
-            <tr repeat.for="row of nationAttributes">
-              <td repeat.for="attribute of row">
-                <button click.trigger="changeNationAttributeValue(attribute.name, -1)" disabled.bind="authPlayer.isReady">-</button>
-                <div>${attribute.name}<p>${attribute.points}</p></div>
-                <button click.trigger="changeNationAttributeValue(attribute.name, 1)" disabled.bind="authPlayer.isReady">+</button>
-              </td>
-            </tr>
-          </table>
+        <div class="lobby-prelaunch-container">
+          <button class="lobby-prelaunch-button">Load nation options from template</button>
+          <button class="lobby-prelaunch-button">Choose map</button>
+          <button class="lobby-prelaunch-button">Start</button>
         </div>
-      </div>
-      <div class="lobby-prelaunch-container">
-        <button class="lobby-prelaunch-button">Load nation options from template</button>
-        <button class="lobby-prelaunch-button">Choose map</button>
-        <button class="lobby-prelaunch-button">Start</button>
       </div>
     </div>
   </div>

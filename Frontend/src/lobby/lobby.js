@@ -8,18 +8,17 @@ export class Lobby {
   constructor(lobbyInfo, router) {
     this.lobbyInfo = lobbyInfo;
     this.router = router;
-    this.test = 111;
+    this.canDisplayNationOptions = this.lobbyInfo.gameMode !== "";
 
     console.log(this.lobbyInfo);
 
-    this.players = [
-      new Player(this.lobbyInfo.playerName, false),
-      new Player("", false)
-    ];
+    // this.players = [
+    //   new Player(this.lobbyInfo.playerName, false)
+    // ];
 
-    this.authPlayer = this.getAuthPlayer();  // here will be written authenticated player
-
-    console.log(this.authPlayer);
+    this.players;
+    this.authPlayer;  // here will be written authenticated player
+    this.setPlayers();
 
     this.nationPoints = 20;  // will be asked from server
 
@@ -53,7 +52,7 @@ export class Lobby {
   }
 
   getReadyStateInfo() {
-    let info = {player: this.authPlayer, nationAttributes: {}};
+    let info = {player: this.authPlayer, nationAttributes: {}, lobbyId: this.lobbyInfo.lobbyId};
     for(let row of this.nationAttributes) {
       for(let attribute of row) {
         info.nationAttributes[attribute.name] = attribute.points;
@@ -64,10 +63,13 @@ export class Lobby {
 
   sendReadyStateInfo() {
     let client = new HttpClient();
-    let info = this.getReadyStateInfo();
 
     this.authPlayer.isReady = !this.authPlayer.isReady;
     this.authPlayer.readyColor = this.authPlayer.isReady ? 'green' : '';
+
+    let info = this.getReadyStateInfo();
+
+    console.log(json(info));
 
     client.fetch("http://localhost:8080/lobby/ready", {
       "method": "POST",
@@ -80,11 +82,9 @@ export class Lobby {
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        console.log(json(data));
     });
 
-    console.log(json(this.players));
-    console.log(json(info));
   }
 
   updatePlayersStateInfo() {
@@ -93,7 +93,7 @@ export class Lobby {
     client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        console.log(json(data));
         for(let updatedPlayer of data) {
           for(let player of this.players) {
             if (updatedPlayer.name === player.name) {
@@ -103,6 +103,31 @@ export class Lobby {
           }
         }
     });
+  }
+
+  setPlayers() {
+    let client = new HttpClient();
+    let players = [];
+
+    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
+      .then(response => response.json())
+      .then(data => {
+        for(let player of data) {
+              let readyColor = player.isReady ? 'green' : '';
+              let temporaryPlayer = new Player(player.name, player.isReady, readyColor);
+              players.push(temporaryPlayer);
+        }
+        this.players = players;
+        this.authPlayer = this.getAuthPlayer();
+        console.log(json(this.players));
+        console.log(json(this.authPlayer));
+    });
+
+  }
+
+  sendGameMode(mode) {
+    this.lobbyInfo.gameMode = mode;
+    this.canDisplayNationOptions = this.lobbyInfo.gameMode !== "";
   }
 
 }
