@@ -42,6 +42,11 @@ public class GameLobby {
             if (!gameField.isMapSet()) gameField.setGameMap(SessionSettings.DEFAULT_MAP);
             gameField.loadField();
             nations.forEach(nation -> nation.getPerson().setStartingLocation());
+            try {
+                Thread.sleep(SessionSettings.START_DELAY);
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
             nations.forEach(nation -> new Thread(nation).start());
             return true;
         } else {
@@ -64,8 +69,7 @@ public class GameLobby {
     public void changeToSinglePlayer() {
         singleMode = true;
         for (int i = 1; !isLobbyFull(); i++) {
-            Optional<Nation> nation = enterSession("bot" + i);
-            nation.ifPresent(team -> team.setReady(true));
+            enterSession("bot" + i).ifPresent(nation -> nation.setReady(true));
         }
     }
 
@@ -98,6 +102,7 @@ public class GameLobby {
                 .findFirst().ifPresent(nation -> { nation.setReady(ready);
                 nation.setPersonWithStats(stats);
                 });
+        if (nations.stream().filter(Nation::isReady).count() == SessionSettings.DEFAULT_MAX_USERS) startSession();
     }
 
     public List<Map<String, Object>> checkPlayerState() {
@@ -118,15 +123,17 @@ public class GameLobby {
         cellsToUpdate.clear();
     }
 
+    public Set<Coordinates> findKeysWithNonNullValues(Map<Coordinates, Person> peopleLocation) {
+        return peopleLocation.keySet().stream().filter(key -> peopleLocation.get(key) != null).collect(Collectors.toSet());
+    }
+
     public synchronized void addUpdatedState(Map<Coordinates, Person> nationUpdate) {
         // Checks for overlapping keys with non-null values
         System.out.println("Checking multiples");
-        if (!Collections.disjoint(cellsToUpdate.keySet().stream().filter(key -> cellsToUpdate.get(key) != null)
-                .collect(Collectors.toSet()), nationUpdate.keySet())) {
+        if (!Collections.disjoint(findKeysWithNonNullValues(cellsToUpdate), findKeysWithNonNullValues(nationUpdate))) {
             System.out.println("Getting overlapped");
-            Set<Coordinates> overlappingKeys = cellsToUpdate.keySet().stream()
-                    .filter(key -> cellsToUpdate.get(key) != null).collect(Collectors.toSet());
-            overlappingKeys.retainAll(nationUpdate.keySet());
+            Set<Coordinates> overlappingKeys = findKeysWithNonNullValues(cellsToUpdate);
+            overlappingKeys.retainAll(findKeysWithNonNullValues(nationUpdate));
             // Compares 2 people and removes one of them
             // TODO: check, if works fast enough
             System.out.println("iterating keys");
@@ -166,29 +173,32 @@ public class GameLobby {
     }
 
     public void endTurn() {
-        newTurnStarted = false;
-        waiting++;
-        System.out.println("Added wait: " + waiting);
-        if (waiting >= nations.stream().filter(Nation::isActive).count()) {
-            newTurnStarted = true;
-            System.out.println("Updating game map");
-            sendUpdateToMap();
-            System.out.println("Checking winner");
-            if (checkWinner().isPresent()) {
-                System.out.println("Terminating lobby");
-                controller.terminateLobby(this, checkWinner().get().getUsername());
-                return;
-            }
-            System.out.println("Resetting turn");
-            waiting = 0;
-            numOfTurns++;
-            synchronized (this) {
+        synchronized (this) {
+            newTurnStarted = false;
+            waiting++;
+            System.out.println("Added wait: " + waiting);
+            if (waiting >= nations.stream().filter(Nation::isActive).count()) {
+                newTurnStarted = true;
+                System.out.println("Updating game map");
+                sendUpdateToMap();
+                System.out.println("Checking winner");
+                if (checkWinner().isPresent()) {
+                    System.out.println("Terminating lobby");
+                    controller.terminateLobby(this, checkWinner().get().getUsername());
+                    nations.forEach(nation -> nation.getPeople().clear());
+                    notifyAll();
+                    return;
+                }
+                System.out.println("Resetting turn");
+                waiting = 0;
+                numOfTurns++;
                 System.out.println("Waking nations");
-                this.notifyAll();
+                notifyAll();
+            } else {
+                System.out.println("more nations to wait");
             }
-        } else {
-            System.out.println("more nations to wait");
         }
+
     }
 
     public boolean isLobbyFull() {

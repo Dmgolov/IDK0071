@@ -4,6 +4,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.PersonValues;
 
@@ -11,10 +12,10 @@ import java.util.*;
 
 public class Nation implements Runnable {
 
-    private String username;
-    private String teamColor;
+    private final String username;
+    private final String teamColor;
 
-    private GameLobby session;
+    private final GameLobby session;
     private final GameField field;
 
     private Person person;
@@ -23,7 +24,7 @@ public class Nation implements Runnable {
     private Set<Person> people = new HashSet<>();
     private Map<Coordinates, Person> updatedPositions = new HashMap<>();
 
-    public Nation(final String username, final String teamColor, final GameLobby session) {
+    public Nation(String username, String teamColor, GameLobby session) {
         this.username = username;
         this.teamColor = teamColor;
         this.session = session;
@@ -126,24 +127,20 @@ public class Nation implements Runnable {
             System.out.println("Spreading " + username);
             spread();
             System.out.println("Finished spreading " + username);
-            try {
-                System.out.println("accessing session " + username);
-                synchronized (session) {
+            synchronized (session) {
+                try {
+                    System.out.println("accessing session " + username);
                     System.out.println("Ending turn " + username);
                     session.endTurn();
                     while (!session.hasNewTurnStarted()) {
                         System.out.println("Waiting " + username);
                         session.wait();
                     }
+                } catch (InterruptedException e) {
+                    System.out.println(e.getMessage());
                 }
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
             }
         }
         System.out.println("Shutting down " + username);
-        synchronized (session) {
-            System.out.println("Stopped " + username);
-            session.endTurn();
-        }
     }
 }

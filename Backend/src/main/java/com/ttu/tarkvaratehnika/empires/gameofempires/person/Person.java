@@ -54,20 +54,15 @@ public class Person implements BasicPerson {
 
     @Override
     public void act() {
-        String username = nation.getUsername();
         if (!resistDisease()) { // if person dies, remove
             nation.removePersonFromCoordinates(positionX, positionY);
-            System.out.println(username + " person dead");
         }
         List<Coordinates> neighbourCells = getFreeNeighbourCells();
         if (hasFreeNeighbourCells(neighbourCells)) { //check near cells.
-            System.out.println(username + " can act");
             Coordinates newLocation = neighbourCells.get(random.nextInt(neighbourCells.size()));
             if (reproduce()) { // if can reproduce, add new person to new cell
-                System.out.println(username + " has new one born");
                 nation.setPersonToCoordinates(newLocation.getX(), newLocation.getY());
             } else { // if cannot reproduce, move to new cell
-                System.out.println(username + " person is moving");
                 nation.removePersonFromCoordinates(positionX, positionY);
                 nation.movePersonToCoordinates(this, newLocation.getX(), newLocation.getY());
             }
