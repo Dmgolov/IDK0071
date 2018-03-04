@@ -25,7 +25,7 @@ public class Person implements BasicPerson {
 
     private Random random = new Random();
 
-    public Person(Nation nation, GameField field) {
+    private Person(Nation nation, GameField field) {
         this.nation = nation;
         this.field = field;
     }

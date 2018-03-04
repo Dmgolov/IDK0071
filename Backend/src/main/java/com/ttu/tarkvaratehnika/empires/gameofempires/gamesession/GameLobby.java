@@ -25,7 +25,7 @@ public class GameLobby {
     private String lobbyPass;
     private Set<Nation> nations = new HashSet<>();
     private Map<Coordinates, Person> cellsToUpdate = new HashMap<>();
-    private List<String> availableColors = new ArrayList<>(Arrays.asList("yellow", "red", "purple", "brown"));
+    private List<String> availableColors = new ArrayList<>(Arrays.asList("#ff0000", "#ffff00", "#6666ff", "#ff00ff"));
     private volatile int waiting = 0;
     private boolean singleMode;
 
