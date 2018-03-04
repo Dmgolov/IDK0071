@@ -24,7 +24,9 @@ export class Game {
 
   attached() {
     this.map.cellSize = this.calculateCellSize();
+    console.log(this.map.cellSize);
     this.adaptMapSize();
+    console.log(this.map);
     this.map.context = this.gameCanvas.getContext('2d');
     this.setInitialMap();
 
@@ -69,6 +71,8 @@ export class Game {
   }
 
   calculateCellSize() {
+    console.log("height:" + this.gameCanvas.height / this.map.height);
+    console.log("height:" + this.gameCanvas.width / this.map.width);
     let height = Math.floor(this.gameCanvas.height / this.map.height);
     let width = Math.floor(this.gameCanvas.width / this.map.width);
     return height < width ? height : width;
@@ -127,7 +131,7 @@ export class Game {
     })
       .then(response => response.json())
       .then(data => {
-        this.stepCounter = data.turnNr;
+        this.stepCounter = data.turnNr === -1 ? 0 : data.turnNr;
         for (let cell of data.update) {
           this.drawUpdatedCell(cell);
         }
