@@ -7,10 +7,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Land;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class GameField {
 
@@ -64,7 +61,11 @@ public class GameField {
         // putting together all updates since turn N
         int lastTurn;
         synchronized (fieldUpdates) {
-            lastTurn = Collections.max(fieldUpdates.keySet());
+            try {
+                lastTurn = Collections.max(fieldUpdates.keySet());
+            } catch (NoSuchElementException e) {
+                lastTurn = 0;
+            }
         }
         for (; turnNr <= lastTurn; turnNr++) {
             synchronized (fieldUpdates) {
