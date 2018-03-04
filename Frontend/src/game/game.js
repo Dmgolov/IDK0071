@@ -5,7 +5,7 @@ import {LobbyInfo} from "../lobby/lobbyInfo";
 
 @inject(LobbyInfo, Router)
 export class Game {
-  gameMap: HTMLCanvasElement;
+  gameCanvas: HTMLCanvasElement;
   constructor(lobbyInfo, router) {
     this.lobbyInfo = lobbyInfo;
     this.router = router;
@@ -18,15 +18,16 @@ export class Game {
     this.setMap();
 
     this.stepCounter = 0;
-    this.cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
   }
 
   attached() {
-    for (let i = 0; i < this.players.length; i++) {
-      console.log(this.players[i].playerScore);
-    }
-    this.map.context = this.gameMap.getContext('2d');
-    this.fillMap(this.cells, this.map.cellSize);
+    this.map.cellSize = this.calculateCellSize();
+    this.adaptMapSize();
+    this.map.context = this.gameCanvas.getContext('2d');
+    this.map.cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
+
+    this.fillMap(this.map.cells, this.map.cellSize);
+
     setInterval(function () {
       console.log("OP");
     }, 1000);
@@ -67,6 +68,17 @@ export class Game {
         this.map.width = data.width;
         this.map.cellSize = 1;
       });
+  }
+
+  calculateCellSize() {
+    let height = Math.floor(this.gameCanvas.height / this.map.height);
+    let width = Math.floor(this.gameCanvas.width / this.map.width);
+    return height < width ? height : width;
+  }
+
+  adaptMapSize() {
+    this.map.height = this.map.height * this.map.cellSize;
+    this.map.width = this.map.width * this.map.cellSize;
   }
 
   createGrid() {
@@ -113,8 +125,6 @@ export class Game {
       }
       cells.push(row);
     }
-    console.log(cells[1][0].x);
-    console.log(cells);
     return cells;
   }
 
@@ -152,8 +162,8 @@ export class Game {
 
   nextStep() {
     this.stepCounter += 1;
-    this.map.context = this.gameMap.getContext('2d');
-    this.updateMap(this.cells, this.map.cellSize);
+    this.map.cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
+    this.updateMap(this.map.cells, this.map.cellSize);
     this.movePersons();
   }
 
@@ -183,5 +193,6 @@ class GameMap {
     this.width = 0;
     this.cellSize = 0;
     this.context = null;
+    this.cells = null;
   }
 }

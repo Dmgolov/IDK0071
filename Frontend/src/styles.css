@@ -133,7 +133,7 @@
   left: 225px;
   background-color: none;
 }
-.game-map {
+.game-canvas {
   width: 901px;
   height: 501px;
   border: 1px solid red;
