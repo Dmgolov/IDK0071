@@ -25,7 +25,7 @@ public class GameLobby {
     private String lobbyPass;
     private Set<Nation> nations = new HashSet<>();
     private Map<Coordinates, Person> cellsToUpdate = new HashMap<>();
-    private List<String> availableColors = new ArrayList<>(Arrays.asList("#ff0000", "#ffff00", "#6666ff", "#ff00ff"));
+    private List<String> availableColors = new ArrayList<>(Arrays.asList(generateNationColor(), generateNationColor(), generateNationColor(), generateNationColor()));
     private volatile int waiting = 0;
     private boolean singleMode;
 
@@ -74,6 +74,7 @@ public class GameLobby {
     public Optional<Nation> enterSession(String username) {
         if (hasFreeSpaces()) {
             Nation nation = new Nation(username, availableColors.get(0), this);
+            System.out.println(availableColors);
             availableColors.remove(0);
             nations.add(nation);
             return Optional.of(nation);
@@ -97,9 +98,10 @@ public class GameLobby {
     public void readyCheck(String username, boolean ready, Map<String, Integer> stats) {
         nations.stream()
                 .filter(nation -> nation.getUsername().equals(username))
-                .findFirst().ifPresent(nation -> { nation.setReady(ready);
-                nation.setPersonWithStats(stats);
-                });
+                .findFirst().ifPresent(nation -> {
+            nation.setReady(ready);
+            nation.setPersonWithStats(stats);
+        });
         if (nations.stream().filter(Nation::isReady).count() == SessionSettings.DEFAULT_MAX_USERS) startSession();
     }
 
@@ -114,7 +116,7 @@ public class GameLobby {
         return data;
     }
 
-    private void sendUpdateToMap(){
+    private void sendUpdateToMap() {
         gameField.updateMap(cellsToUpdate, numOfTurns);
         cellsToUpdate = new HashMap<>();
     }
@@ -228,5 +230,20 @@ public class GameLobby {
 
     public void setSingleMode(boolean singleMode) {
         this.singleMode = singleMode;
+    }
+
+    private static String generateNationColor() {
+        String[] hexElements = "0123456789abcdef".split("");
+        StringBuilder nationColor = new StringBuilder("#");
+        Random random = new Random();
+        for (int i = 0; i < 6; i++) {
+            nationColor.append(hexElements[random.nextInt(15)]);
+        }
+        if (Objects.equals(nationColor.toString(), "#00ff00")){
+            generateNationColor();
+        } else {
+            return nationColor.toString();
+        }
+        return nationColor.toString();
     }
 }
