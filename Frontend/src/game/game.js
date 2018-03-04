@@ -29,7 +29,7 @@ export class Game {
     console.log(this.map);
     this.map.context = this.gameCanvas.getContext('2d');
     this.setInitialMap();
-
+    setTimeout(() => {}, 500);
     this.timerId = setInterval(this.updateMap.bind(this), 100);
   }
 
@@ -72,7 +72,7 @@ export class Game {
 
   calculateCellSize() {
     console.log("height:" + this.gameCanvas.height / this.map.height);
-    console.log("height:" + this.gameCanvas.width / this.map.width);
+    console.log("width:" + this.gameCanvas.width / this.map.width);
     let height = Math.floor(this.gameCanvas.height / this.map.height);
     let width = Math.floor(this.gameCanvas.width / this.map.width);
     return height < width ? height : width;
