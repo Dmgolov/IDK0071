@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class GameField {
 
@@ -26,6 +25,20 @@ public class GameField {
                 field[row][col] = new Land();
             }
         }
+    }
+
+    public JsonArray getInitialMap() {
+        JsonArray array = new JsonArray();
+        for (int row = 0; row < getMapWidth(); row++) {
+            for (int col = 0; col < getMapHeight(); col++) {
+                JsonObject object = new JsonObject();
+                object.addProperty("x", row);
+                object.addProperty("y", col);
+                object.addProperty("color", Land.COLOR_HEX);
+                array.add(object);
+            }
+        }
+        return array;
     }
 
     public InGameObject getObjectInCell(int x, int y) {

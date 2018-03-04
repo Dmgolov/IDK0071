@@ -28,7 +28,6 @@ public class Person implements BasicPerson {
     public Person(Nation nation, GameField field) {
         this.nation = nation;
         this.field = field;
-        nation.addPerson(this);
     }
 
     public Person(Nation nation, GameField field, Map<String, Integer> stats) {
@@ -56,6 +55,7 @@ public class Person implements BasicPerson {
     public void act() {
         if (!resistDisease()) { // if person dies, remove
             nation.removePersonFromCoordinates(positionX, positionY);
+            return;
         }
         List<Coordinates> neighbourCells = getFreeNeighbourCells();
         if (hasFreeNeighbourCells(neighbourCells)) { //check near cells.

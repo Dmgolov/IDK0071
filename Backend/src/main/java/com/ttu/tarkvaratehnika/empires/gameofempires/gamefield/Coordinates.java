@@ -1,7 +1,5 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamefield;
 
-import java.util.Objects;
-
 public class Coordinates {
 
     private int x, y;
@@ -29,10 +27,10 @@ public class Coordinates {
 
     @Override
     public int hashCode() {
-        int hashCode = 31;
-        hashCode += hashCode * x;
-        hashCode += hashCode * y;
-        return hashCode;
+        int result = 31;
+        result = 31 * result + x;
+        result = 31 * result + y;
+        return result;
     }
 
     @Override
