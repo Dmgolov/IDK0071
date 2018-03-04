@@ -1,22 +1,22 @@
+import {inject} from "aurelia-framework";
 import {HttpClient, json} from "aurelia-fetch-client";
+import {Router} from 'aurelia-router';
+import {LobbyInfo} from "../lobby/lobbyInfo";
 
+@inject(LobbyInfo, Router)
 export class Game {
   gameMap: HTMLCanvasElement;
-  constructor(){
-    this.players = [
-      new Player("Player 1", 0),
-      new Player("Player 2", 0),
-      new Player("Player 3", 0),
-      new Player("Player 4", 0),
-    ];
-    this.stortedPayers = [];
-    this.fillCell = 0;
-    this.map = {
-      height: 100,
-      width: 100,
-      cellSize: 25,
-      context: null
-    };
+  constructor(lobbyInfo, router) {
+    this.lobbyInfo = lobbyInfo;
+    this.router = router;
+
+    this.players;
+    this.authPlayer;  // here will be written authenticated player
+    this.setPlayers();
+
+    this.map = new GameMap();
+    this.setMap();
+
     this.stepCounter = 0;
     this.cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
   }
@@ -30,6 +30,43 @@ export class Game {
     setInterval(function () {
       console.log("OP");
     }, 1000);
+  }
+
+  //  get players from server and initialize them
+  setPlayers() {
+    let client = new HttpClient();
+    let players = [];
+
+    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
+      .then(response => response.json())
+      .then(data => {
+        for(let player of data) {
+              players.push(new Player(player.name));
+        }
+        this.players = players;
+        this.authPlayer = this.getAuthPlayer();
+    });
+  }
+
+  //  get authenticated player from players array
+  getAuthPlayer() {
+    for(let player of this.players) {
+      if(player.name === this.lobbyInfo.playerName) {
+        return player;
+      }
+    }
+  }
+
+  setMap() {
+    let client = new HttpClient();
+
+    client.fetch("http://localhost:8080/game/mapSettings?lobbyId=" + this.lobbyInfo.lobbyId)
+      .then(response => response.json())
+      .then(data => {
+        this.map.height = data.height;
+        this.map.width = data.width;
+        this.map.cellSize = 1;
+      });
   }
 
   createGrid() {
@@ -131,19 +168,20 @@ export class Game {
   endGame() {
     // determinate game winner
   }
-
-
-
 }
 
 class Player {
-  constructor(playerName, playerScore) {
-    this.playerName = playerName;
-    this.playerScore = Math.random() * 100;
+  constructor(name) {
+    this.name = name;
+    this.playerScore = Math.floor(Math.random() * 100);
   }
+}
 
-  getPlayerScore() {
-    this.playerScore = Math.random() * 20;
+class GameMap {
+  constructor() {
+    this.height = 0;
+    this.width = 0;
+    this.cellSize = 0;
+    this.context = null;
   }
-
 }

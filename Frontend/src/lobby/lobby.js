@@ -58,7 +58,6 @@ export class Lobby {
     let client = new HttpClient();
 
     this.authPlayer.isReady = !this.authPlayer.isReady;
-    this.authPlayer.readyColor = this.authPlayer.isReady ? 'green' : '';
 
     let info = this.getReadyStateInfo();
 
@@ -93,13 +92,11 @@ export class Lobby {
           for(let player of this.players) {
             if (updatedPlayer.name === player.name) {
               player.isReady = updatedPlayer.isReady;
-              player.readyColor = updatedPlayer.isReady ? 'green' : '';
               addNewPlayer = false;
             }
           }
           if(addNewPlayer) {
             let temporaryPlayer = new Player(updatedPlayer.name, updatedPlayer.isReady);
-            temporaryPlayer.readyColor = updatedPlayer.isReady ? 'green' : '';
             this.players.push(temporaryPlayer);
           }
           if(updatedPlayer.isReady === false) {
@@ -130,10 +127,7 @@ export class Lobby {
       .then(response => response.json())
       .then(data => {
         for(let player of data) {
-              let readyColor = player.isReady ? 'green' : '';
-              let temporaryPlayer = new Player(player.name, player.isReady);
-              temporaryPlayer.readyColor = readyColor;
-              players.push(temporaryPlayer);
+              players.push(new Player(player.name, player.isReady));
         }
         this.players = players;
         this.authPlayer = this.getAuthPlayer();
@@ -188,7 +182,6 @@ class Player {
   constructor(name, isReady) {
     this.name = name;
     this.isReady = isReady;
-    this.readyColor = "";
   }
 }
 
