@@ -204,9 +204,8 @@ export class Game {
     this.stepCounter += 1;
     this.map.cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
     this.updateMap(this.map.cells, this.map.cellSize);
-    this.movePersons();
   }
-  
+
 }
 
 class Player {

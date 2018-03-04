@@ -12,5 +12,5 @@ public class SessionSettings {
     public static final String SINGLE_PLAYER = "single";
     public static final String MULTI_PLAYER = "multi";
 
-    public static final GameMap DEFAULT_MAP = GameMap.EARTH;
+    public static final GameMap DEFAULT_MAP = GameMap.LARGE_MAP;
 }
