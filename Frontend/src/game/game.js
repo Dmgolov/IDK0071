@@ -200,33 +200,13 @@ export class Game {
     }
   }
 
-
-  movePersons(){
-    //method for moving persons.
-  }
-
-  sortTableByScore() {
-    //for (let i = 0; i < this.players.size)
-  }
-
   nextStep() {
     this.stepCounter += 1;
     this.map.cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
     this.updateMap(this.map.cells, this.map.cellSize);
     this.movePersons();
   }
-
-  sendRequestForNextStep() {
-    // here should send every 1 second requset to the server to update map
-  }
-
-  receviedMapData() {
-    // here sould be map update from server by json
-  }
-
-  endGame() {
-    // determinate game winner
-  }
+  
 }
 
 class Player {

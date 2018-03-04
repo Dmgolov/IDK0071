@@ -231,7 +231,7 @@ public class GameLobby {
         for (int i = 0; i < 6; i++) {
             nationColor.append(hexElements[random.nextInt(15)]);
         }
-        if (Objects.equals(nationColor.toString(), "#00ff00")){
+        if (Objects.equals(nationColor.toString(), "#47d147")){
             return generateNationColor();
         } else {
             return nationColor.toString();
