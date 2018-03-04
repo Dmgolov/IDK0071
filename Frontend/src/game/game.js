@@ -114,7 +114,7 @@ export class Game {
 
   updateMap(timerId) {
     let client = new HttpClient();
-    let requestInfo = json({'lobbyId': this.lobbyInfo.lobbyId, 'turnNr': 1});
+    let requestInfo = json({'lobbyId': this.lobbyInfo.lobbyId, 'turnNr': this.stepCounter});
     console.log(requestInfo);
 
     client.fetch("http://localhost:8080/game/state", {
