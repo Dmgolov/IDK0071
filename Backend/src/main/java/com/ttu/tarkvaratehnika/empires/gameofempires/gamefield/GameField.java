@@ -64,7 +64,7 @@ public class GameField {
             try {
                 lastTurn = Collections.max(fieldUpdates.keySet());
             } catch (NoSuchElementException e) {
-                lastTurn = 0;
+                lastTurn = -1;
             }
         }
         for (; turnNr <= lastTurn; turnNr++) {
