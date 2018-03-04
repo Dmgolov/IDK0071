@@ -24,12 +24,9 @@ export class Game {
 
   attached() {
     this.map.cellSize = this.calculateCellSize();
-    console.log(this.map.cellSize);
     this.adaptMapSize();
-    console.log(this.map);
     this.map.context = this.gameCanvas.getContext('2d');
     this.setInitialMap();
-    setTimeout(() => {}, 500);
     this.timerId = setInterval(this.updateMap.bind(this), 100);
   }
 
@@ -64,15 +61,17 @@ export class Game {
     client.fetch("http://localhost:8080/game/mapSettings?lobbyId=" + this.lobbyInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
+        console.log(data);
         this.map.height = data.height;
         this.map.width = data.width;
         this.map.cellSize = 1;
+        // moved here from attached() method, because methods were called before this method ends
+        // this.map.cellSize = this.calculateCellSize();
+        // this.adaptMapSize();
       });
   }
 
   calculateCellSize() {
-    console.log("height:" + this.gameCanvas.height / this.map.height);
-    console.log("width:" + this.gameCanvas.width / this.map.width);
     let height = Math.floor(this.gameCanvas.height / this.map.height);
     let width = Math.floor(this.gameCanvas.width / this.map.width);
     return height < width ? height : width;
@@ -131,13 +130,16 @@ export class Game {
     })
       .then(response => response.json())
       .then(data => {
-        this.stepCounter = data.turnNr === -1 ? 0 : data.turnNr;
-        for (let cell of data.update) {
-          this.drawUpdatedCell(cell);
-        }
+        console.log(data.status);
+        console.log(this.timerId);
         if(data.status === "finished") {
           clearInterval(this.timerId);
           // TODO: ask for winner info and depict it
+        } else {
+          this.stepCounter = data.turnNr === -1 ? 0 : data.turnNr;
+          for (let cell of data.update) {
+            this.drawUpdatedCell(cell);
+          }
         }
       });
   }
