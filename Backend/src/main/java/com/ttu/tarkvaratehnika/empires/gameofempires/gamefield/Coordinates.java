@@ -28,8 +28,8 @@ public class Coordinates {
     @Override
     public int hashCode() {
         int result = 31;
-        result = 31 * result + x;
-        result = 31 * result + y;
+        result = 397 * result + x;
+        result = 397 * result + y;
         return result;
     }
 

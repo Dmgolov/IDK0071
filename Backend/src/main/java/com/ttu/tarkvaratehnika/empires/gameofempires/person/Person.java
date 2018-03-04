@@ -63,8 +63,7 @@ public class Person implements BasicPerson {
             if (reproduce()) { // if can reproduce, add new person to new cell
                 nation.setPersonToCoordinates(newLocation.getX(), newLocation.getY());
             } else { // if cannot reproduce, move to new cell
-                nation.removePersonFromCoordinates(positionX, positionY);
-                nation.movePersonToCoordinates(this, newLocation.getX(), newLocation.getY());
+                nation.movePersonToCoordinates(this, newLocation.getX(), newLocation.getY(), positionX, positionY);
             }
         }
     }
@@ -80,7 +79,7 @@ public class Person implements BasicPerson {
                 int newX = Math.floorMod(positionX + x, field.getMapWidth());
                 int newY = Math.floorMod(positionY + y, field.getMapHeight());
                 InGameObject object = field.getObjectInCell(newX, newY);
-                if (!(object instanceof Person && ((Person) object).getNation() == nation)
+                if (!(object instanceof Person)
                         && !nation.getUpdatedPositions().containsKey(new Coordinates(newX, newY))) {
                     freeCells.add(new Coordinates(newX, newY));
                 }

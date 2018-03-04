@@ -30,7 +30,7 @@ public class Nation implements Runnable {
         field = session.getGameField();
     }
 
-    public void spread() {
+    private void spread() {
         //here initiates finding new positions for people
         List<Person> tempPeople = new ArrayList<>(people);
         for (Person person : tempPeople) {
@@ -38,7 +38,7 @@ public class Nation implements Runnable {
         }
         //this shares data about nation updated state to the map
         session.addUpdatedState(updatedPositions);
-        updatedPositions.clear();
+        updatedPositions = new HashMap<>();
     }
 
     public void setPersonToCoordinates(int x, int y) {
@@ -49,18 +49,18 @@ public class Nation implements Runnable {
         updatedPositions.put(new Coordinates(x, y), person);
     }
 
-    public void movePersonToCoordinates(Person person, int x, int y) {
-        person.setPositionX(x);
-        person.setPositionY(y);
-        people.add(person);
-        updatedPositions.put(new Coordinates(x, y), person);
+    public void movePersonToCoordinates(Person person, int newX, int newY, int oldX, int oldY) {
+        person.setPositionX(newX);
+        person.setPositionY(newY);
+        updatedPositions.put(new Coordinates(oldX, oldY), null);
+        updatedPositions.put(new Coordinates(newX, newY), person);
     }
 
-    public void removePersonFromCoordinates(int positionX, int positionY) {
-        InGameObject object = field.getObjectInCell(positionX,positionY);
+    public void removePersonFromCoordinates(int x, int y) {
+        InGameObject object = field.getObjectInCell(x, y);
         if (object instanceof Person) {
             people.remove(object);
-            updatedPositions.put(new Coordinates(positionX, positionY), null);
+            updatedPositions.put(new Coordinates(x, y), null);
         }
     }
 

@@ -76,7 +76,7 @@ public class GameField {
         JsonArray updatedCells = getUpdatedCellsAsJsonArray(totalUpdate);
         jsonToReturn.addProperty("turnNr", lastTurn);
         jsonToReturn.add("update", updatedCells);
-        jsonToReturn.addProperty("status", "success");
+        jsonToReturn.addProperty("status", "running");
         return jsonToReturn;
     }
 

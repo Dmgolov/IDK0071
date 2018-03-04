@@ -136,16 +136,20 @@ public class LobbyController {
         Optional<GameLobby> searchedLobby = lobbies.stream()
                 .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
         if (!searchedLobby.isPresent()) {
-            return results.getOrDefault(lobbyId, "{\"status\":\"failed\"}");
+            return results.containsKey(lobbyId) ? "{\"status\":\"finished\"}" : "{\"status\":\"notFound\"}";
         }
         int turnNr = gson.fromJson(data, JsonObject.class).get("turnNr").getAsInt();
-        System.out.println("getting update");
         return gson.toJson(searchedLobby.get().getGameField().getMapUpdateSinceTurnNr(turnNr));
+    }
+
+    @GetMapping(path = "/game/winner")
+    public @ResponseBody String getGameWinner(@RequestParam long lobbyId) {
+        return results.getOrDefault(lobbyId, "{\"winner\":\"notFound\"}");
     }
 
     //TODO: would be good, if results would be cleared from map after some time
     public void terminateLobby(GameLobby lobby, String winner) {
         lobbies.remove(lobby);
-        results.put(lobby.getLobbyId(), "{\"status\":\"ended\", \"winner\":\"" + winner + "\"}");
+        results.put(lobby.getLobbyId(), "{\"winner\":\"" + winner + "\"}");
     }
 }
