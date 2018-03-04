@@ -18,6 +18,8 @@ export class Game {
     this.setMap();
 
     this.stepCounter = 0;
+
+    this.timerId;
   }
 
   attached() {
@@ -26,9 +28,7 @@ export class Game {
     this.map.context = this.gameCanvas.getContext('2d');
     this.setInitialMap();
 
-    setInterval(function () {
-      console.log("OP");
-    }, 1000);
+    this.timerId = setInterval(this.updateMap.bind(this), 100);
   }
 
   //  get players from server and initialize them
@@ -104,6 +104,40 @@ export class Game {
       });
   }
 
+  drawUpdatedCell(cell) {
+    const context = this.map.context;
+    const cellSize = this.map.cellSize;
+
+    context.fillStyle = cell.color;
+    context.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
+  }
+
+  updateMap(timerId) {
+    let client = new HttpClient();
+    let requestInfo = json({'lobbyId': this.lobbyInfo.lobbyId, 'turnNr': 1});
+    console.log(requestInfo);
+
+    client.fetch("http://localhost:8080/game/state", {
+      "method": "POST",
+      "body": requestInfo,
+      headers: {
+        'Origin': 'http://localhost:8080',
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        this.stepCounter = data.turnNr;
+        for (let cell of data.update) {
+          this.drawUpdatedCell(cell);
+        }
+        if(data.status === "finished") {
+          clearInterval(this.timerId);
+          // TODO: ask for winner info and depict it
+        }
+      });
+  }
+
   createGrid() {
     const context = this.map.context;
 
@@ -160,20 +194,6 @@ export class Game {
     }
   }
 
-  updateMap(cells, cellSize){
-    const context = this.map.context;
-    for (let row of cells) {
-      for (let cell of row) {
-        if (cell.nation == "red"){
-          context.fillStyle = "#0F0";
-          context.fillRect(cell.x, cell.y, cellSize, cellSize);
-        } else if (cell.nation == "green") {
-          context.fillStyle = "#F00";
-          context.fillRect(cell.x, cell.y, cellSize, cellSize);
-        }
-      }
-    }
-  }
 
   movePersons(){
     //method for moving persons.
