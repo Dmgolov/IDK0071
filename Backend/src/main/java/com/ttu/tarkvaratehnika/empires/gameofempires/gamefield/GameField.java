@@ -72,7 +72,6 @@ public class GameField {
                 totalUpdate.putAll(testMap);
             }
         }
-        System.out.println(totalUpdate.toString());
         JsonArray updatedCells = getUpdatedCellsAsJsonArray(totalUpdate);
         jsonToReturn.addProperty("turnNr", lastTurn);
         jsonToReturn.add("update", updatedCells);

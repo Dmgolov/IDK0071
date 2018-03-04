@@ -146,7 +146,7 @@ public class GameLobby {
         waiting++;
         //System.out.println("Added wait: " + waiting);
         if (allNationsWaiting()) {
-//            System.out.println("Updating game map");
+            //System.out.println("Updating game map");
             sendUpdateToMap();
         }
     }
@@ -158,10 +158,10 @@ public class GameLobby {
             //System.out.println("Turn nr: " + numOfTurns);
             //System.out.println("Checking winner");
             if (checkWinner().isPresent()) {
-                System.out.println("Terminating lobby");
+                //System.out.println("Terminating lobby");
                 controller.terminateLobby(this, checkWinner().get().getUsername());
-                System.out.println("Winner: " + checkWinner().get().getUsername());
-                nations.forEach(nation -> System.out.println(nation.getUsername() + " has " + nation.getNumOfPeople() + " people"));
+                //System.out.println("Winner: " + checkWinner().get().getUsername());
+                //nations.forEach(nation -> System.out.println(nation.getUsername() + " has " + nation.getNumOfPeople() + " people"));
                 nations.forEach(nation -> nation.getPeople().clear());
                 synchronized (this) {
                     notifyAll();
