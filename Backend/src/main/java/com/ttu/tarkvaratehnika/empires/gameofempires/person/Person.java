@@ -80,7 +80,8 @@ public class Person implements BasicPerson {
                 int newX = Math.floorMod(positionX + x, field.getMapWidth());
                 int newY = Math.floorMod(positionY + y, field.getMapHeight());
                 InGameObject object = field.getObjectInCell(newX, newY);
-                if (!(object instanceof Person && ((Person) object).getNation() == nation)) {
+                if (!(object instanceof Person && ((Person) object).getNation() == nation)
+                        && !nation.getUpdatedPositions().containsKey(new Coordinates(newX, newY))) {
                     freeCells.add(new Coordinates(newX, newY));
                 }
             }
@@ -88,7 +89,7 @@ public class Person implements BasicPerson {
         return freeCells;
     }
 
-    public boolean hasFreeNeighbourCells(List<Coordinates> neighbourCells) {
+    private boolean hasFreeNeighbourCells(List<Coordinates> neighbourCells) {
         return !neighbourCells.isEmpty();
     }
 
@@ -204,5 +205,10 @@ public class Person implements BasicPerson {
 
     public void setLuck(int luck) {
         this.luck = luck;
+    }
+
+    @Override
+    public String toString() {
+        return "Person of " + nation.getUsername();
     }
 }

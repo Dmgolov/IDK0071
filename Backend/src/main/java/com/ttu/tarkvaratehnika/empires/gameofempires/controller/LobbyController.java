@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/lobby")
 public class LobbyController {
 
     private Set<GameLobby> lobbies = new HashSet<>();
@@ -30,7 +29,7 @@ public class LobbyController {
         this.templateService = templateService;
     }
 
-    @PostMapping(path = "/new", consumes = "application/json")
+    @PostMapping(path = "/lobby/new", consumes = "application/json")
     public @ResponseBody String createLobby(@RequestBody String data) {
         String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
         if (accountService.isLoggedIn(username)) {
@@ -43,12 +42,24 @@ public class LobbyController {
         return "{\"lobbyId\":0}";
     }
 
-    @GetMapping(path = "/defaultSettings")
+    @GetMapping(path = "/lobby/defaultSettings")
     public @ResponseBody String getDefaultOptions() {
         return "{\"nationPoints\":" + SessionSettings.NATION_POINTS + "}";
     }
 
-    @PostMapping(path = "/mode", consumes = "application/json")
+    @GetMapping(path = "/game/mapSettings")
+    public @ResponseBody String getMapSettings(@RequestParam long lobbyId) {
+        Optional<GameLobby> searchedLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
+                .findFirst();
+        if (searchedLobby.isPresent()) {
+            return String.format("{\"width\":%d,\"height\":%d}", searchedLobby.get().getGameField().getMapWidth(),
+                    searchedLobby.get().getGameField().getMapHeight());
+        } else {
+            return "{\"width\":0,\"height\":0}";
+        }
+    }
+
+    @PostMapping(path = "/lobby/mode", consumes = "application/json")
     public @ResponseBody String changeMode(@RequestBody String data) {
         String mode = gson.fromJson(data, JsonObject.class).get("mode").getAsString();
         long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
@@ -66,7 +77,7 @@ public class LobbyController {
         return "{\"status\":\"failed\"}";
     }
 
-    @RequestMapping(path = "/connect")
+    @RequestMapping(path = "/lobby/connect")
     public @ResponseBody boolean connectToLobby(@RequestParam String username, @RequestParam long lobbyId) {
         Optional<GameLobby> searchedLobby = lobbies.stream()
                 .filter(lobby -> lobby.getLobbyId() == lobbyId)
@@ -74,14 +85,14 @@ public class LobbyController {
         return searchedLobby.isPresent() && searchedLobby.get().enterSession(username).isPresent();
     }
 
-    @RequestMapping(path = "/leave")
+    @RequestMapping(path = "/lobby/leave")
     public @ResponseBody boolean leaveLobby(@RequestParam String username, @RequestParam long lobbyId) {
         Optional<GameLobby> searchedLobby = lobbies.stream()
                 .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
         return searchedLobby.isPresent() && searchedLobby.get().leaveSession(username);
     }
 
-    @PostMapping(path = "/ready", consumes = "application/json")
+    @PostMapping(path = "/lobby/ready", consumes = "application/json")
     public @ResponseBody String setPlayerReadyState(@RequestBody String data) {
         JsonObject json = gson.fromJson(data, JsonObject.class);
         Map<String, Integer> stats = gson
@@ -94,21 +105,21 @@ public class LobbyController {
         return "{\"status\":\"ready\"}";
     }
 
-    @RequestMapping(path = "/check")
+    @RequestMapping(path = "/lobby/check")
     public @ResponseBody String checkPlayerState(@RequestParam long lobbyId) {
         Optional<GameLobby> gameLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findAny();
         return gameLobby.isPresent() ? gson.toJson(gameLobby.get().checkPlayerState()) : "{\"status\":\"notFound\"}";
     }
 
-    @RequestMapping(path = "/all")
+    @RequestMapping(path = "/lobby/all")
     public @ResponseBody String getLobbyNames(@RequestParam String filter) {
         return gson.toJson(lobbies.stream().map(GameLobby::getLobbyName)
                 .filter(name -> name.contains(filter))
                 .collect(Collectors.toList()));
     }
 
-    @RequestMapping(path = "/start")
+    @RequestMapping(path = "/lobby/start")
     public @ResponseBody boolean startLobby(@RequestParam long lobbyId) {
         Optional<GameLobby> searchedLobby = lobbies.stream()
                 .filter(lobby -> lobby.getLobbyId() == lobbyId)
@@ -116,19 +127,22 @@ public class LobbyController {
         return searchedLobby.isPresent() && searchedLobby.get().startSession();
     }
 
-    @RequestMapping(path = "/state")
-    public @ResponseBody String getGameState(@RequestParam long lobbyId) {
+    @PostMapping(path = "/game/state", consumes = "application/json")
+    public @ResponseBody String getGameState(@RequestBody String data) {
+        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
         Optional<GameLobby> searchedLobby = lobbies.stream()
                 .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
         if (!searchedLobby.isPresent()) {
-            return results.getOrDefault(lobbyId, "{\"status\":\"notFound\"}");
+            return results.getOrDefault(lobbyId, "{\"status\":\"failed\"}");
         }
-        return gson.toJson(searchedLobby.get().getLastUpdate());
+        int turnNr = gson.fromJson(data, JsonObject.class).get("turnNr").getAsInt();
+        System.out.println("getting update");
+        return gson.toJson(searchedLobby.get().getGameField().getMapUpdateSinceTurnNr(turnNr));
     }
 
     //TODO: would be good, if results would be cleared from map after some time
     public void terminateLobby(GameLobby lobby, String winner) {
         lobbies.remove(lobby);
-        results.put(lobby.getLobbyId(), winner);
+        results.put(lobby.getLobbyId(), "{\"status\":\"ended\", \"winner\":\"" + winner + "\"}");
     }
 }
