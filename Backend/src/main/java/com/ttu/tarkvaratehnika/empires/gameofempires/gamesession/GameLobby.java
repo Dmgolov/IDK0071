@@ -146,7 +146,7 @@ public class GameLobby {
         waiting++;
         //System.out.println("Added wait: " + waiting);
         if (allNationsWaiting()) {
-            System.out.println("Updating game map");
+//            System.out.println("Updating game map");
             sendUpdateToMap();
         }
     }
