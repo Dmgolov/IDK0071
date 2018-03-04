@@ -91,7 +91,8 @@ public class GameField {
             if (optionalPerson.isPresent()) {
                 singleCell.addProperty("color", updatedCells.get(coordinates).getNation().getTeamColor());
             } else {
-                singleCell.addProperty("color", "default");
+                // TODO: redo so that returns actual color of terrain
+                singleCell.addProperty("color", Land.COLOR_HEX);
             }
             updatedCellsAsJsonArray.add(singleCell);
         }
