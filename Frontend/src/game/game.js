@@ -24,9 +24,7 @@ export class Game {
     this.map.cellSize = this.calculateCellSize();
     this.adaptMapSize();
     this.map.context = this.gameCanvas.getContext('2d');
-    this.map.cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
-
-    this.fillMap(this.map.cells, this.map.cellSize);
+    this.setInitialMap();
 
     setInterval(function () {
       console.log("OP");
@@ -79,6 +77,31 @@ export class Game {
   adaptMapSize() {
     this.map.height = this.map.height * this.map.cellSize;
     this.map.width = this.map.width * this.map.cellSize;
+  }
+
+  drawInitialMap() {
+    const context = this.map.context;
+    const cellSize = this.map.cellSize;
+    for (let cell of this.map.cells){
+      context.fillStyle = cell.color;
+      context.fillRect(cell.x, cell.y, cellSize, cellSize);
+    }
+  }
+
+  setInitialMap() {
+    let client = new HttpClient();
+
+    client.fetch("http://localhost:8080/game/initialMap?lobbyId=" + this.lobbyInfo.lobbyId)
+      .then(response => response.json())
+      .then(data => {
+        this.map.cells = [];
+        for(let cell of data) {
+          cell.x = cell.x * this.map.cellSize;
+          cell.y = cell.y * this.map.cellSize;
+          this.map.cells.push(cell);
+        }
+        this.drawInitialMap();
+      });
   }
 
   createGrid() {
@@ -194,5 +217,13 @@ class GameMap {
     this.cellSize = 0;
     this.context = null;
     this.cells = null;
+  }
+}
+
+class Cell {
+  constructor(x, y, color) {
+    this.x = x;
+    this.y = y;
+    this.color = color;
   }
 }
