@@ -127,14 +127,14 @@ public class Nation implements Runnable {
     @Override
     public void run() {
         while (isActive()) {
-            System.out.println("Spreading " + username);
+            //System.out.println("Spreading " + username);
             spread();
-            System.out.println("Ending turn " + username);
+            //System.out.println("Ending turn " + username);
             synchronized (session) {
                 session.endTurn();
                 if (!session.allNationsWaiting()) {
                     try {
-                        System.out.println("Waiting " + username);
+                        //System.out.println("Waiting " + username);
                         session.wait();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -144,6 +144,6 @@ public class Nation implements Runnable {
                 }
             }
         }
-        System.out.println("Shutting down " + username);
+        //System.out.println("Shutting down " + username);
     }
 }

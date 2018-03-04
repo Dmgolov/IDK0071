@@ -1,7 +1,5 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.controller.LobbyController;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
@@ -34,22 +32,17 @@ public class GameLobby {
         lobbyId = ++id;
     }
 
-    public boolean startSession() {
-        if (nations.stream().filter(Nation::isReady).count() == SessionSettings.DEFAULT_MAX_USERS) {
-            nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
-            if (!gameField.isMapSet()) gameField.setGameMap(SessionSettings.DEFAULT_MAP);
-            gameField.loadField();
-            nations.forEach(nation -> nation.getPerson().setStartingLocation());
-            try {
-                Thread.sleep(SessionSettings.START_DELAY);
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
-            }
-            nations.forEach(nation -> new Thread(nation).start());
-            return true;
-        } else {
-            return false;
+    private void startSession() {
+        nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
+        if (!gameField.isMapSet()) gameField.setGameMap(SessionSettings.DEFAULT_MAP);
+        gameField.loadField();
+        nations.forEach(nation -> nation.getPerson().setStartingLocation());
+        try {
+            Thread.sleep(SessionSettings.START_DELAY);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
         }
+        nations.forEach(nation -> new Thread(nation).start());
     }
 
     private Optional<Nation> checkWinner() {
@@ -127,12 +120,12 @@ public class GameLobby {
 
     public synchronized void addUpdatedState(Map<Coordinates, Person> nationUpdate) {
         // Checks for overlapping keys with non-null values
-        System.out.println("Checking multiples");
+        //System.out.println("Checking multiples");
         Set<Coordinates> overlappingKeys = findKeysWithNonNullValues(cellsToUpdate);
         if (overlappingKeys.retainAll(findKeysWithNonNullValues(nationUpdate))) {
             // Compares 2 people and removes one of them
             // TODO: check, if works fast enough
-            System.out.println("iterating keys");
+            //System.out.println("iterating keys");
             for (Coordinates key : overlappingKeys) {
                 Person person1 = cellsToUpdate.get(key);
                 Person person2 = nationUpdate.get(key);
@@ -145,13 +138,13 @@ public class GameLobby {
                 }
             }
         }
-        System.out.println("adding cells");
+        //System.out.println("adding cells");
         cellsToUpdate.putAll(nationUpdate);
     }
 
     public synchronized void endTurn() {
         waiting++;
-        System.out.println("Added wait: " + waiting);
+        //System.out.println("Added wait: " + waiting);
         if (allNationsWaiting()) {
             System.out.println("Updating game map");
             sendUpdateToMap();
@@ -162,25 +155,25 @@ public class GameLobby {
         if (allNationsWaiting()) {
             waiting = 0;
             numOfTurns++;
-            System.out.println("Turn nr: " + numOfTurns);
-            System.out.println("Checking winner");
+            //System.out.println("Turn nr: " + numOfTurns);
+            //System.out.println("Checking winner");
             if (checkWinner().isPresent()) {
                 System.out.println("Terminating lobby");
                 controller.terminateLobby(this, checkWinner().get().getUsername());
                 System.out.println("Winner: " + checkWinner().get().getUsername());
-                nations.forEach(nation -> System.out.println(nation.getUsername() + " has " + nation.getNumOfPeople() + "people"));
+                nations.forEach(nation -> System.out.println(nation.getUsername() + " has " + nation.getNumOfPeople() + " people"));
                 nations.forEach(nation -> nation.getPeople().clear());
                 synchronized (this) {
                     notifyAll();
                 }
                 return;
             }
-            System.out.println("Waking nations");
+            //System.out.println("Waking nations");
             synchronized (this) {
                 notifyAll();
             }
         } else {
-            System.out.println("more nations to wait");
+            //System.out.println("more nations to wait");
         }
     }
 
