@@ -1,16 +1,23 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamefield;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Land;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameField {
 
     private GameMap gameMap;
     private InGameObject[][] field;
+    private final Map<Integer, Map<Coordinates, Person>> fieldUpdates = new HashMap<>();
 
     public void loadField() {
         field = new InGameObject[gameMap.getMapWidth()][gameMap.getMapHeight()];
@@ -25,7 +32,7 @@ public class GameField {
         return field[x][y];
     }
 
-    public void updateMap(Map<Coordinates, Person> updatedCells) {
+    public void updateMap(Map<Coordinates, Person> updatedCells, int turnNr) {
         for (Coordinates key : updatedCells.keySet()) {
             if (updatedCells.get(key) != null) {
                 addPersonToCell(updatedCells.get(key), key.getX(), key.getY());
@@ -33,6 +40,49 @@ public class GameField {
                 removePersonFromCell(key.getX(), key.getY());
             }
         }
+        synchronized (fieldUpdates) {
+            fieldUpdates.put(turnNr, updatedCells);
+        }
+    }
+
+    public JsonObject getMapUpdateSinceTurnNr(int turnNr) {
+        JsonObject jsonToReturn = new JsonObject();
+        Map<Coordinates, Person> totalUpdate = new HashMap<>();
+        // putting together all updates since turn N
+        int lastTurn;
+        synchronized (fieldUpdates) {
+            lastTurn = Collections.max(fieldUpdates.keySet());
+        }
+        for (; turnNr <= lastTurn; turnNr++) {
+            synchronized (fieldUpdates) {
+                Map<Coordinates, Person> testMap = fieldUpdates.get(turnNr);
+                totalUpdate.putAll(testMap);
+            }
+        }
+        System.out.println(totalUpdate.toString());
+        JsonArray updatedCells = getUpdatedCellsAsJsonArray(totalUpdate);
+        jsonToReturn.addProperty("turnNr", lastTurn);
+        jsonToReturn.add("update", updatedCells);
+        jsonToReturn.addProperty("status", "success");
+        return jsonToReturn;
+    }
+
+    // populating array with map updates since turn N
+    private JsonArray getUpdatedCellsAsJsonArray(Map<Coordinates, Person> updatedCells) {
+        JsonArray updatedCellsAsJsonArray = new JsonArray();
+        for (Coordinates coordinates : updatedCells.keySet()) {
+            JsonObject singleCell = new JsonObject();
+            singleCell.addProperty("x", coordinates.getX());
+            singleCell.addProperty("y", coordinates.getY());
+            Optional<Person> optionalPerson = Optional.ofNullable(updatedCells.get(coordinates));
+            if (optionalPerson.isPresent()) {
+                singleCell.addProperty("color", updatedCells.get(coordinates).getNation().getTeamColor());
+            } else {
+                singleCell.addProperty("color", "default");
+            }
+            updatedCellsAsJsonArray.add(singleCell);
+        }
+        return updatedCellsAsJsonArray;
     }
 
     // private in order to restrict modification simultaneously from multiple threads

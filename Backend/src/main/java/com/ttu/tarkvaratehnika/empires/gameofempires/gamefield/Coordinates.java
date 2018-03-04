@@ -42,4 +42,9 @@ public class Coordinates {
                 && this.y == ((Coordinates) obj).getY()
                 && this.hashCode() == obj.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return String.format("[%d, %d]", x, y);
+    }
 }

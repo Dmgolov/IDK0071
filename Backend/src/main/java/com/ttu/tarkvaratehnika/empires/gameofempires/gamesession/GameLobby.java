@@ -25,10 +25,8 @@ public class GameLobby {
     private String lobbyPass;
     private Set<Nation> nations = new HashSet<>();
     private Map<Coordinates, Person> cellsToUpdate = new HashMap<>();
-    private Map<Coordinates, Person> lastUpdate = new HashMap<>();
     private List<String> availableColors = new ArrayList<>(Arrays.asList("yellow", "red", "purple", "brown"));
-    private int waiting = 0;
-    private boolean newTurnStarted = false;
+    private volatile int waiting = 0;
     private boolean singleMode;
 
     public GameLobby(LobbyController controller) {
@@ -54,7 +52,7 @@ public class GameLobby {
         }
     }
 
-    public Optional<Nation> checkWinner() {
+    private Optional<Nation> checkWinner() {
         long active = nations.stream().filter(Nation::isActive).count();
         if (active == 1) {
             return nations.stream().filter(Nation::isActive).findFirst();
@@ -68,13 +66,13 @@ public class GameLobby {
 
     public void changeToSinglePlayer() {
         singleMode = true;
-        for (int i = 1; !isLobbyFull(); i++) {
+        for (int i = 1; hasFreeSpaces(); i++) {
             enterSession("bot" + i).ifPresent(nation -> nation.setReady(true));
         }
     }
 
     public Optional<Nation> enterSession(String username) {
-        if (!isLobbyFull()) {
+        if (hasFreeSpaces()) {
             Nation nation = new Nation(username, availableColors.get(0), this);
             availableColors.remove(0);
             nations.add(nation);
@@ -116,36 +114,32 @@ public class GameLobby {
         return data;
     }
 
-    public void sendUpdateToMap(){
-        gameField.updateMap(cellsToUpdate);
-        lastUpdate.clear();
-        lastUpdate.putAll(cellsToUpdate);
-        cellsToUpdate.clear();
+    private void sendUpdateToMap(){
+        gameField.updateMap(cellsToUpdate, numOfTurns);
+        cellsToUpdate = new HashMap<>();
     }
 
-    public Set<Coordinates> findKeysWithNonNullValues(Map<Coordinates, Person> peopleLocation) {
+    private Set<Coordinates> findKeysWithNonNullValues(Map<Coordinates, Person> peopleLocation) {
         return peopleLocation.keySet().stream().filter(key -> peopleLocation.get(key) != null).collect(Collectors.toSet());
     }
 
     public synchronized void addUpdatedState(Map<Coordinates, Person> nationUpdate) {
         // Checks for overlapping keys with non-null values
         System.out.println("Checking multiples");
-        if (!Collections.disjoint(findKeysWithNonNullValues(cellsToUpdate), findKeysWithNonNullValues(nationUpdate))) {
-            System.out.println("Getting overlapped");
-            Set<Coordinates> overlappingKeys = findKeysWithNonNullValues(cellsToUpdate);
-            overlappingKeys.retainAll(findKeysWithNonNullValues(nationUpdate));
+        Set<Coordinates> overlappingKeys = findKeysWithNonNullValues(cellsToUpdate);
+        if (overlappingKeys.retainAll(findKeysWithNonNullValues(nationUpdate))) {
             // Compares 2 people and removes one of them
             // TODO: check, if works fast enough
             System.out.println("iterating keys");
             for (Coordinates key : overlappingKeys) {
                 Person person1 = cellsToUpdate.get(key);
                 Person person2 = nationUpdate.get(key);
-                System.out.println("Capturing cell");
-                if (person1.captureCell(person2)) {
+                //System.out.println("Capturing cell");
+                if (person2.captureCell(person1)) {
                     person1.getNation().removePerson(person1);
-                    nationUpdate.remove(key);
                 } else {
                     person2.getNation().removePerson(person2);
+                    nationUpdate.remove(key);
                 }
             }
         }
@@ -153,60 +147,47 @@ public class GameLobby {
         cellsToUpdate.putAll(nationUpdate);
     }
 
-    public List<JsonObject> getLastUpdate() {
-        List<JsonObject> objects = new ArrayList<>();
-        for (Nation nation : nations) {
-            JsonObject nationJson = new JsonObject();
-            JsonArray array = new JsonArray();
-            nationJson.addProperty("color", nation.getTeamColor());
-            Set<Person> people = new HashSet<>(nation.getPeople());
-            for (Person person : people) {
-                JsonObject personJson = new JsonObject();
-                personJson.addProperty("x", person.getPositionX());
-                personJson.addProperty("y", person.getPositionY());
-                array.add(personJson);
-            }
-            nationJson.add("people", array);
-            objects.add(nationJson);
+    public synchronized void endTurn() {
+        waiting++;
+        System.out.println("Added wait: " + waiting);
+        if (allNationsWaiting()) {
+            System.out.println("Updating game map");
+            sendUpdateToMap();
         }
-        return objects;
     }
 
-    public void endTurn() {
-        synchronized (this) {
-            newTurnStarted = false;
-            waiting++;
-            System.out.println("Added wait: " + waiting);
-            if (waiting >= nations.stream().filter(Nation::isActive).count()) {
-                newTurnStarted = true;
-                System.out.println("Updating game map");
-                sendUpdateToMap();
-                System.out.println("Checking winner");
-                if (checkWinner().isPresent()) {
-                    System.out.println("Terminating lobby");
-                    controller.terminateLobby(this, checkWinner().get().getUsername());
-                    nations.forEach(nation -> nation.getPeople().clear());
+    public void startNewTurn() {
+        if (allNationsWaiting()) {
+            waiting = 0;
+            numOfTurns++;
+            System.out.println("Turn nr: " + numOfTurns);
+            System.out.println("Checking winner");
+            if (checkWinner().isPresent()) {
+                System.out.println("Terminating lobby");
+                controller.terminateLobby(this, checkWinner().get().getUsername());
+                System.out.println("Winner: " + checkWinner().get().getUsername());
+                nations.forEach(nation -> System.out.println(nation.getUsername() + " has " + nation.getNumOfPeople() + "people"));
+                nations.forEach(nation -> nation.getPeople().clear());
+                synchronized (this) {
                     notifyAll();
-                    return;
                 }
-                System.out.println("Resetting turn");
-                waiting = 0;
-                numOfTurns++;
-                System.out.println("Waking nations");
-                notifyAll();
-            } else {
-                System.out.println("more nations to wait");
+                return;
             }
+            System.out.println("Waking nations");
+            synchronized (this) {
+                notifyAll();
+            }
+        } else {
+            System.out.println("more nations to wait");
         }
-
     }
 
-    public boolean isLobbyFull() {
-        return nations.size() >= SessionSettings.DEFAULT_MAX_USERS;
+    public boolean allNationsWaiting() {
+        return waiting >= nations.stream().filter(Nation::isActive).count();
     }
 
-    public boolean hasNewTurnStarted() {
-        return newTurnStarted;
+    public boolean hasFreeSpaces() {
+        return nations.size() < SessionSettings.DEFAULT_MAX_USERS;
     }
 
     public Set<Nation> getNations() {

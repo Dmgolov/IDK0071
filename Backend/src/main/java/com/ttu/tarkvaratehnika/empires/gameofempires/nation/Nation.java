@@ -4,7 +4,6 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
-import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.PersonValues;
 
@@ -89,6 +88,10 @@ public class Nation implements Runnable {
         return person != null;
     }
 
+    public Map<Coordinates, Person> getUpdatedPositions() {
+        return updatedPositions;
+    }
+
     public Set<Person> getPeople() {
         return people;
     }
@@ -127,17 +130,18 @@ public class Nation implements Runnable {
             System.out.println("Spreading " + username);
             spread();
             System.out.println("Finished spreading " + username);
+            System.out.println("Ending turn " + username);
             synchronized (session) {
-                try {
-                    System.out.println("accessing session " + username);
-                    System.out.println("Ending turn " + username);
-                    session.endTurn();
-                    while (!session.hasNewTurnStarted()) {
+                session.endTurn();
+                if (!session.allNationsWaiting()) {
+                    try {
                         System.out.println("Waiting " + username);
                         session.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException e) {
-                    System.out.println(e.getMessage());
+                } else {
+                    session.startNewTurn();
                 }
             }
         }
