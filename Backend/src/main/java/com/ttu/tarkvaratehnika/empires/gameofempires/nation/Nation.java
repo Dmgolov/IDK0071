@@ -129,7 +129,6 @@ public class Nation implements Runnable {
         while (isActive()) {
             System.out.println("Spreading " + username);
             spread();
-            System.out.println("Finished spreading " + username);
             System.out.println("Ending turn " + username);
             synchronized (session) {
                 session.endTurn();

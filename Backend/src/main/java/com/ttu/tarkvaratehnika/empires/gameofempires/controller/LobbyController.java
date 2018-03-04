@@ -59,6 +59,17 @@ public class LobbyController {
         }
     }
 
+    @GetMapping(path = "/game/initialMap")
+    public @ResponseBody String getInitialMap(@RequestParam long lobbyId) {
+        Optional<GameLobby> searchedLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
+                .findFirst();
+        if (searchedLobby.isPresent()) {
+            return gson.toJson(searchedLobby.get().getGameField().getInitialMap());
+        } else {
+            return "{}";
+        }
+    }
+
     @PostMapping(path = "/lobby/mode", consumes = "application/json")
     public @ResponseBody String changeMode(@RequestBody String data) {
         String mode = gson.fromJson(data, JsonObject.class).get("mode").getAsString();
@@ -117,14 +128,6 @@ public class LobbyController {
         return gson.toJson(lobbies.stream().map(GameLobby::getLobbyName)
                 .filter(name -> name.contains(filter))
                 .collect(Collectors.toList()));
-    }
-
-    @RequestMapping(path = "/lobby/start")
-    public @ResponseBody boolean startLobby(@RequestParam long lobbyId) {
-        Optional<GameLobby> searchedLobby = lobbies.stream()
-                .filter(lobby -> lobby.getLobbyId() == lobbyId)
-                .findFirst();
-        return searchedLobby.isPresent() && searchedLobby.get().startSession();
     }
 
     @PostMapping(path = "/game/state", consumes = "application/json")
