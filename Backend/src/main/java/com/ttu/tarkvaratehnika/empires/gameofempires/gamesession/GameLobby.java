@@ -129,7 +129,6 @@ public class GameLobby {
             for (Coordinates key : overlappingKeys) {
                 Person person1 = cellsToUpdate.get(key);
                 Person person2 = nationUpdate.get(key);
-                //System.out.println("Capturing cell");
                 if (person2.captureCell(person1)) {
                     person1.getNation().removePerson(person1);
                 } else {
@@ -233,10 +232,9 @@ public class GameLobby {
             nationColor.append(hexElements[random.nextInt(15)]);
         }
         if (Objects.equals(nationColor.toString(), "#00ff00")){
-            generateNationColor();
+            return generateNationColor();
         } else {
             return nationColor.toString();
         }
-        return nationColor.toString();
     }
 }

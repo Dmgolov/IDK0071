@@ -121,11 +121,11 @@ public class GameField {
     }
 
     public int getMapWidth() {
-        return field[0].length;
+        return field.length;
     }
 
     public int getMapHeight() {
-        return field.length;
+        return field[0].length;
     }
 
     public boolean isMapSet() {
