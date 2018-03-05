@@ -64,7 +64,6 @@ export class Game {
         console.log(data);
         this.map.height = data.height;
         this.map.width = data.width;
-        this.map.cellSize = 1;
         // moved code here from attached() method, because methods were called before this method is ended
         this.map.cellSize = this.calculateCellSize();
         this.adaptMapSize();
@@ -81,8 +80,13 @@ export class Game {
   }
 
   adaptMapSize() {
+    // adapt size of map in GameMap object
     this.map.height = this.map.height * this.map.cellSize;
     this.map.width = this.map.width * this.map.cellSize;
+
+    // adapt size of canvas according to map size in GameMap object
+    this.gameCanvas.height = this.map.height;
+    this.gameCanvas.width = this.map.width;
   }
 
   drawInitialMap() {
@@ -205,9 +209,11 @@ export class Game {
 
   nextStep() {
     this.stepCounter += 1;
-    this.map.cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
-    this.updateMap(this.map.cells, this.map.cellSize);
+    //this.map.cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
+    //this.updateMap(this.map.cells, this.map.cellSize);
   }
+
+
 
 }
 

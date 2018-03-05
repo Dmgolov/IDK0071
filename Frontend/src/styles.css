@@ -110,31 +110,30 @@
   width: 1000px;
   margin: auto;
 }
-.game-playerTable td{
+.game-playerTable td {
   opacity: 0.5;
   border: 1px solid #333;
   padding: 5px;
 }
-.game-playerTable:hover td{
+.game-playerTable:hover td {
   opacity: 100;
 }
 .game-content-container {
-  position: relative;
 }
 .game-stats-container {
   position: absolute;
-  top: 310px;
+  z-index: 2;
 }
 .game-playtime-container {
   font-size: 25px;
 }
 .game-playfield-container {
-  position: absolute;
+  position: relative;
   left: 225px;
   background-color: none;
 }
 .game-canvas {
-  width: 901px;
-  height: 501px;
-  border: 1px solid red;
+  position: absolute;
+  z-index: 1;
+  margin: auto;
 }
