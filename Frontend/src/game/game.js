@@ -23,11 +23,11 @@ export class Game {
   }
 
   attached() {
-    this.map.cellSize = this.calculateCellSize();
-    this.adaptMapSize();
-    this.map.context = this.gameCanvas.getContext('2d');
-    this.setInitialMap();
-    this.timerId = setInterval(this.updateMap.bind(this), 100);
+    // this.map.cellSize = this.calculateCellSize();
+    // this.adaptMapSize();
+    // this.map.context = this.gameCanvas.getContext('2d');
+    // this.setInitialMap();
+    // this.timerId = setInterval(this.updateMap.bind(this), 100);
   }
 
   //  get players from server and initialize them
@@ -65,9 +65,12 @@ export class Game {
         this.map.height = data.height;
         this.map.width = data.width;
         this.map.cellSize = 1;
-        // moved here from attached() method, because methods were called before this method ends
-        // this.map.cellSize = this.calculateCellSize();
-        // this.adaptMapSize();
+        // moved code here from attached() method, because methods were called before this method is ended
+        this.map.cellSize = this.calculateCellSize();
+        this.adaptMapSize();
+        this.map.context = this.gameCanvas.getContext('2d');
+        this.setInitialMap();
+        this.timerId = setInterval(this.updateMap.bind(this), 100);
       });
   }
 
