@@ -139,7 +139,14 @@ public class LobbyController {
             return results.containsKey(lobbyId) ? "{\"status\":\"finished\"}" : "{\"status\":\"notFound\"}";
         }
         int turnNr = gson.fromJson(data, JsonObject.class).get("turnNr").getAsInt();
-        return gson.toJson(searchedLobby.get().getGameField().getMapUpdateSinceTurnNr(turnNr));
+        String username = gson.fromJson(data, JsonObject.class).get("name").getAsString();
+        GameLobby lobby = searchedLobby.get();
+        Optional<JsonObject> update = lobby.sendUpdateToUser(username, turnNr);
+        if (update.isPresent()) {
+            lobby.checkIfEveryoneReceivedUpdate();
+            return gson.toJson(update);
+        }
+        return "{\"status\":\"received\"}";
     }
 
     @GetMapping(path = "/game/winner")

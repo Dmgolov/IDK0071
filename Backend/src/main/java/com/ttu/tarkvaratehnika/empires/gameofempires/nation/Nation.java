@@ -132,15 +132,11 @@ public class Nation implements Runnable {
             //System.out.println("Ending turn " + username);
             synchronized (session) {
                 session.endTurn();
-                if (!session.allNationsWaiting()) {
-                    try {
-                        //System.out.println("Waiting " + username);
-                        session.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    session.startNewTurn();
+                try {
+                    System.out.println("Waiting " + username);
+                    session.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }

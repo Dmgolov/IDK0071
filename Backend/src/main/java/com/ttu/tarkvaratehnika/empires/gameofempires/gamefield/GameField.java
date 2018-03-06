@@ -13,7 +13,7 @@ public class GameField {
 
     private GameMap gameMap;
     private InGameObject[][] field;
-    private final Map<Integer, Map<Coordinates, Person>> fieldUpdates = new HashMap<>();
+    private final Map<Coordinates, Person> lastUpdate = new HashMap<>();
 
     public void loadField() {
         field = new InGameObject[gameMap.getMapWidth()][gameMap.getMapHeight()];
@@ -42,7 +42,19 @@ public class GameField {
         return field[x][y];
     }
 
-    public void updateMap(Map<Coordinates, Person> updatedCells, int turnNr) {
+    public void clearLastUpdate() {
+        synchronized (lastUpdate) {
+            lastUpdate.clear();
+        }
+    }
+
+    public boolean hasLastUpdate() {
+        synchronized (lastUpdate) {
+            return !lastUpdate.isEmpty();
+        }
+    }
+
+    public void updateMap(Map<Coordinates, Person> updatedCells) {
         for (Coordinates key : updatedCells.keySet()) {
             if (updatedCells.get(key) != null) {
                 addPersonToCell(updatedCells.get(key), key.getX(), key.getY());
@@ -50,31 +62,20 @@ public class GameField {
                 removePersonFromCell(key.getX(), key.getY());
             }
         }
-        synchronized (fieldUpdates) {
-            fieldUpdates.put(turnNr, updatedCells);
+        synchronized (lastUpdate) {
+            lastUpdate.putAll(updatedCells);
         }
     }
 
-    public JsonObject getMapUpdateSinceTurnNr(int turnNr) {
+    public JsonObject getLastMapUpdate(int turnNr) {
         JsonObject jsonToReturn = new JsonObject();
-        Map<Coordinates, Person> totalUpdate = new HashMap<>();
-        // putting together all updates since turn N
-        int lastTurn;
-        synchronized (fieldUpdates) {
-            try {
-                lastTurn = Collections.max(fieldUpdates.keySet());
-            } catch (NoSuchElementException e) {
-                lastTurn = -1;
-            }
+        Map<Coordinates, Person> totalUpdate;
+        synchronized (lastUpdate) {
+            totalUpdate = new HashMap<>(lastUpdate);
         }
-        for (; turnNr <= lastTurn; turnNr++) {
-            synchronized (fieldUpdates) {
-                Map<Coordinates, Person> testMap = fieldUpdates.get(turnNr);
-                totalUpdate.putAll(testMap);
-            }
-        }
+        turnNr++;
         JsonArray updatedCells = getUpdatedCellsAsJsonArray(totalUpdate);
-        jsonToReturn.addProperty("turnNr", lastTurn);
+        jsonToReturn.addProperty("turnNr", turnNr);
         jsonToReturn.add("update", updatedCells);
         jsonToReturn.addProperty("status", "running");
         return jsonToReturn;
