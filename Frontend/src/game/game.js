@@ -66,7 +66,7 @@ export class Game {
         this.map.context = this.gameCanvas.getContext('2d');
         this.setInitialMap();
         // this.timerId = setInterval(this.updateMap.bind(this), 100);
-        this.updateMap();
+        // this.updateMap();  --> was moved into setInitalMap()
       });
   }
 
@@ -108,6 +108,7 @@ export class Game {
           this.map.cells.push(cell);
         }
         this.drawInitialMap();
+        this.updateMap();
       });
   }
 
