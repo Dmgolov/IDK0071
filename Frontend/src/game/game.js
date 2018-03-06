@@ -56,6 +56,7 @@ export class Game {
     client.fetch("http://localhost:8080/game/mapSettings?lobbyId=" + this.lobbyInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
+        console.log("set map response:");
         console.log(data);
         this.map.height = data.height;
         this.map.width = data.width;
@@ -71,6 +72,8 @@ export class Game {
   }
 
   calculateCellSize() {
+    console.log("canvas height: " + this.gameCanvas.height);
+    console.log("map height: " + this.map.height);
     let height = Math.floor(this.gameCanvas.height / this.map.height);
     let width = Math.floor(this.gameCanvas.width / this.map.width);
     return height < width ? height : width;
@@ -101,6 +104,8 @@ export class Game {
     client.fetch("http://localhost:8080/game/initialMap?lobbyId=" + this.lobbyInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
+        console.log("set initial map response:");
+        console.log(data);
         this.map.cells = [];
         for(let cell of data) {
           cell.x = cell.x * this.map.cellSize;
@@ -128,6 +133,7 @@ export class Game {
       'name': this.lobbyInfo.playerName
     };
     let requestInfo = json(info);
+    console.log("update map request:");
     console.log(requestInfo);
 
     client.fetch("http://localhost:8080/game/state", {
@@ -140,17 +146,21 @@ export class Game {
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data.status);
-        console.log(this.timerId);
+        console.log("update map response:");
+        console.log(data);
+        // console.log(this.timerId);
         if(data.status === "finished") {
           // clearInterval(this.timerId);
           // TODO: ask for winner info and depict it
+        } else if (data.status === "received") {
+          setTimeout(() => {}, 200);
+          this.updateMap();
         } else {
           this.stepCounter = data.turnNr === -1 ? 0 : data.turnNr;
           for (let cell of data.update) {
             this.drawUpdatedCell(cell);
           }
-          setTimeout(() => {}, 100);
+          setTimeout(() => {}, 200);
           this.updateMap();
         }
       });
