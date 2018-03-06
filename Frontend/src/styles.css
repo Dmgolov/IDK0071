@@ -129,8 +129,8 @@
 }
 .game-playfield-container {
   position: relative;
-  left: 225px;
   background-color: none;
+  margin: auto;
 }
 .game-canvas {
   position: absolute;

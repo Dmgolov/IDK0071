@@ -23,11 +23,6 @@ export class Game {
   }
 
   attached() {
-    // this.map.cellSize = this.calculateCellSize();
-    // this.adaptMapSize();
-    // this.map.context = this.gameCanvas.getContext('2d');
-    // this.setInitialMap();
-    // this.timerId = setInterval(this.updateMap.bind(this), 100);
   }
 
   //  get players from server and initialize them
@@ -67,6 +62,7 @@ export class Game {
         // moved code here from attached() method, because methods were called before this method is ended
         this.map.cellSize = this.calculateCellSize();
         this.adaptMapSize();
+        this.playfieldContainer.style.width = this.map.width + "px";
         this.map.context = this.gameCanvas.getContext('2d');
         this.setInitialMap();
         this.timerId = setInterval(this.updateMap.bind(this), 100);
@@ -150,70 +146,10 @@ export class Game {
         }
       });
   }
-
-  createGrid() {
-    const context = this.map.context;
-
-    for (var x = 0.5; x < mapSizeX; x += cellSize) {
-      for (var y = 0.5; y < mapSizeY; y += cellSize) {
-      context.moveTo(x, 0);
-      context.lineTo(x, mapSizeY - 1);
-      context.moveTo(0, y);
-      context.lineTo(mapSizeX - 1, y);
-    }
-      context.stroke();
-    }
-  }
-
-  fillMap(cells, cellSize) {
-    const context = this.map.context;
-    for (let row of cells){
-      for (let cell of row){
-        if (cell.nation == "red"){
-          context.fillStyle = cell.nationColor;
-          context.fillRect(cell.x, cell.y, cellSize, cellSize);
-        } else if (cell.nation == "green") {
-          context.fillStyle = cell.nationColor;
-          context.fillRect(cell.x, cell.y, cellSize, cellSize);
-        }
-      }
-    }
-  }
-
-  createNations(mapWidth, mapHeight, cellSize) {
-    let cells = [];
-    let nation = "";
-    let nationColor = "";
-    for (let i = 0; i < mapWidth - 1; i += cellSize) {
-      let row = new Array();
-      for (let j = 0; j < mapHeight - 1; j += cellSize) {
-        if (Math.random() < 0.5){
-          row.push({x: i, y: j, nation: "green", nationColor: "#0F0"});
-        } else {
-          row.push({x: i, y: j, nation: "red", nationColor: "#F00"});
-        }
-      }
-      cells.push(row);
-    }
-    return cells;
-  }
-
-  clearMap(cells, cellSize) {
-    const context = this.map.context;
-    for (let row of cells){
-      for (let cell of row){
-        context.clearRect(cell.x, cell.y, cellSize, cellSize);
-      }
-    }
-  }
-
+  
   nextStep() {
     this.stepCounter += 1;
-    //this.map.cells = this.createNations(this.map.width, this.map.height, this.map.cellSize);
-    //this.updateMap(this.map.cells, this.map.cellSize);
   }
-
-
 
 }
 
