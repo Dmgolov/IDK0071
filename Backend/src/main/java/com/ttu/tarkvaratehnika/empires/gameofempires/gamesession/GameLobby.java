@@ -1,5 +1,6 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 
+import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.controller.LobbyController;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
@@ -23,8 +24,10 @@ public class GameLobby {
     private String lobbyPass;
     private Set<Nation> nations = new HashSet<>();
     private Map<Coordinates, Person> cellsToUpdate = new HashMap<>();
+    private final List<String> receivedUpdate = new ArrayList<>();
     private List<String> availableColors = new ArrayList<>(Arrays.asList(generateNationColor(), generateNationColor(), generateNationColor(), generateNationColor()));
     private volatile int waiting = 0;
+    private int nonBotsPlayersCount;
     private boolean singleMode;
 
     public GameLobby(LobbyController controller) {
@@ -59,9 +62,11 @@ public class GameLobby {
 
     public void changeToSinglePlayer() {
         singleMode = true;
-        for (int i = 1; hasFreeSpaces(); i++) {
+        int i = nations.size();
+        for (; hasFreeSpaces(); i++) {
             enterSession("bot" + i).ifPresent(nation -> nation.setReady(true));
         }
+        nonBotsPlayersCount = SessionSettings.DEFAULT_MAX_USERS - i;
     }
 
     public Optional<Nation> enterSession(String username) {
@@ -110,7 +115,7 @@ public class GameLobby {
     }
 
     private void sendUpdateToMap() {
-        gameField.updateMap(cellsToUpdate, numOfTurns);
+        gameField.updateMap(cellsToUpdate);
         cellsToUpdate = new HashMap<>();
     }
 
@@ -141,16 +146,33 @@ public class GameLobby {
         cellsToUpdate.putAll(nationUpdate);
     }
 
+    public Optional<JsonObject> sendUpdateToUser(String username, int turnNr) {
+        if (!receivedUpdate.contains(username) && allNationsWaiting() && gameField.hasLastUpdate()) {
+            System.out.println(username + " received update");
+            receivedUpdate.add(username);
+            return Optional.of(gameField.getLastMapUpdate(turnNr));
+        }
+        return Optional.empty();
+    }
+
+    public void checkIfEveryoneReceivedUpdate() {
+        if (receivedUpdate.size() >= nonBotsPlayersCount && allNationsWaiting()) {
+            gameField.clearLastUpdate();
+            receivedUpdate.clear();
+            startNewTurn();
+        }
+    }
+
     public synchronized void endTurn() {
         waiting++;
         //System.out.println("Added wait: " + waiting);
         if (allNationsWaiting()) {
-            //System.out.println("Updating game map");
+            System.out.println("Updating game map");
             sendUpdateToMap();
         }
     }
 
-    public void startNewTurn() {
+    private void startNewTurn() {
         if (allNationsWaiting()) {
             waiting = 0;
             numOfTurns++;
@@ -167,7 +189,7 @@ public class GameLobby {
                 }
                 return;
             }
-            //System.out.println("Waking nations");
+            System.out.println("Waking nations");
             synchronized (this) {
                 notifyAll();
             }
