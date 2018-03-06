@@ -144,7 +144,7 @@ public class LobbyController {
         Optional<JsonObject> update = lobby.sendUpdateToUser(username, turnNr);
         if (update.isPresent()) {
             lobby.checkIfEveryoneReceivedUpdate();
-            return update.get().get("value").getAsString();
+            return update.get().toString();
         }
         return "{\"status\":\"received\"}";
     }
