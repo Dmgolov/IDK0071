@@ -1,15 +1,21 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 public class UserController {
+
+    private Gson gson = new Gson();
 
     private AccountService accountService;
     private TemplateService templateService;
@@ -20,16 +26,20 @@ public class UserController {
         this.templateService = templateService;
     }
 
-    @RequestMapping(path = "/register")
-    public @ResponseBody String signUp(@RequestParam String username, @RequestParam String pass) {
-        boolean result = accountService.register(username, pass);
-        return result ? "Registered" : "Failed to register";
+    @PostMapping(path = "/register", consumes = "application/json")
+    public @ResponseBody String signUp(@RequestBody String data) {
+        try {
+            return "{\"token\":\"" + accountService.register(gson.fromJson(data, JsonObject.class).get("username").getAsString(),
+                    gson.fromJson(data, JsonObject.class).get("password").getAsString()) + "\", \"result\":\"success\"}";
+        } catch (DataIntegrityViolationException | GeneralSecurityException e) {
+            return "{\"token\":null,\"result\":\"" + e.getMessage() + "\"}";
+        }
     }
 
-    @RequestMapping(path = "/login")
-    public @ResponseBody String signIn(@RequestParam String username, @RequestParam String pass) {
-        boolean result = accountService.logIn(username, pass);
-        return result ? username : "";
+    @PostMapping(path = "/login", consumes = "application/json")
+    public @ResponseBody String signIn(@RequestBody String data) {
+        return "{\"token\":\"" + accountService.logIn(gson.fromJson(data, JsonObject.class).get("username").getAsString(),
+                gson.fromJson(data, JsonObject.class).get("password").getAsString()) + "\"}";
     }
 
     //TODO: change depending on how templates will be implemented

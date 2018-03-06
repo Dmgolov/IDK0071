@@ -1,9 +1,8 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.user;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.ttu.tarkvaratehnika.empires.gameofempires.securityconstants.Constants;
+
+import javax.persistence.*;
 
 //TODO: add all needed values for User table and getters/setters for transferring data from and to the database
 @Entity
@@ -13,8 +12,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(unique = true, nullable = false)
     private String name;
+    @Column(nullable = false, length = Constants.PASSWORD_LENGTH)
     private String password;
+    @Column(nullable = false, length = Constants.SALT_BYTE_ARRAY_LENGTH)
+    private String salt;
 
     public long getId() {
         return id;
@@ -38,5 +41,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }
