@@ -65,7 +65,8 @@ export class Game {
         this.playfieldContainer.style.width = this.map.width + "px";
         this.map.context = this.gameCanvas.getContext('2d');
         this.setInitialMap();
-        this.timerId = setInterval(this.updateMap.bind(this), 100);
+        // this.timerId = setInterval(this.updateMap.bind(this), 100);
+        this.updateMap();
       });
   }
 
@@ -118,9 +119,14 @@ export class Game {
     context.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
   }
 
-  updateMap(timerId) {
+  updateMap() {
     let client = new HttpClient();
-    let requestInfo = json({'lobbyId': this.lobbyInfo.lobbyId, 'turnNr': this.stepCounter});
+    let info = {
+      'lobbyId': this.lobbyInfo.lobbyId,
+      'turnNr': this.stepCounter,
+      'name': this.lobbyInfo.playerName
+    };
+    let requestInfo = json(info);
     console.log(requestInfo);
 
     client.fetch("http://localhost:8080/game/state", {
@@ -136,17 +142,19 @@ export class Game {
         console.log(data.status);
         console.log(this.timerId);
         if(data.status === "finished") {
-          clearInterval(this.timerId);
+          // clearInterval(this.timerId);
           // TODO: ask for winner info and depict it
         } else {
           this.stepCounter = data.turnNr === -1 ? 0 : data.turnNr;
           for (let cell of data.update) {
             this.drawUpdatedCell(cell);
           }
+          setTimeout(() => {}, 100);
+          this.updateMap();
         }
       });
   }
-  
+
   nextStep() {
     this.stepCounter += 1;
   }
