@@ -25,6 +25,7 @@ public class GameLobby {
     private Set<Nation> nations = new HashSet<>();
     private Map<Coordinates, Person> cellsToUpdate = new HashMap<>();
     private final List<String> receivedUpdate = new ArrayList<>();
+    private List<String> usedColors = new ArrayList<>(5);
     private List<String> availableColors = new ArrayList<>(Arrays.asList(generateNationColor(), generateNationColor(), generateNationColor(), generateNationColor()));
     private volatile int waiting = 0;
     private int nonBotsPlayersCount;
@@ -168,6 +169,7 @@ public class GameLobby {
         //System.out.println("Added wait: " + waiting);
         if (allNationsWaiting()) {
             System.out.println("Updating game map");
+            System.out.println(usedColors);
             sendUpdateToMap();
         }
     }
@@ -246,17 +248,15 @@ public class GameLobby {
         this.singleMode = singleMode;
     }
 
-    private static String generateNationColor() {
-        String[] hexElements = "0123456789abcdef".split("");
-        StringBuilder nationColor = new StringBuilder("#");
+    private String generateNationColor() {
+        String nationColor = "";
         Random random = new Random();
-        for (int i = 0; i < 6; i++) {
-            nationColor.append(hexElements[random.nextInt(15)]);
-        }
-        if (Objects.equals(nationColor.toString(), "#47d147")){
-            return generateNationColor();
+        nationColor = SessionSettings.NATION_COLORS[random.nextInt(5)];
+        if (!usedColors.contains(nationColor)){
+            usedColors.add(nationColor);
+            return nationColor;
         } else {
-            return nationColor.toString();
+            return generateNationColor();
         }
     }
 }
