@@ -96,7 +96,8 @@ public class LobbyController {
                 .findFirst();
         String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
         if (searchedLobby.isPresent() && searchedLobby.get().enterSession(username).isPresent()) {
-            return "{\"status\":\"success\"}";
+            String mode = searchedLobby.get().isSingleMode() ? "single" : "multi";
+            return "{\"status\":\"success\", \"gameMode\":\"" + mode + "\"}";
         }
         return "{\"status\":\"failed\"}";
     }
