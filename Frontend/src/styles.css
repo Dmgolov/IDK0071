@@ -111,7 +111,7 @@
   margin: auto;
 }
 .game-playerTable td {
-  opacity: 0.2;
+  opacity: 0.2  ;
   border: 1px solid #333;
   padding: 5px;
   background-color: black;

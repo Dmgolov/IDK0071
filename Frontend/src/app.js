@@ -6,6 +6,7 @@ export class App {
           { route: ['', 'home'], name: 'home', moduleId: 'home/index' },
           { route: 'lobby', name: 'lobby', moduleId: 'lobby/lobby', nav: true, title: 'Lobby' },
           { route: 'game', name: 'game', moduleId: 'game/game', nav: true, title: 'Game'},
+          { route: 'mapTool', name: 'mapTool', moduleId: 'mapTool/mapTool', nav: true, title: 'Map Tool'},
         ]);
       }
 }
