@@ -101,7 +101,7 @@ public class GameLobby {
             nation.setReady(ready);
             nation.setPersonWithStats(stats);
         });
-        if (nations.stream().filter(Nation::isReady).count() == SessionSettings.DEFAULT_MAX_USERS) startSession();
+        if (nations.stream().filter(Nation::isReady).count() == nations.size()) startSession();
     }
 
     public List<Map<String, Object>> checkPlayerState() {
