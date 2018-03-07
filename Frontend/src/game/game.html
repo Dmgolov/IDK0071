@@ -3,13 +3,13 @@
   <div class="game-main-container">
     <div class="game-content-container">
       <div ref="playfieldContainer" class="game-playfield-container">
-        <canvas id='gameCanvas' ref="gameCanvas" class="game-canvas" width="1200" height="600"></canvas>
+        <canvas id='gameCanvas' ref="gameCanvas" class="game-canvas" width="1200" height="600" onmouseover="showTable"></canvas>
         <div class="game-stats-container">
           <div class="game-playtime-container">
             <span>Age ${stepCounter}</span>
           </div>
           <div class="game-players-container">
-            <table class="game-playerTable">
+            <table ref="table" class="game-playerTable">
               <tr repeat.for="player of players">
                 <td><font color="#f00">${player.name}</font></td>
                 <td>${player.playerScore}</td>

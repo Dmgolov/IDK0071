@@ -111,9 +111,10 @@
   margin: auto;
 }
 .game-playerTable td {
-  opacity: 0.5;
+  opacity: 0.2;
   border: 1px solid #333;
   padding: 5px;
+  background-color: black;
 }
 .game-playerTable:hover td {
   opacity: 100;
@@ -122,7 +123,6 @@
 }
 .game-stats-container {
   position: absolute;
-  z-index: 2;
 }
 .game-playtime-container {
   font-size: 25px;
@@ -134,6 +134,8 @@
 }
 .game-canvas {
   position: absolute;
-  z-index: 1;
   margin: auto;
+}
+.game-playerTable {
+
 }
