@@ -9,11 +9,11 @@ export class Home {
     this.lobbyInfo = lobbyInfo;
     this.router = router;
 
-    console.log(this.router);
+    // console.log(this.router);
   }
 
   createLobby() {
-    console.log(this.lobbyInfo);
+    // console.log(this.lobbyInfo);
 
     let client = new HttpClient();
     client.fetch("http://localhost:8080/lobby/new", {
@@ -27,14 +27,14 @@ export class Home {
       .then(response => response.json())
       .then(data => {
         this.lobbyInfo.lobbyId = data.lobbyId;
-        console.log(this.lobbyInfo);
+        // console.log(this.lobbyInfo);
 
         this.router.navigate("lobby");
     });
   }
 
   connectToLobby() {
-    console.log(this.lobbyInfo);
+    // console.log(this.lobbyInfo);
 
     let client = new HttpClient();
     client.fetch("http://localhost:8080/lobby/connect", {
@@ -50,8 +50,8 @@ export class Home {
     })
       .then(response => response.json())
       .then(data => {
-        console.log("this was connect response");
-        console.log(data);
+        // console.log("this was connect response");
+        // console.log(data);
         if (data.status !== "failed") {
           this.lobbyInfo.gameMode = data.gameMode;
           this.router.navigate("lobby");
