@@ -13,8 +13,8 @@
         <button class="home-account-button" type="submit">Sing Up</button> -->
         <input placeholder="Player name" value.bind="lobbyInfo.playerName">
         <button click.trigger="createLobby()">Create Lobby</button>
-        <button>Connect to lobby</button>
-        <input placeholder="Lobby ID">
+        <button click.trigger="connectToLobby()">Connect to lobby</button>
+        <input placeholder="Lobby ID" value.bind="lobbyInfo.lobbyId">
         <button>Upload map template</button>
         <button>Browse map templates</button>
       </div>
