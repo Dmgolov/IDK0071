@@ -28,8 +28,9 @@ public class GameLobby {
     private List<String> usedColors = new ArrayList<>(5);
     private List<String> availableColors = new ArrayList<>(Arrays.asList(generateNationColor(), generateNationColor(), generateNationColor(), generateNationColor()));
     private volatile int waiting = 0;
-    private int nonBotsPlayersCount;
+    private int botsPlayersCount = 0;
     private boolean singleMode;
+    private boolean hasStarted = false;
 
     public GameLobby(LobbyController controller) {
         this.controller = controller;
@@ -46,6 +47,7 @@ public class GameLobby {
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
+        hasStarted = true;
         nations.forEach(nation -> new Thread(nation).start());
     }
 
@@ -63,15 +65,15 @@ public class GameLobby {
 
     public void changeToSinglePlayer() {
         singleMode = true;
-        int i = nations.size();
-        for (; hasFreeSpaces(); i++) {
+        int i;
+        for (i = 0; hasFreeSpaces(); i++) {
             enterSession("bot" + i).ifPresent(nation -> nation.setReady(true));
         }
-        nonBotsPlayersCount = SessionSettings.DEFAULT_MAX_USERS - i;
+        botsPlayersCount = i;
     }
 
     public Optional<Nation> enterSession(String username) {
-        if (hasFreeSpaces()) {
+        if (hasFreeSpaces() && !hasStarted) {
             Nation nation = new Nation(username, availableColors.get(0), this);
             System.out.println(availableColors);
             availableColors.remove(0);
@@ -157,7 +159,7 @@ public class GameLobby {
     }
 
     public void checkIfEveryoneReceivedUpdate() {
-        if (receivedUpdate.size() >= nonBotsPlayersCount && allNationsWaiting()) {
+        if (receivedUpdate.size() >= nations.size() - botsPlayersCount && allNationsWaiting()) {
             gameField.clearLastUpdate();
             receivedUpdate.clear();
             startNewTurn();
