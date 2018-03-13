@@ -1,8 +1,10 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamemap;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,34 +14,26 @@ public class ImageConverter {
 
         BufferedImage hugeImage = ImageIO.read(new FileInputStream("src/main/java/com/ttu/tarkvaratehnika/empires/gameofempires/gamemap/map145x145.png"));
 
-        System.out.println("Testing convertTo2DUsingGetRGB:");
-        for (int i = 0; i < 10; i++) {
-            long startTime = System.nanoTime();
-            int[][] result = convertTo2DUsingGetRGB(hugeImage);
-            long endTime = System.nanoTime();
-        }
-
-        System.out.println("");
-
-        System.out.println("Testing convertTo2DWithoutUsingGetRGB:");
-        for (int i = 0; i < 10; i++) {
-            long startTime = System.nanoTime();
-          //  int[][] result = convertTo2DWithoutUsingGetRGB(hugeImage);
-            long endTime = System.nanoTime();
-        }
+        System.out.println("Start converting map: ");
+        JsonArray result = convertTo2DUsingGetRGB(hugeImage);
+        System.out.println(result);
     }
 
-    private static int[][] convertTo2DUsingGetRGB(BufferedImage image) {
+    private static JsonArray convertTo2DUsingGetRGB(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
-        int[][] result = new int[height][width];
-        JsonObject object = new JsonObject();
+        JsonArray array = new JsonArray();
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
-                result[row][col] = image.getRGB(col, row);
+                Color color = new Color(image.getRGB(col,row));
+                JsonObject object = new JsonObject();
+                object.addProperty("x", row);
+                object.addProperty("y", col);
+                object.addProperty("color", String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
+                array.add(object);
             }
         }
-        return result;
+        return array;
     }
 
 }
