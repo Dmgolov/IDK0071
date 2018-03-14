@@ -1,6 +1,6 @@
 # Cellpires
 
-The Cellpires game is based on 'cellular automaton' idea. In this game you can create your Cellpires and conquer the land.
+The Cellpires game is based on 'cellular automaton' idea. In this game you can create your empire and conquer the land.
 The world is made up of cells through which people can move and capturing cells. Each person has different stats (age, 
 strenght, reproduction points).
 
