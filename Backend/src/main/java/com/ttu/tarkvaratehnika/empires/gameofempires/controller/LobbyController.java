@@ -88,12 +88,18 @@ public class LobbyController {
         return "{\"status\":\"failed\"}";
     }
 
-    @RequestMapping(path = "/lobby/connect")
-    public @ResponseBody boolean connectToLobby(@RequestParam String username, @RequestParam long lobbyId) {
+    @PostMapping(path = "/lobby/connect", consumes = "application/json")
+    public @ResponseBody String connectToLobby(@RequestBody String data) {
+        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
         Optional<GameLobby> searchedLobby = lobbies.stream()
                 .filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findFirst();
-        return searchedLobby.isPresent() && searchedLobby.get().enterSession(username).isPresent();
+        String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
+        if (searchedLobby.isPresent() && searchedLobby.get().enterSession(username).isPresent()) {
+            String mode = searchedLobby.get().isSingleMode() ? "single" : "multi";
+            return "{\"status\":\"success\", \"gameMode\":\"" + mode + "\"}";
+        }
+        return "{\"status\":\"failed\"}";
     }
 
     @RequestMapping(path = "/lobby/leave")

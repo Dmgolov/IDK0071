@@ -5,7 +5,7 @@ import {LobbyInfo} from "../lobby/lobbyInfo";
 
 @inject(LobbyInfo, Router)
 export class Game {
-  gameCanvas: HTMLCanvasElement;
+  // this.gameCanvas: HTMLCanvasElement;
   constructor(lobbyInfo, router) {
     this.lobbyInfo = lobbyInfo;
     this.router = router;
@@ -14,8 +14,7 @@ export class Game {
     this.authPlayer;  // here will be written authenticated player
     this.setPlayers();
 
-    this.map = new GameMap();
-    this.setMap();
+    this.map;
 
     this.stepCounter = 0;
 
@@ -23,6 +22,7 @@ export class Game {
   }
 
   attached() {
+    this.setMap();
   }
 
   //  get players from server and initialize them
@@ -56,10 +56,23 @@ export class Game {
     client.fetch("http://localhost:8080/game/mapSettings?lobbyId=" + this.lobbyInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
-        console.log("set map response:");
-        console.log(data);
+        // console.log("set map response:");
+        // console.log(data);
+
+        this.map = new GameMap();
+
         this.map.height = data.height;
         this.map.width = data.width;
+<<<<<<< HEAD
+=======
+
+        // console.log("this.gameCanvas: ");
+        // console.log(this.gameCanvas);
+
+        this.gameCanvas.height = window.innerHeight;
+        this.gameCanvas.width = window.innerWidth;
+
+>>>>>>> master
         // moved code here from attached() method, because methods were called before this method is ended
         this.map.cellSize = this.calculateCellSize();
         this.adaptMapSize();
@@ -72,8 +85,8 @@ export class Game {
   }
 
   calculateCellSize() {
-    console.log("canvas height: " + this.gameCanvas.height);
-    console.log("map height: " + this.map.height);
+    // console.log("canvas height: " + this.gameCanvas.height);
+    // console.log("map height: " + this.map.height);
     let height = Math.floor(this.gameCanvas.height / this.map.height);
     let width = Math.floor(this.gameCanvas.width / this.map.width);
     return height < width ? height : width;
@@ -104,8 +117,8 @@ export class Game {
     client.fetch("http://localhost:8080/game/initialMap?lobbyId=" + this.lobbyInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
-        console.log("set initial map response:");
-        console.log(data);
+        // console.log("set initial map response:");
+        // console.log(data);
         this.map.cells = [];
         for(let cell of data) {
           cell.x = cell.x * this.map.cellSize;
@@ -133,8 +146,8 @@ export class Game {
       'name': this.lobbyInfo.playerName
     };
     let requestInfo = json(info);
-    console.log("update map request:");
-    console.log(requestInfo);
+    // console.log("update map request:");
+    // console.log(requestInfo);
 
     client.fetch("http://localhost:8080/game/state", {
       "method": "POST",
@@ -146,8 +159,8 @@ export class Game {
     })
       .then(response => response.json())
       .then(data => {
-        console.log("update map response:");
-        console.log(data);
+        // console.log("update map response:");
+        // console.log(data);
         // console.log(this.timerId);
         if(data.status === "finished") {
           // clearInterval(this.timerId);

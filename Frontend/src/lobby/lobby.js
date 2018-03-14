@@ -9,7 +9,7 @@ export class Lobby {
     this.lobbyInfo = lobbyInfo;
     this.router = router;
 
-    console.log(this.lobbyInfo);
+    // console.log(this.lobbyInfo);
 
     this.canDisplayNationOptions = this.lobbyInfo.gameMode !== "";
 
@@ -61,7 +61,7 @@ export class Lobby {
 
     let info = this.getReadyStateInfo();
 
-    console.log(json(info));
+    // console.log(json(info));
 
     client.fetch("http://localhost:8080/lobby/ready", {
       "method": "POST",
@@ -74,7 +74,7 @@ export class Lobby {
     })
       .then(response => response.json())
       .then(data => {
-        console.log(json(data));
+        // console.log(json(data));
     });
 
   }
@@ -85,7 +85,7 @@ export class Lobby {
     client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
-        console.log(json(data));
+        // console.log(json(data));
         let playersAreReady = true;
         for(let updatedPlayer of data) {
           let addNewPlayer = true;
@@ -131,8 +131,8 @@ export class Lobby {
         }
         this.players = players;
         this.authPlayer = this.getAuthPlayer();
-        console.log(json(this.players));
-        console.log(json(this.authPlayer));
+        // console.log(json(this.players));
+        // console.log(json(this.authPlayer));
     });
 
   }
@@ -144,7 +144,7 @@ export class Lobby {
       .then(response => response.json())
       .then(data => {
         this.nationPoints = data.nationPoints;
-        console.log(this.nationPoints);
+        // console.log(this.nationPoints);
     });
   }
 
@@ -164,7 +164,7 @@ export class Lobby {
     })
       .then(response => response.json())
       .then(data => {
-        console.log(json(data));
+        // console.log(json(data));
     });
   }
 
