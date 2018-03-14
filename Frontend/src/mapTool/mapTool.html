@@ -1,13 +1,9 @@
 <template>
-  <div class="mapTool-main-container">
-    <div class="mapTool-mapTool-container">
-      <div class="mapTool-workField-container">
-        <p>Here draw map</p>
-        <canvas class="mapTool-canvasFiled" width="100px" height="100px">
-        </canvas>
-      </div>
-      <div class="mapTool-workTools-container">
-      </div>
-    </div>
-  </div>
+  <body>
+    <h1>Spring Boot file upload example</h1>
+    <form method="POST" action="http://localhost:8080/upload" enctype="multipart/form-data">
+      <input type="file" name="file"><br><br>
+      <input type="submit" value="Submit">
+    </form>
+  </body>
 </template>

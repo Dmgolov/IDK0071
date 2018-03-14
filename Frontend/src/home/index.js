@@ -58,4 +58,8 @@ export class Home {
         }
     });
   }
+
+  uploadMapPage() {
+    this.router.navigate("mapTool");
+  }
 }

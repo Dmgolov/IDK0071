@@ -63,8 +63,6 @@ export class Game {
 
         this.map.height = data.height;
         this.map.width = data.width;
-<<<<<<< HEAD
-=======
 
         // console.log("this.gameCanvas: ");
         // console.log(this.gameCanvas);
@@ -72,7 +70,6 @@ export class Game {
         this.gameCanvas.height = window.innerHeight;
         this.gameCanvas.width = window.innerWidth;
 
->>>>>>> master
         // moved code here from attached() method, because methods were called before this method is ended
         this.map.cellSize = this.calculateCellSize();
         this.adaptMapSize();
