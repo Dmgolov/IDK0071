@@ -10,16 +10,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class ImageConverter {
-    public static void main(String[] args) throws IOException {
+//    public static void main(String[] args) throws IOException {
+//
+//        BufferedImage hugeImage = ImageIO.read(new FileInputStream("src/main/java/com/ttu/tarkvaratehnika/empires/gameofempires/gamemap/map145x145.png"));
+//
+//        System.out.println("Start converting map: ");
+//        JsonArray result = convertTo2DUsingGetRGB(hugeImage);
+//        System.out.println(result);
+//    }
 
-        BufferedImage hugeImage = ImageIO.read(new FileInputStream("src/main/java/com/ttu/tarkvaratehnika/empires/gameofempires/gamemap/map145x145.png"));
-
-        System.out.println("Start converting map: ");
-        JsonArray result = convertTo2DUsingGetRGB(hugeImage);
-        System.out.println(result);
-    }
-
-    private static JsonArray convertTo2DUsingGetRGB(BufferedImage image) {
+    public static JsonArray convertMapWithRGB(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
         JsonArray array = new JsonArray();
