@@ -1,4 +1,4 @@
-export class LobbyInfo {
+export class UtilityInfo {
   constructor() {
     this.playerName = "";
     this.lobbyId = null;

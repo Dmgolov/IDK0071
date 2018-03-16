@@ -1,17 +1,17 @@
 import {inject} from "aurelia-framework";
 import {HttpClient, json} from "aurelia-fetch-client";
 import {Router} from 'aurelia-router';
-import {LobbyInfo} from "../lobby/lobbyInfo";
+import {UtilityInfo} from "../utility/utilityInfo";
 
-@inject(LobbyInfo, Router)
+@inject(UtilityInfo, Router)
 export class Lobby {
-  constructor(lobbyInfo, router) {
-    this.lobbyInfo = lobbyInfo;
+  constructor(utilityInfo, router) {
+    this.utilityInfo = utilityInfo;
     this.router = router;
 
-    // console.log(this.lobbyInfo);
+    console.log(this.utilityInfo);
 
-    this.canDisplayNationOptions = this.lobbyInfo.gameMode !== "";
+    this.canDisplayNationOptions = this.utilityInfo.gameMode !== "";
 
     this.players;
     this.authPlayer;  // here will be written authenticated player
@@ -45,7 +45,7 @@ export class Lobby {
   }
 
   getReadyStateInfo() {
-    let info = {player: this.authPlayer, nationAttributes: {}, lobbyId: this.lobbyInfo.lobbyId};
+    let info = {player: this.authPlayer, nationAttributes: {}, lobbyId: this.utilityInfo.lobbyId};
     for(let row of this.nationAttributes) {
       for(let attribute of row) {
         info.nationAttributes[attribute.name] = attribute.points;
@@ -82,7 +82,7 @@ export class Lobby {
   updatePlayers() {
     let client = new HttpClient();
 
-    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
+    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.utilityInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
         // console.log(json(data));
@@ -113,7 +113,7 @@ export class Lobby {
 
   getAuthPlayer() {
     for(let player of this.players) {
-      if(player.name === this.lobbyInfo.playerName) {
+      if(player.name === this.utilityInfo.playerName) {
         return player;
       }
     }
@@ -123,7 +123,7 @@ export class Lobby {
     let client = new HttpClient();
     let players = [];
 
-    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
+    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.utilityInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
         for(let player of data) {
@@ -151,12 +151,12 @@ export class Lobby {
   sendGameMode(mode) {
     let client = new HttpClient();
 
-    this.lobbyInfo.gameMode = mode;
-    this.canDisplayNationOptions = this.lobbyInfo.gameMode !== "";
+    this.utilityInfo.gameMode = mode;
+    this.canDisplayNationOptions = this.utilityInfo.gameMode !== "";
 
     client.fetch("http://localhost:8080/lobby/mode", {
       "method": "POST",
-      "body": json({'mode': mode, 'lobbyId': this.lobbyInfo.lobbyId}),
+      "body": json({'mode': mode, 'lobbyId': this.utilityInfo.lobbyId}),
       headers: {
         'Origin': 'http://localhost:8080',
         'Content-Type': 'application/json'

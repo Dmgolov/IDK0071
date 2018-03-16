@@ -1,13 +1,13 @@
 import {inject} from "aurelia-framework";
 import {HttpClient, json} from "aurelia-fetch-client";
 import {Router} from 'aurelia-router';
-import {LobbyInfo} from "../lobby/lobbyInfo";
+import {UtilityInfo} from "../utility/utilityInfo";
 
-@inject(LobbyInfo, Router)
+@inject(UtilityInfo, Router)
 export class Game {
   // this.gameCanvas: HTMLCanvasElement;
-  constructor(lobbyInfo, router) {
-    this.lobbyInfo = lobbyInfo;
+  constructor(utilityInfo, router) {
+    this.utilityInfo = utilityInfo;
     this.router = router;
 
     this.players;
@@ -30,7 +30,7 @@ export class Game {
     let client = new HttpClient();
     let players = [];
 
-    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
+    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.utilityInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
         for(let player of data) {
@@ -44,7 +44,7 @@ export class Game {
   //  get authenticated player from players array
   getAuthPlayer() {
     for(let player of this.players) {
-      if(player.name === this.lobbyInfo.playerName) {
+      if(player.name === this.utilityInfo.playerName) {
         return player;
       }
     }
@@ -53,7 +53,7 @@ export class Game {
   setMap() {
     let client = new HttpClient();
 
-    client.fetch("http://localhost:8080/game/mapSettings?lobbyId=" + this.lobbyInfo.lobbyId)
+    client.fetch("http://localhost:8080/game/mapSettings?lobbyId=" + this.utilityInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
         // console.log("set map response:");
@@ -111,7 +111,7 @@ export class Game {
   setInitialMap() {
     let client = new HttpClient();
 
-    client.fetch("http://localhost:8080/game/initialMap?lobbyId=" + this.lobbyInfo.lobbyId)
+    client.fetch("http://localhost:8080/game/initialMap?lobbyId=" + this.utilityInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
         // console.log("set initial map response:");
@@ -138,9 +138,9 @@ export class Game {
   updateMap() {
     let client = new HttpClient();
     let info = {
-      'lobbyId': this.lobbyInfo.lobbyId,
+      'lobbyId': this.utilityInfo.lobbyId,
       'turnNr': this.stepCounter,
-      'name': this.lobbyInfo.playerName
+      'name': this.utilityInfo.playerName
     };
     let requestInfo = json(info);
     // console.log("update map request:");
