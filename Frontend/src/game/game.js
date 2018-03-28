@@ -3,6 +3,8 @@ import {HttpClient, json} from "aurelia-fetch-client";
 import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
 
+import environment from '../environment';
+
 @inject(UtilityInfo, Router)
 export class Game {
   // this.gameCanvas: HTMLCanvasElement;

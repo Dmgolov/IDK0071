@@ -3,6 +3,8 @@ import {HttpClient, json} from "aurelia-fetch-client";
 import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
 
+import environment from '../environment';
+
 @inject(UtilityInfo, Router)
 export class Home {
   constructor(utilityInfo, router) {
@@ -16,11 +18,11 @@ export class Home {
     // console.log(this.utilityInfo);
 
     let client = new HttpClient();
-    client.fetch("http://localhost:8080/lobby/new", {
+    client.fetch(environment.apiBaseUrl + "/lobby/new", {
       "method": "POST",
       "body": json({"playerName": this.utilityInfo.playerName}),
       headers: {
-        'Origin': 'http://localhost:8080',
+        'Origin': environment.apiBaseUrl,
         'Content-Type': 'application/json'
       }
     })
@@ -37,14 +39,14 @@ export class Home {
     // console.log(this.utilityInfo);
 
     let client = new HttpClient();
-    client.fetch("http://localhost:8080/lobby/connect", {
+    client.fetch(environment.apiBaseUrl + "/lobby/connect", {
       "method": "POST",
       "body": json({
         "playerName": this.utilityInfo.playerName,
         "lobbyId": this.utilityInfo.lobbyId
       }),
       headers: {
-        'Origin': 'http://localhost:8080',
+        'Origin': environment.apiBaseUrl,
         'Content-Type': 'application/json'
       }
     })
