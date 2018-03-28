@@ -10,6 +10,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.processor.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,7 +61,7 @@ public class LobbyController {
     }
 
     @GetMapping(path = "/game/initialMap")
-    public @ResponseBody String getInitialMap(@RequestParam long lobbyId) {
+    public @ResponseBody String getInitialMap(@RequestParam long lobbyId) throws IOException {
         Optional<GameLobby> searchedLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findFirst();
         if (searchedLobby.isPresent()) {

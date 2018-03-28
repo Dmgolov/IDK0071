@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class ImageConverter {
 
-    public static JsonArray convertMapWithRGB(BufferedImage image) {
+    public static JsonArray convertMapWithRGBtoJSON(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
         JsonArray array = new JsonArray();

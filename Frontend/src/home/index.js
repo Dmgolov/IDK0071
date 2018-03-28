@@ -16,11 +16,11 @@ export class Home {
     // console.log(this.lobbyInfo);
 
     let client = new HttpClient();
-    client.fetch("http://localhost:8080/lobby/new", {
+    client.fetch(environment.apiBaseUrl + "/lobby/new", {
       "method": "POST",
       "body": json({"playerName": this.lobbyInfo.playerName}),
       headers: {
-        'Origin': 'http://localhost:8080',
+        'Origin': environment.apiBaseUrl,
         'Content-Type': 'application/json'
       }
     })

@@ -41,7 +41,7 @@ public class GameMapController {
             Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
             Files.write(path, bytes);
             BufferedImage imageForConvert = ImageIO.read(path.toFile());
-            JsonArray convertedMap = ImageConverter.convertMapWithRGB(imageForConvert);
+            JsonArray convertedMap = ImageConverter.convertMapWithRGBtoJSON(imageForConvert);
             byte[] mapToBytes = convertedMap.toString().getBytes();
             Files.write(Paths.get(UPLOADED_FOLDER + "test.json"), mapToBytes);
 

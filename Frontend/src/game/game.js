@@ -30,7 +30,7 @@ export class Game {
     let client = new HttpClient();
     let players = [];
 
-    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
+    client.fetch(environment.apiBaseUrl + "/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
       .then(response => response.json())
       .then(data => {
         for(let player of data) {
