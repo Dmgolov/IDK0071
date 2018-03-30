@@ -2,16 +2,22 @@ import {inject} from "aurelia-framework";
 import {HttpClient, json} from "aurelia-fetch-client";
 import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
+import {AuthService} from 'aurelia-authentication';
 
 import environment from '../environment';
 
-@inject(UtilityInfo, Router)
+@inject(UtilityInfo, Router, AuthService)
 export class Home {
-  constructor(utilityInfo, router) {
+  constructor(utilityInfo, router, authService) {
     this.utilityInfo = utilityInfo;
     this.router = router;
+    this.authService = authService;
 
     // console.log(this.router);
+  }
+
+  signOut() {
+    this.authService.logout();
   }
 
   createLobby() {
