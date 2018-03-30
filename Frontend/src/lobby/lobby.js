@@ -3,6 +3,8 @@ import {HttpClient, json} from "aurelia-fetch-client";
 import {Router} from 'aurelia-router';
 import {LobbyInfo} from "../lobby/lobbyInfo";
 
+import environment from '../environment';
+
 @inject(LobbyInfo, Router)
 export class Lobby {
   constructor(lobbyInfo, router) {

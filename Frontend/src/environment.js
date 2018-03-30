@@ -1,5 +1,5 @@
 export default {
-  debug: false,
-  testing: false,
-  apiBaseUrl: "prod"
+  debug: true,
+  testing: true,
+  apiBaseUrl: "http://localhost:8080"
 };
