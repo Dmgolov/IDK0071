@@ -14,6 +14,7 @@ import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -35,25 +36,37 @@ public class UserController {
         String email = gson.fromJson(data, JsonObject.class).get("email").getAsString();
         String pass = gson.fromJson(data, JsonObject.class).get("password").getAsString();
         try {
-            String token = accountService.register(name, email, pass);
-            if (token != null) {
-                return "{\"token\":\"" + token + "\", \"result\":\"success\"}";
-            }
-        } catch (DataIntegrityViolationException | UnsupportedEncodingException | NoSuchAlgorithmException e) {
+            accountService.register(name, email, pass);
+            return "{\"result\":\"success\"}";
+        } catch (DataIntegrityViolationException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        return "{\"token\":null,\"result\":\"failed\"}";
+        return "{\"result\":\"failed\"}";
     }
 
     @PostMapping(path = "/auth/signin", consumes = "application/json")
     public @ResponseBody String signIn(@RequestBody String data) throws UnsupportedEncodingException {
         String email = gson.fromJson(data, JsonObject.class).get("email").getAsString();
         String pass = gson.fromJson(data, JsonObject.class).get("password").getAsString();
-        String token = accountService.logIn(email, pass);
-        if (token != null) {
-            return "{\"token\":\"" + token + "\", \"result\":\"success\"}";
+        Optional<String> token = accountService.logIn(email, pass);
+        if (token.isPresent()) {
+            return "{\"token\":\"" + token.get() + "\", \"result\":\"success\"}";
         }
         return "{\"token\":null,\"result\":\"failed\"}";
+    }
+
+    @GetMapping(path = "/auth/signout")
+    public @ResponseBody String logOut(@RequestHeader(name = "Authorization", required = false) String token) {
+        accountService.logOut(token);
+        return "{\"result\":\"success\"}";
+    }
+
+    @GetMapping(path = "/auth/check")
+    public @ResponseBody String checkLogIn(@RequestHeader(name = "Authorization", required = false) String token) {
+        if (accountService.isLoggedIn(token)) {
+            return "{\"result\":\"success\"}";
+        }
+        return "{\"result\":\"failed\"}";
     }
 
     //TODO: change depending on how templates will be implemented
