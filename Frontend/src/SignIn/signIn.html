@@ -1,2 +1,17 @@
 <template>
+  <require from="../styles.css"></require>
+  <div class="signIn-main-container">
+    <div class="signIn-content-container">
+      <div class="signIn-logo-container">
+        <p>Cellpires</p>
+        <p>by</p>
+        <p>DIV team</p>
+      </div>
+      <div class="signIn-buttons-container">
+        <input placeholder="Email" type="email" value.bind="email">
+        <input placeholder="Password" type="password" value.bind="password">
+        <button click.delegate="login()">Sign In</button>
+      </div>
+    </div>
+  </div>
 </template>

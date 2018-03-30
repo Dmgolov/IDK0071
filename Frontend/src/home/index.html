@@ -1,20 +1,20 @@
 <template>
   <require from="../styles.css"></require>
   <div class="home-main-container">
-    <!-- ${message} -->
     <div class="home-content-container">
       <div class="home-logo-container">
-        <p>Empires</p>
+        <p>Cellpires</p>
         <p>by</p>
         <p>DIV team</p>
       </div>
       <div class="home-buttons-container">
-        <button class="home-account-button" type="submit">Sing In</button>
-        <button class="home-account-button" type="submit">Sing Up</button>
-        <input placeholder="Player name" value.bind="lobbyInfo.playerName">
-        <button click.trigger="createLobby()">Create Lobby</button>
-        <button click.trigger="connectToLobby()">Connect to lobby</button>
-        <input placeholder="Lobby ID" value.bind="lobbyInfo.lobbyId">
+        <button class="home-account-button" click.delegate="router.navigate('signIn')">Sign In</button>
+        <button class="home-account-button" click.delegate="router.navigate('signUp')">Sign Up</button>
+        <button click.delegate="signOut()">Sign Out</button>
+        <input placeholder="Player name" value.bind="utilityInfo.playerName">
+        <button click.delegate="createLobby()">Create Lobby</button>
+        <button click.delegate="connectToLobby()">Connect to lobby</button>
+        <input placeholder="Lobby ID" value.bind="utilityInfo.lobbyId">
         <button>Upload map template</button>
         <button>Browse map templates</button>
       </div>

@@ -1,2 +1,18 @@
 <template>
+  <require from="../styles.css"></require>
+  <div class="signUp-main-container">
+    <div class="signUp-content-container">
+      <div class="signUp-logo-container">
+        <p>Cellpires</p>
+        <p>by</p>
+        <p>DIV team</p>
+      </div>
+      <div class="signUp-buttons-container">
+        <input placeholder="Username" type="text" value.bind="username">
+        <input placeholder="Email" type="email" value.bind="email">
+        <input placeholder="Password" type="password" value.bind="password">
+        <button click.delegate="signUp()">Sign Up</button>
+      </div>
+    </div>
+  </div>
 </template>
