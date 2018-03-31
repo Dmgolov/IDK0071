@@ -1,11 +1,32 @@
+/* Adding fonts */
+@font-face {
+    font-family: 'Unibody-pixel';
+    src: url('scripts/fonts/Unibody8Pro-Regular.otf');
+}
+@font-face {
+    font-family: 'Unibody-pixel';
+    src: url('scripts/fonts/Unibody8Pro-Bold.otf');
+    font-weight: bold;
+}
+@font-face {
+    font-family: 'Unibody-pixel';
+    src: url('scripts/fonts/Unibody8Pro-RegularItalic.otf');
+    font-style: italic;
+}
+
+
 /* Custom elements CSS */
 .custom-logo-container{
   font-size: 35px;
   text-align: center;
   padding-bottom: 50px;
+  font-family: 'Unibody-pixel';
+  font-weight: bold;
 }
 .custom-logo-container p {
   margin: 0px;
+}
+.custom-logo-container p:first-child {
 }
 
 
@@ -17,21 +38,66 @@
   margin: auto;
   margin-top: 100px;
 }
-.home-buttons-container {
-  color: red;
+.home-menu-container {
   text-align: center;
 }
-.home-buttons-container button {
+.home-menu-container button {
   text-align: center;
   display: block;
   width: 300px;
   margin: auto;
 }
-.home-buttons-container .home-account-button {
+.home-menu-container .home-half-button {
   float: left;
   width: 150px;
 }
-.home-buttons-container input {
+.home-menu-container input {
+  text-align: center;
+  width: 296px;
+}
+
+
+/* Sign up page CSS */
+.sign-up-main-container {
+}
+.sign-up-content-container {
+  width: 300px;
+  margin: auto;
+  margin-top: 100px;
+}
+.sign-up-menu-container {
+  text-align: center;
+}
+.sign-up-menu-container button {
+  text-align: center;
+  display: block;
+  width: 300px;
+  margin: auto;
+}
+.sign-up-menu-container input {
+  text-align: center;
+  width: 296px;
+}
+
+
+/* Sign in page CSS */
+.sign-in-main-container {
+}
+.sign-in-content-container {
+  width: 300px;
+  margin: auto;
+  margin-top: 100px;
+}
+.sign-in-menu-container {
+  text-align: center;
+}
+.sign-in-menu-container button {
+  text-align: center;
+  display: block;
+  width: 300px;
+  margin: auto;
+}
+.sign-in-menu-container input {
   text-align: center;
   width: 296px;
 }

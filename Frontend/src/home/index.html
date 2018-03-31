@@ -3,9 +3,9 @@
   <div class="home-main-container">
     <div class="home-content-container">
       <logo></logo>
-      <div class="home-buttons-container">
-        <button class="home-account-button" click.delegate="router.navigate('signIn')">Sign In</button>
-        <button class="home-account-button" click.delegate="router.navigate('signUp')">Sign Up</button>
+      <div class="home-menu-container">
+        <button class="home-half-button" click.delegate="router.navigate('signIn')">Sign In</button>
+        <button class="home-half-button" click.delegate="router.navigate('signUp')">Sign Up</button>
         <button click.delegate="signOut()">Sign Out</button>
         <input placeholder="Player name" value.bind="utilityInfo.username">
         <button click.delegate="createLobby()">Create Lobby</button>

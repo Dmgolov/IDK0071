@@ -27,4 +27,8 @@ export class SignUp {
       });
   }
 
+  goBack() {
+    this.router.navigate("home");
+  }
+
 }

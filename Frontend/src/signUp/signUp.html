@@ -1,13 +1,15 @@
 <template>
   <require from="../customElements/logo.html"></require>
-  <div class="signUp-main-container">
-    <div class="signUp-content-container">
+  <div class="sign-up-main-container">
+    <div class="sign-up-content-container">
       <logo></logo>
-      <div class="signUp-buttons-container">
+      <div class="sign-up-menu-container">
         <input placeholder="Username" type="text" value.bind="username">
         <input placeholder="Email" type="email" value.bind="email">
         <input placeholder="Password" type="password" value.bind="password">
         <button click.delegate="signUp()">Sign Up</button>
+        <br>
+        <button click.delegate="goBack()">Back</button>
       </div>
     </div>
   </div>

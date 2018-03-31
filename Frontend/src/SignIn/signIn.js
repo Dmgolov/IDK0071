@@ -15,14 +15,7 @@ export class SignIn {
     this.password;
   }
 
-  // make a getter to get the authentication status.
-  // use computedFrom to avoid dirty checking
-  // @computedFrom('authService.authenticated')
-  // get authenticated() {
-  //   return this.authService.authenticated;
-  // }
-
-  login() {
+  signIn() {
       return this.authService.login(this.email, this.password)
       .then(response => {
           console.log("success logged " + response);
@@ -30,12 +23,10 @@ export class SignIn {
       .catch(err => {
           console.log("login failure");
       });
-  };
+  }
 
-  // authenticate(name) {
-  //     return this.authService.authenticate(name)
-  //     .then(response => {
-  //         console.log("auth response " + response);
-  //     });
-  // }
+  goBack() {
+    this.router.navigate("home");
+  }
+
 }
