@@ -23,7 +23,7 @@ export class SignIn {
   // }
 
   login() {
-      return this.authService.login(this.email, this.password, "home")
+      return this.authService.login(this.email, this.password)
       .then(response => {
           console.log("success logged " + response);
       })

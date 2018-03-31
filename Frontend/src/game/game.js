@@ -46,7 +46,7 @@ export class Game {
   //  get authenticated player from players array
   getAuthPlayer() {
     for(let player of this.players) {
-      if(player.name === this.utilityInfo.playerName) {
+      if(player.name === this.utilityInfo.username) {
         return player;
       }
     }
@@ -142,7 +142,7 @@ export class Game {
     let info = {
       'lobbyId': this.utilityInfo.lobbyId,
       'turnNr': this.stepCounter,
-      'name': this.utilityInfo.playerName
+      'name': this.utilityInfo.username
     };
     let requestInfo = json(info);
     // console.log("update map request:");

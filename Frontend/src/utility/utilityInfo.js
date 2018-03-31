@@ -1,6 +1,6 @@
 export class UtilityInfo {
   constructor() {
-    this.playerName = "";
+    this.username = "";
     this.lobbyId = null;
     this.gameMode = "";
   }

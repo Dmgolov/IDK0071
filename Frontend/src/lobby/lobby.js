@@ -115,7 +115,7 @@ export class Lobby {
 
   getAuthPlayer() {
     for(let player of this.players) {
-      if(player.name === this.utilityInfo.playerName) {
+      if(player.name === this.utilityInfo.username) {
         return player;
       }
     }

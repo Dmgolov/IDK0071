@@ -11,7 +11,7 @@
         <button class="home-account-button" click.delegate="router.navigate('signIn')">Sign In</button>
         <button class="home-account-button" click.delegate="router.navigate('signUp')">Sign Up</button>
         <button click.delegate="signOut()">Sign Out</button>
-        <input placeholder="Player name" value.bind="utilityInfo.playerName">
+        <input placeholder="Player name" value.bind="utilityInfo.username">
         <button click.delegate="createLobby()">Create Lobby</button>
         <button click.delegate="connectToLobby()">Connect to lobby</button>
         <input placeholder="Lobby ID" value.bind="utilityInfo.lobbyId">

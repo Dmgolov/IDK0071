@@ -26,7 +26,7 @@ export class Home {
     let client = new HttpClient();
     client.fetch(environment.apiBaseUrl + "/lobby/new", {
       "method": "POST",
-      "body": json({"playerName": this.utilityInfo.playerName}),
+      "body": json({"playerName": this.utilityInfo.username}),
       headers: {
         'Origin': environment.apiBaseUrl,
         'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ export class Home {
     client.fetch(environment.apiBaseUrl + "/lobby/connect", {
       "method": "POST",
       "body": json({
-        "playerName": this.utilityInfo.playerName,
+        "playerName": this.utilityInfo.username,
         "lobbyId": this.utilityInfo.lobbyId
       }),
       headers: {
