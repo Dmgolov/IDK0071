@@ -48,11 +48,7 @@ public class UserController {
     public @ResponseBody String signIn(@RequestBody String data) throws UnsupportedEncodingException {
         String email = gson.fromJson(data, JsonObject.class).get("email").getAsString();
         String pass = gson.fromJson(data, JsonObject.class).get("password").getAsString();
-        Optional<String> token = accountService.logIn(email, pass);
-        if (token.isPresent()) {
-            return "{\"token\":\"" + token.get() + "\", \"result\":\"success\"}";
-        }
-        return "{\"token\":null,\"result\":\"failed\"}";
+        return accountService.logIn(email, pass);
     }
 
     @GetMapping(path = "/auth/signout")
