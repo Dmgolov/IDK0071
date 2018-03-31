@@ -26,8 +26,8 @@ public class AccountService {
         this.userRepository = userRepository;
     }
 
-    public String register(String name, String email, String password)
-            throws DataIntegrityViolationException, UnsupportedEncodingException, NoSuchAlgorithmException {
+    public void register(String name, String email, String password)
+            throws DataIntegrityViolationException, NoSuchAlgorithmException {
         User user = new User();
         byte[] salt = getSalt().getBytes();
         user.setName(name);
@@ -36,25 +36,28 @@ public class AccountService {
         user.setPassword(pass);
         user.setSalt(new String(salt));
         userRepository.save(user);
-        return logIn(email, password);
     }
 
-    public String logIn(String email, String password) throws UnsupportedEncodingException {
+    public Optional<String> logIn(String email, String password) throws UnsupportedEncodingException {
         if (isRegistered(email, password)) {
             LocalDateTime dateTime = LocalDateTime.now();
-            String token = null;
+            Optional<String> token = Optional.empty();
             try {
-                while (token == null || loggedInUsers.containsKey(token)) {
-                    token = generateToken(email, dateTime);
+                while (!token.isPresent() || loggedInUsers.containsKey(token.get())) {
+                    token = Optional.ofNullable(generateToken(email, dateTime));
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
-                return null;
+                return Optional.empty();
             }
-            loggedInUsers.put(token, dateTime);
+            loggedInUsers.put(token.get(), dateTime);
             return token;
         }
-        return null;
+        return Optional.empty();
+    }
+
+    public void logOut(String token) {
+        loggedInUsers.remove(token);
     }
 
     private boolean isRegistered(String email, String password) throws UnsupportedEncodingException {
