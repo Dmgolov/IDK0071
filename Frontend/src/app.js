@@ -1,6 +1,21 @@
+import {inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
+import {FetchConfig} from 'aurelia-authentication';
 import {AuthenticateStep} from 'aurelia-authentication';
 
+
+@inject(Router,FetchConfig)
 export class App {
+  constructor(router, fetchConfig) {
+    this.router = router;
+    this.fetchConfig = fetchConfig;
+  }
+
+  activate() {
+    // this will add the interceptor for the Authorization header to the HttpClient singleton
+    this.fetchConfig.configure();
+  }
+
   configureRouter(config, router) {
         this.router = router;
 

@@ -1,19 +1,34 @@
 import {inject} from "aurelia-framework";
-import {HttpClient, json} from "aurelia-fetch-client";
+// import {HttpClient, json} from "aurelia-fetch-client";
 import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
+import {Endpoint} from 'aurelia-api';
 
 import environment from '../environment';
 
-@inject(UtilityInfo, Router, AuthService)
+@inject(UtilityInfo, Router, AuthService, Endpoint.of('auth'))
 export class Home {
-  constructor(utilityInfo, router, authService) {
+  constructor(utilityInfo, router, authService, authEndpoint) {
     this.utilityInfo = utilityInfo;
     this.router = router;
     this.authService = authService;
+    this.authEndpoint = authEndpoint;
 
     // console.log(this.router);
+  }
+
+  attached() {
+    this.getUsername();
+  }
+
+  getUsername() {
+    if (this.authService.isAuthenticated()) {
+      this.authEndpoint.find('user')
+      .then(data => {
+        console.log(data);
+      });
+    }
   }
 
   signOut() {

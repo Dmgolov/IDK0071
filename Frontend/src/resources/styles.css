@@ -21,12 +21,12 @@
   text-align: center;
   padding-bottom: 50px;
   font-family: 'Unibody-pixel';
-  font-weight: bold;
 }
 .custom-logo-container p {
   margin: 0px;
 }
 .custom-logo-container p:first-child {
+  font-weight: bold;
 }
 
 
