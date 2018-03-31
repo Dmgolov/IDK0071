@@ -39,22 +39,21 @@ public class AccountService {
         userRepository.save(user);
     }
 
-    public String logIn(String email, String password) throws UnsupportedEncodingException {
+    public Optional<String> logIn(String email, String password) throws UnsupportedEncodingException {
         if (isRegistered(email, password)) {
             LocalDateTime dateTime = LocalDateTime.now();
             Optional<String> token = Optional.ofNullable(generateToken(email, dateTime));
             while (!token.isPresent() || loggedInUsers.containsKey(token.get())) {
                 token = Optional.ofNullable(generateToken(email, dateTime));
             }
-            String stringToken = token.get();
             Optional<User> user = userRepository.getUserByEmail(email);
             if (user.isPresent()) {
                 loggedInUsers.put(token.get(), dateTime);
-                userTokens.put(stringToken, user.get().getName());
-                return "{\"token\":\"" + stringToken + "\",\"username\":\"" + user.get().getName() + "\",\"result\":\"failed\"}";
+                userTokens.put(token.get(), user.get().getName());
+                return token;
             }
         }
-        return "{\"token\":null,\"username\":null,\"result\":\"failed\"}";
+        return Optional.empty();
     }
 
     public void logOut(String token) {
