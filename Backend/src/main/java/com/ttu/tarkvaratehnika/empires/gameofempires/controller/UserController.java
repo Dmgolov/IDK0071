@@ -65,6 +65,13 @@ public class UserController {
         return "{\"result\":\"failed\"}";
     }
 
+    @GetMapping(path = "/auth/user")
+    public @ResponseBody String getUsername(@RequestHeader(name = "Authorization", required = false) String token) {
+        Optional<String> username = accountService.getUsernameForToken(token);
+        if (username.isPresent()) return "{\"username\":\"" + username.get() + "\", \"result\":\"success\"}";
+        return "{\"username\":null,\"result\":\"failed\"}";
+    }
+
     //TODO: change depending on how templates will be implemented
     @RequestMapping(path = "/template/new")
     public @ResponseBody String uploadTemplate(@RequestParam String username, @RequestParam String pass,

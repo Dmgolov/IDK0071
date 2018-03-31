@@ -19,6 +19,7 @@ import java.util.*;
 public class AccountService {
 
     private Map<String, LocalDateTime> loggedInUsers = new HashMap<>();
+    private Map<String, String> userTokens = new HashMap<>();
     private UserRepository userRepository;
 
     @Autowired
@@ -45,10 +46,11 @@ public class AccountService {
             while (!token.isPresent() || loggedInUsers.containsKey(token.get())) {
                 token = Optional.ofNullable(generateToken(email, dateTime));
             }
-            loggedInUsers.put(token.get(), dateTime);
             String stringToken = token.get();
             Optional<User> user = userRepository.getUserByEmail(email);
             if (user.isPresent()) {
+                loggedInUsers.put(token.get(), dateTime);
+                userTokens.put(stringToken, user.get().getName());
                 return "{\"token\":\"" + stringToken + "\",\"username\":\"" + user.get().getName() + "\",\"result\":\"failed\"}";
             }
         }
@@ -57,6 +59,7 @@ public class AccountService {
 
     public void logOut(String token) {
         loggedInUsers.remove(token);
+        userTokens.remove(token);
     }
 
     private boolean isRegistered(String email, String password) throws UnsupportedEncodingException {
@@ -111,8 +114,13 @@ public class AccountService {
                 return true;
             } else {
                 loggedInUsers.remove(token);
+                userTokens.remove(token);
             }
         }
         return false;
+    }
+
+    public Optional<String> getUsernameForToken(String token) {
+        return Optional.ofNullable(userTokens.get(token));
     }
 }
