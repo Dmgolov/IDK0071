@@ -1,19 +1,21 @@
+/* Custom elements CSS */
+.custom-logo-container{
+  font-size: 35px;
+  text-align: center;
+  padding-bottom: 50px;
+}
+.custom-logo-container p {
+  margin: 0px;
+}
+
+
 /* Home page CSS */
 .home-main-container {
-
 }
 .home-content-container {
   width: 300px;
   margin: auto;
   margin-top: 100px;
-}
-.home-logo-container{
-  font-size: 35px;
-  text-align: center;
-  padding-bottom: 50px;
-}
-.home-logo-container p {
-  margin: 0px;
 }
 .home-buttons-container {
   color: red;
@@ -34,9 +36,9 @@
   width: 296px;
 }
 
+
 /* Lobby page CSS */
 .lobby-main-container {
-
 }
 .lobby-content-container {
   width: 1000px;
@@ -56,7 +58,6 @@
   padding: 25px 0px 10px 0px;
 }
 .lobby-game-options-container {
-
 }
 .lobby-players-container {
   float: left;
@@ -95,7 +96,6 @@
   display: inline-block;
 }
 .lobby-nation-points-cell {
-
 }
 .lobby-prelaunch-container {
   display: block;
@@ -110,22 +110,12 @@
   width: 1000px;
   margin: auto;
 }
-.game-playerTable td {
-  opacity: 0.5;
-  border: 1px solid #333;
-  padding: 5px;
-}
-.game-playerTable:hover td {
-  opacity: 100;
+
+
+/* Game page CSS */
+.game-main-container {
 }
 .game-content-container {
-}
-.game-stats-container {
-  position: absolute;
-  z-index: 2;
-}
-.game-playtime-container {
-  font-size: 25px;
 }
 .game-playfield-container {
   position: relative;
@@ -136,4 +126,23 @@
   position: absolute;
   z-index: 1;
   margin: auto;
+}
+.game-stats-container {
+  position: absolute;
+  z-index: 2;
+}
+.game-playtime-container {
+  font-size: 25px;
+}
+.game-players-container {
+}
+.game-playerTable {
+}
+.game-playerTable td {
+  opacity: 0.5;
+  border: 1px solid #333;
+  padding: 5px;
+}
+.game-playerTable:hover td {
+  opacity: 100;
 }
