@@ -1,26 +1,25 @@
-import {inject} from "aurelia-framework";
-import {HttpClient, json} from "aurelia-fetch-client";
+import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
+import {AuthService} from 'aurelia-authentication';
+import {Endpoint} from 'aurelia-api';
 
-import environment from '../environment';
-
-@inject(UtilityInfo, Router)
+@inject(UtilityInfo, Router, AuthService, Endpoint.of('auth'), Endpoint.of('lobby'))
 export class Lobby {
-  constructor(utilityInfo, router) {
+  constructor(utilityInfo, router, authService, authEndpoint, lobbyEndpoint) {
     this.utilityInfo = utilityInfo;
+    this.utilityInfo.requestUsernameUpdate();
     this.router = router;
-
-    // console.log(this.utilityInfo);
+    this.authService = authService;
+    this.authEndpoint = authEndpoint;
+    this.lobbyEndpoint = lobbyEndpoint;
 
     this.canDisplayNationOptions = this.utilityInfo.gameMode !== "";
 
-    this.players;
-    this.authPlayer;  // here will be written authenticated player
-    this.setPlayers();
+    this.players = [];
+    this.authPlayer;
 
-    this.nationPoints;  // will be asked from server
-    this.setDefaultSettings();
+    this.nationPoints;
 
     this.nationAttributes = [
       [new Attribute("Vitality", 0), new Attribute("Reproduction", 0)],
@@ -29,10 +28,16 @@ export class Lobby {
     ];
 
     this.gameStartMessage;
+    this.playersAreReady = false;
+
+    this.timerId;
+  }
+
+  attached() {
+    this.setPlayers();
+    this.setDefaultSettings();
     this.setGameStartMessage(false);
-
-    this.timerId = setInterval(this.updatePlayers.bind(this), 1000);
-
+    this.timerId = setInterval(this.update.bind(this), 1000);
   }
 
   changeNationAttributeValue(name, points) {
@@ -57,38 +62,23 @@ export class Lobby {
   }
 
   sendReadyStateInfo() {
-    let client = new HttpClient();
-
     this.authPlayer.isReady = !this.authPlayer.isReady;
-
     let info = this.getReadyStateInfo();
 
-    // console.log(json(info));
-
-    client.fetch("http://localhost:8080/lobby/ready", {
-      "method": "POST",
-      "body": json(info),
-      headers: {
-        'Origin': 'http://localhost:8080',
-        'Content-Type': 'application/json'
-      }
-
-    })
-      .then(response => response.json())
-      .then(data => {
-        // console.log(json(data));
-    });
-
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.post('ready', info)
+      .then()
+      .catch(console.error);
+    }
   }
 
   updatePlayers() {
-    let client = new HttpClient();
-
-    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.utilityInfo.lobbyId)
-      .then(response => response.json())
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.post('check', {
+        "lobbyId": this.utilityInfo.lobbyId
+      })
       .then(data => {
-        // console.log(json(data));
-        let playersAreReady = true;
+        this.playersAreReady = true;
         for(let updatedPlayer of data) {
           let addNewPlayer = true;
           for(let player of this.players) {
@@ -98,76 +88,71 @@ export class Lobby {
             }
           }
           if(addNewPlayer) {
-            let temporaryPlayer = new Player(updatedPlayer.name, updatedPlayer.isReady);
-            this.players.push(temporaryPlayer);
+            let newPlayer = new Player(updatedPlayer.name, updatedPlayer.isReady);
+            this.players.push(newPlayer);
           }
           if(updatedPlayer.isReady === false) {
-            playersAreReady = false;
+            this.playersAreReady = false;
           }
         }
-        if(playersAreReady) {
-          this.setGameStartMessage(true);
-          clearInterval(this.timerId);
-          this.router.navigate("game");
-        }
-    });
-  }
-
-  getAuthPlayer() {
-    for(let player of this.players) {
-      if(player.name === this.utilityInfo.username) {
-        return player;
-      }
+      })
+      .catch(console.error);
     }
   }
 
+  startGame() {
+    if(this.playersAreReady) {
+      this.setGameStartMessage(true);
+      clearInterval(this.timerId);
+      this.router.navigate("game");
+    }
+  }
+
+  update() {
+    this.updatePlayers();
+    this.startGame();
+  }
+
   setPlayers() {
-    let client = new HttpClient();
-    let players = [];
-
-    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.utilityInfo.lobbyId)
-      .then(response => response.json())
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.post('check', {
+        "lobbyId": this.utilityInfo.lobbyId
+      })
       .then(data => {
-        for(let player of data) {
-              players.push(new Player(player.name, player.isReady));
+        for(let playerData of data) {
+          let player = new Player(playerData.name, playerData.isReady);
+          if(player.name === this.utilityInfo.username) {
+            this.authPlayer = player;
+          }
+          this.players.push(player);
         }
-        this.players = players;
-        this.authPlayer = this.getAuthPlayer();
-        // console.log(json(this.players));
-        // console.log(json(this.authPlayer));
-    });
-
+      })
+      .catch(console.error);
+    }
   }
 
   setDefaultSettings() {
-    let client = new HttpClient();
-
-    client.fetch("http://localhost:8080/lobby/defaultSettings")
-      .then(response => response.json())
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.find('defaultSettings')
       .then(data => {
         this.nationPoints = data.nationPoints;
-        // console.log(this.nationPoints);
-    });
+      })
+      .catch(console.error);
+    }
   }
 
   sendGameMode(mode) {
-    let client = new HttpClient();
-
     this.utilityInfo.gameMode = mode;
     this.canDisplayNationOptions = this.utilityInfo.gameMode !== "";
 
-    client.fetch("http://localhost:8080/lobby/mode", {
-      "method": "POST",
-      "body": json({'mode': mode, 'lobbyId': this.utilityInfo.lobbyId}),
-      headers: {
-        'Origin': 'http://localhost:8080',
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        // console.log(json(data));
-    });
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.post('mode', {
+        "mode": mode,
+        "lobbyId": this.utilityInfo.lobbyId
+      })
+      .then()
+      .catch(console.error);
+    }
   }
 
   setGameStartMessage(ready) {

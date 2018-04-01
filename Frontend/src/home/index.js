@@ -1,10 +1,8 @@
-import {inject} from "aurelia-framework";
+import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
-
-import environment from '../environment';
 
 @inject(UtilityInfo, Router, AuthService, Endpoint.of('auth'), Endpoint.of('lobby'))
 export class Home {
@@ -17,16 +15,7 @@ export class Home {
   }
 
   attached() {
-    this.getUsername();
-  }
-
-  getUsername() {
-    if (this.authService.isAuthenticated()) {
-      this.authEndpoint.find('user')
-      .then(data => {
-        this.utilityInfo.username = data.username;
-      });
-    }
+    this.utilityInfo.requestUsernameUpdate();
   }
 
   signOut() {
@@ -40,7 +29,7 @@ export class Home {
       })
       .then(data => {
         this.utilityInfo.lobbyId = data.lobbyId;
-        this.router.navigate("lobby");
+        this.router.navigate('lobby');
       })
       .catch(console.error);
     }
@@ -48,14 +37,19 @@ export class Home {
 
   connectToLobby() {
     if (this.authService.isAuthenticated()) {
+      console.log({
+        "playerName": this.utilityInfo.username,
+        "lobbyId": this.utilityInfo.lobbyId
+      });
       this.lobbyEndpoint.post('connect', {
         "playerName": this.utilityInfo.username,
         "lobbyId": this.utilityInfo.lobbyId
       })
       .then(data => {
-        if (data.status !== "failed") {
+        console.log(data);
+        if (data.status !== 'failed') {
           this.utilityInfo.gameMode = data.gameMode;
-          this.router.navigate("lobby");
+          this.router.navigate('lobby');
         }
       })
       .catch(console.error);

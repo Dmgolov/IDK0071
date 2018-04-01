@@ -10,8 +10,8 @@ export default {
   signupUrl: 'signup',
   logoutUrl: 'signout',
   logoutMethod: 'get',
-  profileUrl: 'me',
-  unlinkUrl: 'me/unlink',
+  profileUrl: 'user',
+  unlinkUrl: 'unlink',
   storageChangedReload: true,    // ensure secondary tab reloading after auth status changes
   expiredRedirect: 1,            // redirect to logoutRedirect after token expiration
   providers: {

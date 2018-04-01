@@ -7,7 +7,7 @@
         <button click.trigger="sendGameMode('multi')" disabled.bind="canDisplayNationOptions" css="background-color: ${lobbyInfo.gameMode === 'multi' ? 'green; color: white' : ''}">Multiplayer</button>
       </div>
       <div css="display: ${canDisplayNationOptions ? '': 'none'}">
-        <div class="lobby-lobby-id-info">Lobby id is ${lobbyInfo.lobbyId}</div>
+        <div class="lobby-lobby-id-info">Lobby id is ${utilityInfo.lobbyId}</div>
         <div class="lobby-game-options-container">
           <div class="lobby-players-container">
             <table>

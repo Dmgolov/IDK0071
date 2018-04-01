@@ -7,9 +7,9 @@ export function configure(aurelia) {
     /* setup the api endpoints first (if desired) */
     .plugin('aurelia-api', configure => {
       configure
-        .registerEndpoint('auth', 'http://localhost:8080/auth/')
-        .registerEndpoint('lobby', 'http://localhost:8080/lobby/')
-        .registerEndpoint('game', 'http://localhost:8080/game/');
+        .registerEndpoint('auth', environment.serverUrlBase + 'auth/')
+        .registerEndpoint('lobby', environment.serverUrlBase + 'lobby/')
+        .registerEndpoint('game', environment.serverUrlBase + 'game/');
     })
     /* configure aurelia-authentication */
     .plugin('aurelia-authentication', baseConfig => {
