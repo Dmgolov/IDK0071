@@ -4,14 +4,13 @@ import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
 
-@inject(UtilityInfo, Router, AuthService, Endpoint.of('auth'), Endpoint.of('lobby'))
+@inject(UtilityInfo, Router, AuthService, Endpoint.of('lobby'))
 export class Lobby {
-  constructor(utilityInfo, router, authService, authEndpoint, lobbyEndpoint) {
+  constructor(utilityInfo, router, authService, lobbyEndpoint) {
     this.utilityInfo = utilityInfo;
     this.utilityInfo.requestUsernameUpdate();
     this.router = router;
     this.authService = authService;
-    this.authEndpoint = authEndpoint;
     this.lobbyEndpoint = lobbyEndpoint;
 
     this.canDisplayNationOptions = this.utilityInfo.gameMode !== "";

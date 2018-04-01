@@ -1,20 +1,22 @@
-import {inject} from "aurelia-framework";
-import {HttpClient, json} from "aurelia-fetch-client";
+import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
+import {AuthService} from 'aurelia-authentication';
+import {Endpoint} from 'aurelia-api';
 
-import environment from '../environment';
-
-@inject(UtilityInfo, Router)
+@inject(UtilityInfo, Router, AuthService, Endpoint.of('lobby'), Endpoint.of('game'))
 export class Game {
   // this.gameCanvas: HTMLCanvasElement;
-  constructor(utilityInfo, router) {
+  constructor(utilityInfo, router, authService, lobbyEndpoint, gameEndpoint) {
     this.utilityInfo = utilityInfo;
+    this.utilityInfo.requestUsernameUpdate();
     this.router = router;
+    this.authService = authService;
+    this.lobbyEndpoint = lobbyEndpoint;
+    this.gameEndpoint = gameEndpoint;
 
-    this.players;
-    this.authPlayer;  // here will be written authenticated player
-    this.setPlayers();
+    this.players = [];
+    this.authPlayer;
 
     this.map;
 
@@ -24,68 +26,54 @@ export class Game {
   }
 
   attached() {
+    this.setPlayers();
     this.setMap();
   }
 
   //  get players from server and initialize them
   setPlayers() {
-    let client = new HttpClient();
-    let players = [];
-
-    client.fetch("http://localhost:8080/lobby/check?lobbyId=" + this.utilityInfo.lobbyId)
-      .then(response => response.json())
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.post('check', {
+        "lobbyId": this.utilityInfo.lobbyId
+      })
       .then(data => {
-        for(let player of data) {
-              players.push(new Player(player.name));
+        for(let playerData of data) {
+          let player = new Player(playerData.name, playerData.isReady);
+          if(player.name === this.utilityInfo.username) {
+            this.authPlayer = player;
+          }
+          this.players.push(player);
         }
-        this.players = players;
-        this.authPlayer = this.getAuthPlayer();
-    });
-  }
-
-  //  get authenticated player from players array
-  getAuthPlayer() {
-    for(let player of this.players) {
-      if(player.name === this.utilityInfo.username) {
-        return player;
-      }
+      })
+      .catch(console.error);
     }
   }
 
   setMap() {
-    let client = new HttpClient();
-
-    client.fetch("http://localhost:8080/game/mapSettings?lobbyId=" + this.utilityInfo.lobbyId)
-      .then(response => response.json())
+    if (this.authService.isAuthenticated()) {
+      this.gameEndpoint.post('mapSettings', {
+        "lobbyId": this.utilityInfo.lobbyId
+      })
       .then(data => {
-        // console.log("set map response:");
-        // console.log(data);
-
         this.map = new GameMap();
 
         this.map.height = data.height;
         this.map.width = data.width;
 
-        // console.log("this.gameCanvas: ");
-        // console.log(this.gameCanvas);
-
         this.gameCanvas.height = window.innerHeight;
         this.gameCanvas.width = window.innerWidth;
 
-        // moved code here from attached() method, because methods were called before this method is ended
         this.map.cellSize = this.calculateCellSize();
         this.adaptMapSize();
         this.playfieldContainer.style.width = this.map.width + "px";
         this.map.context = this.gameCanvas.getContext('2d');
         this.setInitialMap();
-        // this.timerId = setInterval(this.updateMap.bind(this), 100);
-        // this.updateMap();  --> was moved into setInitalMap()
-      });
+      })
+      .catch(console.error);
+    }
   }
 
   calculateCellSize() {
-    // console.log("canvas height: " + this.gameCanvas.height);
-    // console.log("map height: " + this.map.height);
     let height = Math.floor(this.gameCanvas.height / this.map.height);
     let width = Math.floor(this.gameCanvas.width / this.map.width);
     return height < width ? height : width;
@@ -101,6 +89,24 @@ export class Game {
     this.gameCanvas.width = this.map.width;
   }
 
+  setInitialMap() {
+    if (this.authService.isAuthenticated()) {
+      this.gameEndpoint.post('initialMap', {
+        "lobbyId": this.utilityInfo.lobbyId
+      })
+      .then(data => {
+        for(let cell of data) {
+          cell.x = cell.x * this.map.cellSize;
+          cell.y = cell.y * this.map.cellSize;
+          this.map.cells.push(cell);
+        }
+        this.drawInitialMap();
+        this.updateMap();
+      })
+      .catch(console.error);
+    }
+  }
+
   drawInitialMap() {
     const context = this.map.context;
     const cellSize = this.map.cellSize;
@@ -110,60 +116,16 @@ export class Game {
     }
   }
 
-  setInitialMap() {
-    let client = new HttpClient();
-
-    client.fetch("http://localhost:8080/game/initialMap?lobbyId=" + this.utilityInfo.lobbyId)
-      .then(response => response.json())
-      .then(data => {
-        // console.log("set initial map response:");
-        // console.log(data);
-        this.map.cells = [];
-        for(let cell of data) {
-          cell.x = cell.x * this.map.cellSize;
-          cell.y = cell.y * this.map.cellSize;
-          this.map.cells.push(cell);
-        }
-        this.drawInitialMap();
-        this.updateMap();
-      });
-  }
-
-  drawUpdatedCell(cell) {
-    const context = this.map.context;
-    const cellSize = this.map.cellSize;
-
-    context.fillStyle = cell.color;
-    context.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
-  }
-
   updateMap() {
-    let client = new HttpClient();
-    let info = {
-      'lobbyId': this.utilityInfo.lobbyId,
-      'turnNr': this.stepCounter,
-      'name': this.utilityInfo.username
-    };
-    let requestInfo = json(info);
-    // console.log("update map request:");
-    // console.log(requestInfo);
-
-    client.fetch("http://localhost:8080/game/state", {
-      "method": "POST",
-      "body": requestInfo,
-      headers: {
-        'Origin': 'http://localhost:8080',
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => response.json())
+    if (this.authService.isAuthenticated()) {
+      this.gameEndpoint.post('state', {
+        'lobbyId': this.utilityInfo.lobbyId,
+        'turnNr': this.stepCounter,
+        'name': this.utilityInfo.username
+      })
       .then(data => {
-        // console.log("update map response:");
-        // console.log(data);
-        // console.log(this.timerId);
         if(data.status === "finished") {
-          // clearInterval(this.timerId);
-          // TODO: ask for winner info and depict it
+          // TODO: ask for winner info and show it
         } else if (data.status === "received") {
           setTimeout(() => {}, 200);
           this.updateMap();
@@ -175,11 +137,16 @@ export class Game {
           setTimeout(() => {}, 200);
           this.updateMap();
         }
-      });
+      })
+      .catch(console.error);
+    }
   }
 
-  nextStep() {
-    this.stepCounter += 1;
+  drawUpdatedCell(cell) {
+    const context = this.map.context;
+    const cellSize = this.map.cellSize;
+    context.fillStyle = cell.color;
+    context.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
   }
 
 }
@@ -197,7 +164,7 @@ class GameMap {
     this.width = 0;
     this.cellSize = 0;
     this.context = null;
-    this.cells = null;
+    this.cells = [];
   }
 }
 
