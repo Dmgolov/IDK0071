@@ -47,8 +47,9 @@ public class LobbyController {
         return "{\"nationPoints\":" + SessionSettings.NATION_POINTS + "}";
     }
 
-    @GetMapping(path = "/game/mapSettings")
-    public @ResponseBody String getMapSettings(@RequestParam long lobbyId) {
+    @PostMapping(path = "/game/mapSettings", consumes = "application/json")
+    public @ResponseBody String getMapSettings(@RequestBody String data) {
+        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
         Optional<GameLobby> searchedLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findFirst();
         if (searchedLobby.isPresent()) {
