@@ -122,8 +122,9 @@ public class LobbyController {
         return "{\"status\":\"ready\"}";
     }
 
-    @RequestMapping(path = "/lobby/check")
-    public @ResponseBody String checkPlayerState(@RequestParam long lobbyId) {
+    @PostMapping(path = "/lobby/check", consumes = "application/json")
+    public @ResponseBody String checkPlayerState(@RequestBody String data) {
+        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
         Optional<GameLobby> gameLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findAny();
         return gameLobby.isPresent() ? gson.toJson(gameLobby.get().checkPlayerState()) : "{\"status\":\"notFound\"}";
