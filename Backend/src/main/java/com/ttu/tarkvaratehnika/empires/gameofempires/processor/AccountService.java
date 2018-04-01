@@ -48,8 +48,9 @@ public class AccountService {
             }
             Optional<User> user = userRepository.getUserByEmail(email);
             if (user.isPresent()) {
-                loggedInUsers.put(token.get(), dateTime);
-                userTokens.put(token.get(), user.get().getName());
+                String stringToken = "Bearer " + token.get();
+                loggedInUsers.put(stringToken, dateTime);
+                userTokens.put(stringToken, user.get().getName());
                 return token;
             }
         }
