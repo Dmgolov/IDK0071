@@ -1,5 +1,4 @@
 import {inject} from "aurelia-framework";
-// import {HttpClient, json} from "aurelia-fetch-client";
 import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
@@ -7,15 +6,14 @@ import {Endpoint} from 'aurelia-api';
 
 import environment from '../environment';
 
-@inject(UtilityInfo, Router, AuthService, Endpoint.of('auth'))
+@inject(UtilityInfo, Router, AuthService, Endpoint.of('auth'), Endpoint.of('lobby'))
 export class Home {
-  constructor(utilityInfo, router, authService, authEndpoint) {
+  constructor(utilityInfo, router, authService, authEndpoint, lobbyEndpoint) {
     this.utilityInfo = utilityInfo;
     this.router = router;
     this.authService = authService;
     this.authEndpoint = authEndpoint;
-
-    // console.log(this.router);
+    this.lobbyEndpoint = lobbyEndpoint;
   }
 
   attached() {
@@ -26,7 +24,7 @@ export class Home {
     if (this.authService.isAuthenticated()) {
       this.authEndpoint.find('user')
       .then(data => {
-        console.log(data);
+        this.utilityInfo.username = data.username;
       });
     }
   }
@@ -36,49 +34,31 @@ export class Home {
   }
 
   createLobby() {
-    // console.log(this.utilityInfo);
-
-    let client = new HttpClient();
-    client.fetch(environment.apiBaseUrl + "/lobby/new", {
-      "method": "POST",
-      "body": json({"playerName": this.utilityInfo.username}),
-      headers: {
-        'Origin': environment.apiBaseUrl,
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => response.json())
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.post('new', {
+        "playerName": this.utilityInfo.username
+      })
       .then(data => {
         this.utilityInfo.lobbyId = data.lobbyId;
-        // console.log(this.utilityInfo);
-
         this.router.navigate("lobby");
-    });
+      })
+      .catch(console.error);
+    }
   }
 
   connectToLobby() {
-    // console.log(this.utilityInfo);
-
-    let client = new HttpClient();
-    client.fetch(environment.apiBaseUrl + "/lobby/connect", {
-      "method": "POST",
-      "body": json({
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.post('connect', {
         "playerName": this.utilityInfo.username,
         "lobbyId": this.utilityInfo.lobbyId
-      }),
-      headers: {
-        'Origin': environment.apiBaseUrl,
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => response.json())
+      })
       .then(data => {
-        // console.log("this was connect response");
-        // console.log(data);
         if (data.status !== "failed") {
           this.utilityInfo.gameMode = data.gameMode;
           this.router.navigate("lobby");
         }
-    });
+      })
+      .catch(console.error);
+    }
   }
 }

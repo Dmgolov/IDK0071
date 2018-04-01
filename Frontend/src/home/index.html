@@ -4,15 +4,16 @@
     <div class="home-content-container">
       <logo></logo>
       <div class="home-menu-container">
-        <label>Player: ${utilityInfo.username}</label><br>
+        <p if.bind="authService.authenticated">Player: ${utilityInfo.username}</p>
         <button class="home-half-button" click.delegate="router.navigate('signIn')">Sign In</button>
         <button class="home-half-button" click.delegate="router.navigate('signUp')">Sign Up</button>
-        <button click.delegate="signOut()">Sign Out</button>
         <button click.delegate="createLobby()">Create Lobby</button>
         <button click.delegate="connectToLobby()">Connect to lobby</button>
         <input placeholder="Lobby ID" value.bind="utilityInfo.lobbyId">
         <button>Upload map template</button>
         <button>Browse map templates</button>
+        <br>
+        <button click.delegate="signOut()">Sign Out</button>
       </div>
     </div>
   </div>

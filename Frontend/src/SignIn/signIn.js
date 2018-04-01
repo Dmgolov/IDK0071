@@ -19,11 +19,11 @@ export class SignIn {
       return this.authService.login(this.email, this.password)
       // .then(response => response.json())
       .then(data => {
-        console.log(data);
+        // console.log(data);
       })
       .catch(err => {
         console.log("login failure");
-        console.log(err);
+        // console.log(err);
       });
   }
 

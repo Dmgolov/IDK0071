@@ -19,11 +19,11 @@ export class SignUp {
   signUp() {
     this.authService.signup(this.username, this.email, this.password)
       .then(data => {
-        console.log(data);
+        // console.log(data);
       })
       .catch(err => {
-          console.log("registration failure");
-          console.log(err);
+        console.log("registration failure");
+        // console.log(err);
       });
   }
 

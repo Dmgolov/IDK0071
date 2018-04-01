@@ -19,7 +19,7 @@
 .custom-logo-container{
   font-size: 35px;
   text-align: center;
-  padding-bottom: 50px;
+  padding-bottom: 25px;
   font-family: 'Unibody-pixel';
 }
 .custom-logo-container p {
@@ -40,6 +40,9 @@
 }
 .home-menu-container {
   text-align: center;
+}
+.home-menu-container p {
+  margin-top: 0px;
 }
 .home-menu-container button {
   text-align: center;

@@ -11,7 +11,7 @@ export class Lobby {
     this.utilityInfo = utilityInfo;
     this.router = router;
 
-    console.log(this.utilityInfo);
+    // console.log(this.utilityInfo);
 
     this.canDisplayNationOptions = this.utilityInfo.gameMode !== "";
 
