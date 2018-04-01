@@ -60,8 +60,9 @@ public class LobbyController {
         }
     }
 
-    @GetMapping(path = "/game/initialMap")
-    public @ResponseBody String getInitialMap(@RequestParam long lobbyId) {
+    @PostMapping(path = "/game/initialMap", consumes = "application/json")
+    public @ResponseBody String getInitialMap(@RequestBody String data) {
+        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
         Optional<GameLobby> searchedLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findFirst();
         if (searchedLobby.isPresent()) {
