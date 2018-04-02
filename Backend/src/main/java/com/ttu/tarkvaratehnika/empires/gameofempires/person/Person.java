@@ -1,10 +1,17 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.person;
 
+import com.google.gson.JsonArray;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Person implements BasicPerson {
@@ -52,7 +59,7 @@ public class Person implements BasicPerson {
     }
 
     @Override
-    public void act() {
+    public void act() throws IOException {
         if (!resistDisease()) { // if person dies, remove
             nation.removePersonFromCoordinates(positionX, positionY);
             return;
@@ -69,8 +76,9 @@ public class Person implements BasicPerson {
     }
 
     @Override
-    public List<Coordinates> getFreeNeighbourCells() {
+    public List<Coordinates> getFreeNeighbourCells() throws IOException {
         List<Coordinates> freeCells = new ArrayList<>();
+        List<Coordinates> lockCells = deadLocation();
         for (int x = -1; x < 2; x++) {
             for (int y = -1; y < 2; y++) {
                 if (x == 0 && y == 0) {
@@ -80,12 +88,26 @@ public class Person implements BasicPerson {
                 int newY = Math.floorMod(positionY + y, field.getMapHeight());
                 InGameObject object = field.getObjectInCell(newX, newY);
                 if (!(object instanceof Person)
-                        && !nation.getUpdatedPositions().containsKey(new Coordinates(newX, newY))) {
+                        && !nation.getUpdatedPositions().containsKey(new Coordinates(newX, newY)) && !lockCells.contains(new Coordinates(newX, newY))) {
                     freeCells.add(new Coordinates(newX, newY));
                 }
             }
         }
         return freeCells;
+    }
+
+    private List<Coordinates> deadLocation() throws IOException {
+        List<Coordinates> deadCells = new ArrayList<>();
+        Path path = Paths.get("C:\\uploadFiles\\gameMap.png");
+        BufferedImage imageForConvert = ImageIO.read(path.toFile());
+        JsonArray array = ImageConverter.convertMapWithRGBtoJSON(imageForConvert);
+        for (int i = 0; i <array.size(); i++){
+            String[] string = array.get(i).toString().split(",");
+            if (array.get(i).toString().contains("Ocean")){
+                deadCells.add(new Coordinates(Integer.parseInt(string[0].replaceAll("[\\D]", "")),Integer.parseInt(string[1].replaceAll("[\\D]", ""))));
+            }
+        }
+        return deadCells;
     }
 
     private boolean hasFreeNeighbourCells(List<Coordinates> neighbourCells) {
@@ -108,7 +130,7 @@ public class Person implements BasicPerson {
     @Override
     public boolean captureCell(Person another) {
         if (true){
-            
+
         }
         return strength > another.getStrength();
     }

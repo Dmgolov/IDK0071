@@ -7,6 +7,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.PersonValues;
 
+import java.io.IOException;
 import java.util.*;
 
 public class Nation implements Runnable {
@@ -30,7 +31,7 @@ public class Nation implements Runnable {
         field = session.getGameField();
     }
 
-    private void spread() {
+    private void spread() throws IOException {
         //here initiates finding new positions for people
         List<Person> tempPeople = new ArrayList<>(people);
         for (Person person : tempPeople) {
@@ -128,7 +129,11 @@ public class Nation implements Runnable {
     public void run() {
         while (isActive()) {
             //System.out.println("Spreading " + username);
-            spread();
+            try {
+                spread();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             //System.out.println("Ending turn " + username);
             synchronized (session) {
                 session.endTurn();

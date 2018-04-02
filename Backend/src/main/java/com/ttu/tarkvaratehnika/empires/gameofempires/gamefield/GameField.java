@@ -45,7 +45,7 @@ public class GameField {
 //        }
 //        System.out.println(array);
 //        return array;
-        Path path = Paths.get("C:\\uploadFiles\\worldMap.jpg");
+        Path path = Paths.get("C:\\uploadFiles\\gameMap.png");
         BufferedImage imageForConvert = ImageIO.read(path.toFile());
         return ImageConverter.convertMapWithRGBtoJSON(imageForConvert);
     }
