@@ -107,6 +107,9 @@ public class Person implements BasicPerson {
     //TODO: implement better way to compare stats
     @Override
     public boolean captureCell(Person another) {
+        if (true){
+            
+        }
         return strength > another.getStrength();
     }
 

@@ -3,7 +3,7 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.gamemap;
 // TODO: find a way to set different landscapes to different maps
 public enum GameMap {
     BASIC_MAP("basic", 100, 100),
-    LARGE_MAP("large", 25, 25),
+    LARGE_MAP("large", 1000, 500),
     EARTH("earth", 300, 200);
 
     private String mapName;

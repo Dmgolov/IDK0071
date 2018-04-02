@@ -1,5 +1,7 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
 import org.springframework.stereotype.Controller;
@@ -34,21 +36,19 @@ public class GameMapController {
         if (file.isEmpty()) {
             return "PLEASE, DO NOT UPLOAD EMPTY FILE";
         }
-
         try {
-
             byte[] bytes = file.getBytes();
             Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
             Files.write(path, bytes);
             BufferedImage imageForConvert = ImageIO.read(path.toFile());
             JsonArray convertedMap = ImageConverter.convertMapWithRGBtoJSON(imageForConvert);
-            byte[] mapToBytes = convertedMap.toString().getBytes();
-            Files.write(Paths.get(UPLOADED_FOLDER + "test.json"), mapToBytes);
-
+            try (Writer writer = new FileWriter(UPLOADED_FOLDER + "test.json")){
+                Gson gson = new GsonBuilder().create();
+                gson.toJson(convertedMap, writer);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return "UPLOADED";
     }
 }

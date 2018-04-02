@@ -2,11 +2,19 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.gamefield;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Land;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class GameField {
@@ -24,18 +32,22 @@ public class GameField {
         }
     }
 
-    public JsonArray getInitialMap() {
-        JsonArray array = new JsonArray();
-        for (int row = 0; row < getMapWidth(); row++) {
-            for (int col = 0; col < getMapHeight(); col++) {
-                JsonObject object = new JsonObject();
-                object.addProperty("x", row);
-                object.addProperty("y", col);
-                object.addProperty("color", Land.COLOR_HEX);
-                array.add(object);
-            }
-        }
-        return array;
+    public JsonArray getInitialMap() throws IOException {
+//        JsonArray array = new JsonArray();
+//        for (int row = 0; row < getMapWidth(); row++) {
+//            for (int col = 0; col < getMapHeight(); col++) {
+//                JsonObject object = new JsonObject();
+//                object.addProperty("x", row);
+//                object.addProperty("y", col);
+//                object.addProperty("color", Land.COLOR_HEX);
+//                array.add(object);
+//            }
+//        }
+//        System.out.println(array);
+//        return array;
+        Path path = Paths.get("C:\\uploadFiles\\worldMap.jpg");
+        BufferedImage imageForConvert = ImageIO.read(path.toFile());
+        return ImageConverter.convertMapWithRGBtoJSON(imageForConvert);
     }
 
     public InGameObject getObjectInCell(int x, int y) {
