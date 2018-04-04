@@ -164,6 +164,17 @@ public class LobbyController {
         return results.getOrDefault(lobbyId, "{\"winner\":\"notFound\"}");
     }
 
+    @PostMapping(path = "game/players", consumes = "application/json")
+    public @ResponseBody String getPlayerColors(@RequestBody String data) {
+        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
+        Optional<GameLobby> searchedLobby = lobbies.stream()
+                .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
+        if (searchedLobby.isPresent()) {
+            return gson.toJson(searchedLobby.get().getPlayerColors());
+        }
+        return "{\"status\":\"notFound\"}";
+    }
+
     //TODO: would be good, if results would be cleared from map after some time
     public void terminateLobby(GameLobby lobby, String winner, String color) {
         lobbies.remove(lobby);

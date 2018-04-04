@@ -262,4 +262,15 @@ public class GameLobby {
             return generateNationColor();
         }
     }
+
+    public List<Map<String, String>> getPlayerColors() {
+        List<Map<String, String>> data = new ArrayList<>();
+        for (Nation nation : nations) {
+            Map<String, String> playerData = new HashMap<>();
+            playerData.put("name", nation.getUsername());
+            playerData.put("color", nation.getTeamColor());
+            data.add(playerData);
+        }
+        return data;
+    }
 }
