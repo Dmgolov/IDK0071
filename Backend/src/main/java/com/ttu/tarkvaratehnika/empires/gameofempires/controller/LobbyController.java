@@ -167,6 +167,6 @@ public class LobbyController {
     //TODO: would be good, if results would be cleared from map after some time
     public void terminateLobby(GameLobby lobby, String winner, String color) {
         lobbies.remove(lobby);
-        results.put(lobby.getLobbyId(), "{\"winner\":\"" + winner + "\", \"color\":\"" + color + "\"}");
+        results.put(lobby.getLobbyId(), "{\"name\":\"" + winner + "\", \"color\":\"" + color + "\"}");
     }
 }
