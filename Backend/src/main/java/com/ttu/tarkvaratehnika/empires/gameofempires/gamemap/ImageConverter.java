@@ -2,11 +2,16 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.gamemap;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImageConverter {
+
+    public static List<Coordinates> DEAD_CELLS = new ArrayList<>();
 
     public static JsonArray convertMapWithRGBtoJSON(BufferedImage image) {
         int width = image.getWidth();
@@ -35,6 +40,7 @@ public class ImageConverter {
                 } else if (deg >= 235 && deg < 241){
                     tileName = "Ocean";
                     hexColor = "#000070";
+                    DEAD_CELLS.add(new Coordinates(col, row));
                 }
                 JsonObject object = new JsonObject();
                 object.addProperty("x", col);
@@ -46,5 +52,18 @@ public class ImageConverter {
         }
         return array;
     }
+//    private static List<Coordinates> deadLocation() throws IOException {
+//        Path path = Paths.get("C:\\uploadFiles\\gameMap.png");
+//        BufferedImage imageForConvert = ImageIO.read(path.toFile());
+//        JsonArray array = ImageConverter.convertMapWithRGBtoJSON(imageForConvert);
+//        for (int i = 0; i <array.size(); i++){
+//            String[] string = array.get(i).toString().split(",");
+//            if (array.get(i).toString().contains("Ocean")){
+//                deadCells.add(new Coordinates(Integer.parseInt(string[0].replaceAll("[\\D]", "")),Integer.parseInt(string[1].replaceAll("[\\D]", ""))));
+//            }
+//        }
+//        return deadCells;
+//    }
+
 
 }

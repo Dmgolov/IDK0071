@@ -32,6 +32,8 @@ public class Person implements BasicPerson {
 
     private Random random = new Random();
 
+    private List<Coordinates> deadCells = new ArrayList<>();
+
     private Person(Nation nation, GameField field) {
         this.nation = nation;
         this.field = field;
@@ -78,7 +80,6 @@ public class Person implements BasicPerson {
     @Override
     public List<Coordinates> getFreeNeighbourCells() throws IOException {
         List<Coordinates> freeCells = new ArrayList<>();
-        List<Coordinates> lockCells = deadLocation();
         for (int x = -1; x < 2; x++) {
             for (int y = -1; y < 2; y++) {
                 if (x == 0 && y == 0) {
@@ -88,7 +89,7 @@ public class Person implements BasicPerson {
                 int newY = Math.floorMod(positionY + y, field.getMapHeight());
                 InGameObject object = field.getObjectInCell(newX, newY);
                 if (!(object instanceof Person)
-                        && !nation.getUpdatedPositions().containsKey(new Coordinates(newX, newY)) && !lockCells.contains(new Coordinates(newX, newY))) {
+                        && !nation.getUpdatedPositions().containsKey(new Coordinates(newX, newY)) && !ImageConverter.DEAD_CELLS.contains(new Coordinates(newX, newY))) {
                     freeCells.add(new Coordinates(newX, newY));
                 }
             }
@@ -96,9 +97,8 @@ public class Person implements BasicPerson {
         return freeCells;
     }
 
-    private List<Coordinates> deadLocation() throws IOException {
-        List<Coordinates> deadCells = new ArrayList<>();
-        Path path = Paths.get("C:\\uploadFiles\\gameMap.png");
+    public List<Coordinates> deadLocation() throws IOException {
+        Path path = Paths.get("C:\\uploadFiles\\gameMap2.png");
         BufferedImage imageForConvert = ImageIO.read(path.toFile());
         JsonArray array = ImageConverter.convertMapWithRGBtoJSON(imageForConvert);
         for (int i = 0; i <array.size(); i++){
