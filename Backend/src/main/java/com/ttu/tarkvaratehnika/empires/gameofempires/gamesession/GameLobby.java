@@ -7,6 +7,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,7 @@ public class GameLobby {
         lobbyId = ++id;
     }
 
-    private void startSession() {
+    private void startSession() throws IOException {
         nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
         if (!gameField.isMapSet()) gameField.setGameMap(SessionSettings.DEFAULT_MAP);
         gameField.loadField();
@@ -96,7 +97,7 @@ public class GameLobby {
         return false;
     }
 
-    public void readyCheck(String username, boolean ready, Map<String, Integer> stats) {
+    public void readyCheck(String username, boolean ready, Map<String, Integer> stats) throws IOException {
         nations.stream()
                 .filter(nation -> nation.getUsername().equals(username))
                 .findFirst().ifPresent(nation -> {

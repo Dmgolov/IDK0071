@@ -5,6 +5,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Terrain;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 
 import javax.imageio.ImageIO;
@@ -89,25 +90,13 @@ public class Person implements BasicPerson {
                 int newY = Math.floorMod(positionY + y, field.getMapHeight());
                 InGameObject object = field.getObjectInCell(newX, newY);
                 if (!(object instanceof Person)
-                        && !nation.getUpdatedPositions().containsKey(new Coordinates(newX, newY)) && !ImageConverter.DEAD_CELLS.contains(new Coordinates(newX, newY))) {
+                        && !nation.getUpdatedPositions().containsKey(new Coordinates(newX, newY))
+                        && object instanceof Terrain && ((Terrain) object).isPassable()) {
                     freeCells.add(new Coordinates(newX, newY));
                 }
             }
         }
         return freeCells;
-    }
-
-    public List<Coordinates> deadLocation() throws IOException {
-        Path path = Paths.get("C:\\uploadFiles\\gameMap2.png");
-        BufferedImage imageForConvert = ImageIO.read(path.toFile());
-        JsonArray array = ImageConverter.convertMapWithRGBtoJSON(imageForConvert);
-        for (int i = 0; i <array.size(); i++){
-            String[] string = array.get(i).toString().split(",");
-            if (array.get(i).toString().contains("Ocean")){
-                deadCells.add(new Coordinates(Integer.parseInt(string[0].replaceAll("[\\D]", "")),Integer.parseInt(string[1].replaceAll("[\\D]", ""))));
-            }
-        }
-        return deadCells;
     }
 
     private boolean hasFreeNeighbourCells(List<Coordinates> neighbourCells) {
@@ -129,18 +118,17 @@ public class Person implements BasicPerson {
     //TODO: implement better way to compare stats
     @Override
     public boolean captureCell(Person another) {
-        if (true){
-
-        }
         return strength > another.getStrength();
     }
 
     public void setStartingLocation() {
         positionX = random.nextInt(field.getMapWidth());
         positionY = random.nextInt(field.getMapHeight());
-        while (field.getObjectInCell(positionX, positionY) instanceof Person) {
+        InGameObject cell = field.getObjectInCell(positionX, positionY);
+        while (cell instanceof Person || cell instanceof Terrain && !((Terrain) cell).isPassable()) {
             positionX = random.nextInt(field.getMapWidth());
             positionY = random.nextInt(field.getMapHeight());
+            cell = field.getObjectInCell(positionX, positionY);
         }
         nation.addPerson(this);
     }
@@ -234,5 +222,10 @@ public class Person implements BasicPerson {
     @Override
     public String toString() {
         return "Person of " + nation.getUsername();
+    }
+
+    @Override
+    public String getColorHex() {
+        return nation.getTeamColor();
     }
 }

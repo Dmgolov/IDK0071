@@ -40,12 +40,6 @@ public class GameMapController {
             byte[] bytes = file.getBytes();
             Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
             Files.write(path, bytes);
-            BufferedImage imageForConvert = ImageIO.read(path.toFile());
-            JsonArray convertedMap = ImageConverter.convertMapWithRGBtoJSON(imageForConvert);
-            try (Writer writer = new FileWriter(UPLOADED_FOLDER + "test.json")){
-                Gson gson = new GsonBuilder().create();
-                gson.toJson(convertedMap, writer);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }

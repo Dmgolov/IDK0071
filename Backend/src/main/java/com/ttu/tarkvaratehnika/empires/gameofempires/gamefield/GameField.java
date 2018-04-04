@@ -2,19 +2,13 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.gamefield;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
-import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Land;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Terrain;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class GameField {
@@ -22,36 +16,30 @@ public class GameField {
     private GameMap gameMap;
     private InGameObject[][] field;
     private final Map<Coordinates, Person> lastUpdate = new HashMap<>();
+    private String mapName = "worldMap.png";
 
-    public void loadField() {
-        field = new InGameObject[gameMap.getMapWidth()][gameMap.getMapHeight()];
-        for (int row = 0; row < getMapWidth(); row++) {
-            for (int col = 0; col < getMapHeight(); col++) {
-                field[row][col] = new Land();
-            }
-        }
+    public void loadField() throws IOException {
+        field = ImageConverter.createField(mapName);
     }
 
     public JsonArray getInitialMap() throws IOException {
-//        JsonArray array = new JsonArray();
-//        for (int row = 0; row < getMapWidth(); row++) {
-//            for (int col = 0; col < getMapHeight(); col++) {
-//                JsonObject object = new JsonObject();
-//                object.addProperty("x", row);
-//                object.addProperty("y", col);
-//                object.addProperty("color", Land.COLOR_HEX);
-//                array.add(object);
-//            }
-//        }
-//        System.out.println(array);
-//        return array;
-        Path path = Paths.get("C:\\uploadFiles\\gameMap2.png");
-        BufferedImage imageForConvert = ImageIO.read(path.toFile());
-        return ImageConverter.convertMapWithRGBtoJSON(imageForConvert);
+        JsonArray array = new JsonArray();
+        System.out.println("Width " + getMapWidth());
+        System.out.println("Height " + getMapHeight());
+        for (int y = 0; y < getMapHeight(); y++) {
+            for (int x = 0; x < getMapWidth(); x++) {
+                JsonObject object = new JsonObject();
+                object.addProperty("x", x);
+                object.addProperty("y", y);
+                object.addProperty("color", field[y][x].getColorHex());
+                array.add(object);
+            }
+        }
+        return array;
     }
 
     public InGameObject getObjectInCell(int x, int y) {
-        return field[x][y];
+        return field[y][x];
     }
 
     public void clearLastUpdate() {
@@ -98,14 +86,15 @@ public class GameField {
         JsonArray updatedCellsAsJsonArray = new JsonArray();
         for (Coordinates coordinates : updatedCells.keySet()) {
             JsonObject singleCell = new JsonObject();
-            singleCell.addProperty("x", coordinates.getX());
-            singleCell.addProperty("y", coordinates.getY());
+            int x = coordinates.getX(), y = coordinates.getY();
+            singleCell.addProperty("x", x);
+            singleCell.addProperty("y", y);
             Optional<Person> optionalPerson = Optional.ofNullable(updatedCells.get(coordinates));
             if (optionalPerson.isPresent()) {
-                singleCell.addProperty("color", updatedCells.get(coordinates).getNation().getTeamColor());
+                singleCell.addProperty("color", updatedCells.get(coordinates).getColorHex());
             } else {
                 // TODO: redo so that returns actual color of terrain
-                singleCell.addProperty("color", Land.COLOR_HEX);
+                singleCell.addProperty("color", field[y][x].getColorHex());
             }
             updatedCellsAsJsonArray.add(singleCell);
         }
@@ -114,19 +103,19 @@ public class GameField {
 
     // private in order to restrict modification simultaneously from multiple threads
     private void addPersonToCell(Person person, int x, int y) {
-        InGameObject object = field[x][y];
+        InGameObject object = field[y][x];
         if (object instanceof Person) {
             object = ((Person) object).removeEffect();
         }
         person.addEffect(object);
-        field[x][y] = person;
+        field[y][x] = person;
     }
 
     // private in order to restrict modification simultaneously from multiple threads
     private void removePersonFromCell(int x, int y) {
-        InGameObject object = field[x][y];
+        InGameObject object = field[y][x];
         if (object instanceof Person) {
-            field[x][y] = ((Person) object).getEffectedBy();
+            field[y][x] = ((Person) object).getEffectedBy();
         }
     }
 
@@ -135,19 +124,15 @@ public class GameField {
     }
 
     public int getMapWidth() {
-        return field.length;
+        return field[0].length;
     }
 
     public int getMapHeight() {
-        return field[0].length;
+        return field.length;
     }
 
     public boolean isMapSet() {
         return gameMap != null;
-    }
-
-    public GameMap getGameMap() {
-        return gameMap;
     }
 
     public void setGameMap(GameMap gameMap) {

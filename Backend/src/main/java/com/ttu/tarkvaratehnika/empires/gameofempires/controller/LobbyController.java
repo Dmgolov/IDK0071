@@ -118,8 +118,14 @@ public class LobbyController {
         JsonObject jsonObject = gson.fromJson(json.get("player"), JsonObject.class);
         lobbies.stream()
                 .filter(lobby -> lobby.getLobbyId() == json.get("lobbyId").getAsLong())
-                .findFirst().ifPresent(lobby -> lobby.readyCheck(jsonObject.get("name").getAsString(),
-                jsonObject.get("isReady").getAsBoolean(), stats));
+                .findFirst().ifPresent(lobby -> {
+            try {
+                lobby.readyCheck(jsonObject.get("name").getAsString(),
+                        jsonObject.get("isReady").getAsBoolean(), stats);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         return "{\"status\":\"ready\"}";
     }
 
