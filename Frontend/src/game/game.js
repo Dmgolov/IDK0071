@@ -4,19 +4,19 @@ import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
 
-@inject(UtilityInfo, Router, AuthService, Endpoint.of('lobby'), Endpoint.of('game'))
+@inject(UtilityInfo, Router, AuthService, Endpoint.of('game'))
 export class Game {
   // this.gameCanvas: HTMLCanvasElement;
-  constructor(utilityInfo, router, authService, lobbyEndpoint, gameEndpoint) {
+  constructor(utilityInfo, router, authService, gameEndpoint) {
     this.utilityInfo = utilityInfo;
     this.utilityInfo.requestUsernameUpdate();
     this.router = router;
     this.authService = authService;
-    this.lobbyEndpoint = lobbyEndpoint;
     this.gameEndpoint = gameEndpoint;
 
     this.players = [];
     this.authPlayer;
+    // this.winner;
 
     this.map;
 
@@ -33,12 +33,12 @@ export class Game {
   //  get players from server and initialize them
   setPlayers() {
     if (this.authService.isAuthenticated()) {
-      this.lobbyEndpoint.post('check', {
+      this.gameEndpoint.post('players', {
         "lobbyId": this.utilityInfo.lobbyId
       })
       .then(data => {
         for(let playerData of data) {
-          let player = new Player(playerData.name, playerData.isReady);
+          let player = new Player(playerData.name, playerData.color);
           if(player.name === this.utilityInfo.username) {
             this.authPlayer = player;
           }
@@ -65,6 +65,7 @@ export class Game {
 
         this.map.cellSize = this.calculateCellSize();
         this.adaptMapSize();
+        this.playfieldContainer.style.height = this.map.height + 'px';
         this.playfieldContainer.style.width = this.map.width + "px";
         this.map.context = this.gameCanvas.getContext('2d');
         this.setInitialMap();
@@ -125,7 +126,7 @@ export class Game {
       })
       .then(data => {
         if(data.status === "finished") {
-          // TODO: ask for winner info and show it
+          this.requestWinnerData();
         } else if (data.status === "received") {
           setTimeout(() => {}, 200);
           this.updateMap();
@@ -149,11 +150,26 @@ export class Game {
     context.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
   }
 
+  requestWinnerData() {
+    if (this.authService.isAuthenticated()) {
+      this.gameEndpoint.post('winner', {
+        'lobbyId': this.utilityInfo.lobbyId,
+      })
+      .then(data => {
+        this.winnerNameTd.innerHTML = data.name;
+        this.winnerColorTd.style.backgroundColor = data.color;
+        this.winnerContainer.style.zIndex = '4';
+      })
+      .catch(console.error);
+    }
+  }
+
 }
 
 class Player {
-  constructor(name) {
+  constructor(name, color) {
     this.name = name;
+    this.color = color;
     this.playerScore = Math.floor(Math.random() * 100);
   }
 }
