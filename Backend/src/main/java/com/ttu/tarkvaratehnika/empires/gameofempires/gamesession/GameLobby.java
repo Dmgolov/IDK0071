@@ -89,7 +89,7 @@ public class GameLobby {
             availableColors.add(nation.get().getTeamColor());
             nations.remove(nation.get());
             if (nations.size() == 0) {
-                controller.terminateLobby(this, null);
+                controller.terminateLobby(this, null, null);
             }
             return true;
         }
@@ -184,7 +184,8 @@ public class GameLobby {
             //System.out.println("Checking winner");
             if (checkWinner().isPresent()) {
                 //System.out.println("Terminating lobby");
-                controller.terminateLobby(this, checkWinner().get().getUsername());
+                Nation winner = checkWinner().get();
+                controller.terminateLobby(this, winner.getUsername(), winner.getTeamColor());
                 //System.out.println("Winner: " + checkWinner().get().getUsername());
                 //nations.forEach(nation -> System.out.println(nation.getUsername() + " has " + nation.getNumOfPeople() + " people"));
                 nations.forEach(nation -> nation.getPeople().clear());

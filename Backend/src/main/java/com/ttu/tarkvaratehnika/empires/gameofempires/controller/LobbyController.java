@@ -158,14 +158,15 @@ public class LobbyController {
         return "{\"status\":\"received\"}";
     }
 
-    @GetMapping(path = "/game/winner")
-    public @ResponseBody String getGameWinner(@RequestParam long lobbyId) {
+    @PostMapping(path = "/game/winner", consumes = "application/json")
+    public @ResponseBody String getGameWinner(@RequestBody String data) {
+        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
         return results.getOrDefault(lobbyId, "{\"winner\":\"notFound\"}");
     }
 
     //TODO: would be good, if results would be cleared from map after some time
-    public void terminateLobby(GameLobby lobby, String winner) {
+    public void terminateLobby(GameLobby lobby, String winner, String color) {
         lobbies.remove(lobby);
-        results.put(lobby.getLobbyId(), "{\"winner\":\"" + winner + "\"}");
+        results.put(lobby.getLobbyId(), "{\"winner\":\"" + winner + "\", \"color\":\"" + color + "\"}");
     }
 }
