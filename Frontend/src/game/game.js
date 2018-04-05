@@ -16,13 +16,15 @@ export class Game {
 
     this.players = [];
     this.authPlayer;
-    // this.winner;
+    this.winner;
 
     this.map;
 
     this.stepCounter = 0;
 
     this.timerId;
+
+    this.isGameFinished = false;
   }
 
   attached() {
@@ -44,6 +46,7 @@ export class Game {
           }
           this.players.push(player);
         }
+        console.log(this.players);
       })
       .catch(console.error);
     }
@@ -156,8 +159,8 @@ export class Game {
         'lobbyId': this.utilityInfo.lobbyId,
       })
       .then(data => {
-        this.winnerNameTd.innerHTML = data.name;
-        this.winnerColorTd.style.backgroundColor = data.color;
+        this.isGameFinished = true;
+        this.winner = new Player(data.name, data.color);
         this.winnerContainer.style.zIndex = '4';
       })
       .catch(console.error);
