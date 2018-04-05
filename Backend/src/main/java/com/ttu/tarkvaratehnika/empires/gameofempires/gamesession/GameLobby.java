@@ -254,7 +254,7 @@ public class GameLobby {
     private String generateNationColor() {
         String nationColor = "";
         Random random = new Random();
-        nationColor = SessionSettings.NATION_COLORS[random.nextInt(5)];
+        nationColor = SessionSettings.NATION_COLORS[random.nextInt(4)];
         if (!usedColors.contains(nationColor)){
             usedColors.add(nationColor);
             return nationColor;

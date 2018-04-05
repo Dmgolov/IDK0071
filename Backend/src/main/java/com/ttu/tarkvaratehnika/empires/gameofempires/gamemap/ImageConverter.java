@@ -29,22 +29,26 @@ public class ImageConverter {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Color color = new Color(image.getRGB(x, y));
-                float hsb[] = new float[3];
-                int r = color.getRed();
-                int g = color.getGreen();
-                int b = color.getBlue();
-                Color.RGBtoHSB(r, g, b, hsb);
-                float deg = hsb[0] * 360;
-                if (deg >= 30 && deg < 33) {
-                    field[y][x] = Terrain.DESERT;
-                } else if (deg >= 80 && deg < 88) {
-                    field[y][x] = Terrain.PLAINS;
-                } else if (deg >= 130 && deg < 138) {
-                    field[y][x] = Terrain.FOREST;
-                } else if (deg >= 235 && deg < 241){
-                    field[y][x] = Terrain.OCEAN;
-                } else {
-                    field[y][x] = Terrain.RIVER;
+                System.out.println(String.format("%d %d %d", color.getRed(), color.getGreen(), color.getBlue()));
+                String RGB = String.format("%d %d %d", color.getRed(), color.getGreen(), color.getBlue());
+                switch (RGB) {
+                    case "141 179 96":
+                        field[y][x] = Terrain.PLAINS;
+                        break;
+                    case "5 102 33":
+                        field[y][x] = Terrain.FOREST;
+                        break;
+                    case "250 148 24":
+                        field[y][x] = Terrain.DESERT;
+                        break;
+                    case "0 0 112":
+                        field[y][x] = Terrain.OCEAN;
+                        break;
+                    case "0 0 255":
+                        field[y][x] = Terrain.RIVER;
+                        break;
+                    default:
+                        field[y][x] = Terrain.RIVER;
                 }
             }
         }

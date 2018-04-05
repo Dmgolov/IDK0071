@@ -6,7 +6,7 @@ public enum Terrain implements InGameObject {
     DESERT("#FA9418", true),
     FOREST("#056618", true),
     OCEAN("#000070", false),
-    RIVER("#0000FF", true);
+    RIVER("#0000FF", false);
 
     private final String colorHex;
     private final boolean isPassable;
