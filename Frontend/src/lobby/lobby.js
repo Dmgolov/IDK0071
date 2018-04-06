@@ -13,17 +13,25 @@ export class Lobby {
     this.authService = authService;
     this.lobbyEndpoint = lobbyEndpoint;
 
-    this.canDisplayNationOptions = this.utilityInfo.gameMode !== "";
+    this.canDisplayNationOptions = this.utilityInfo.gameMode !== '';
 
     this.players = [];
     this.authPlayer;
 
     this.nationPoints;
 
+    // this.nationAttributes = [
+    //   [new Attribute("Vitality", 0), new Attribute("Reproduction", 0)],
+    //   [new Attribute("Strength", 0), new Attribute("Intelligence", 0)],
+    //   [new Attribute("Dexterity", 0), new Attribute("Luck", 0)]
+    // ];
     this.nationAttributes = [
-      [new Attribute("Vitality", 0), new Attribute("Reproduction", 0)],
-      [new Attribute("Strength", 0), new Attribute("Intelligence", 0)],
-      [new Attribute("Dexterity", 0), new Attribute("Luck", 0)]
+      [new Attribute("Vitality", 0)],
+      [new Attribute("Reproduction", 0)],
+      [new Attribute("Strength", 0)],
+      [new Attribute("Intelligence", 0)],
+      [new Attribute("Dexterity", 0)],
+      [new Attribute("Luck", 0)]
     ];
 
     this.gameStartMessage;

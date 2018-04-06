@@ -25,8 +25,6 @@ body {
 .app-main-container {
   width: 100vw;
   height: 100vh;
-  /* background-image: linear-gradient(to right, rgba(225, 225, 225, 0), rgba(225, 225, 225, 0.5) 40%, rgba(225, 225, 225, 0.5) 60%, rgba(225, 225, 225, 0)),
-                    url('scripts/images/cellpiresAnimation.gif');  */
   background-image: url('scripts/images/cellpiresAnimationNoiseAndBlur.gif');
   background-repeat: no-repeat;
   background-size: cover;
@@ -49,14 +47,30 @@ body {
 }
 
 
-/* menu elements CSS (used in index.html, signIn.html, signUp.html) */
+/* centered-element CSS (used in all site pages) */
+.centered-element {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
+}
+
+
+/* menu elements CSS (used in index.html, signIn.html, signUp.html, lobby.html) */
 .menu-element {
   font-family: 'Unibody-pixel';
+  text-align: center;
+  margin-top: 0px;
   margin-bottom: 10px;
   border: none;
   background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0));
   border-top: 2px dashed rgba(255, 255, 255, 0.4);
   border-bottom: 2px dashed rgba(255, 255, 255, 0.4);
+}
+.menu-element:last-child {
+  margin-bottom: 0px;
 }
 .menu-element:hover {
   background: linear-gradient(to right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.5));
@@ -71,12 +85,10 @@ body {
 }
 .menu-button {
   height: 30px;
-  text-align: center;
   width: 300px;
 }
 .menu-input {
   height: 26px;
-  text-align: center;
   width: 300px;
 }
 
@@ -85,13 +97,7 @@ body {
 .home-main-container {
 }
 .home-content-container {
-  position: absolute;
   width: 300px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.6);
-  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
 }
 .home-menu-container {
   text-align: center;
@@ -99,7 +105,6 @@ body {
 .home-menu-container p {
   height: 36px;
   width: 300px;
-  margin-top: 0px;
 }
 .home-menu-container p span:first-child {
   float: left;
@@ -115,13 +120,7 @@ body {
 .sign-up-main-container {
 }
 .sign-up-content-container {
-  position: absolute;
   width: 300px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.6);
-  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
 }
 .sign-up-menu-container {
   text-align: center;
@@ -132,13 +131,7 @@ body {
 .sign-in-main-container {
 }
 .sign-in-content-container {
-  position: absolute;
   width: 300px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.6);
-  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
 }
 .sign-in-menu-container {
   text-align: center;
@@ -149,59 +142,86 @@ body {
 .lobby-main-container {
 }
 .lobby-content-container {
-  position: absolute;
-  width: 1000px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.6);
-  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
+  border-top: 2px dashed rgba(255, 255, 255, 0.4);
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.4);
 }
 .lobby-gamemode-container {
-  text-align: center;
+  width: 300px;
 }
-.lobby-gamemode-container button {
-  height: 22px;
-  display: inline;
-  width: 457px;
-}
-.lobby-lobby-id-info {
-  height: 19px;
-  text-align: center;
-  width: 1000px;
-  padding: 25px 0px 10px 0px;
-}
-.lobby-game-options-container {
+.lobby-prelaunch-container {
+  font-family: 'Unibody-pixel';
+  font-size: 12px;
 }
 .lobby-players-container {
+  width: 300px;
+  vertical-align: top;
+}
+.lobby-players-container table {
+  width: 200px;
+  margin-left: 25px;
   float: left;
 }
+.lobby-players-container table tr td:first-child {
+  padding: 16px 0px;
+  text-align: center;
+}
 .lobby-player-cell {
-  width: 150px;
+  width: 140px;
+  padding: 0px;
   padding-left: 10px;
 }
 .lobby-ready-button-cell {
   padding: 0px 4px;
 }
 .lobby-ready-button-cell button {
-  width: 50px;
-  height: 50px;
+  font-family: 'Unibody-pixel';
+  font-size: 12px;
+  width: 60px;
+  height: 30px;
   padding: 0px;
-  border-radius: 25px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0));
+  border: none;
+  border-top: 2px dashed rgba(255, 255, 255, 0.4);
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.4);
+  outline: none;
+}
+.lobby-ready-button-cell button:hover {
+  background: linear-gradient(to right, rgba(0, 255, 0, 0.5), rgba(0, 255, 0, 0) 50%, rgba(0, 255, 0, 0.5));
+  border-top: 2px dashed rgba(255, 255, 255, 0.4);
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.4);
+}
+.lobby-ready-button-cell button:focus {
+  background: linear-gradient(to right, rgba(0, 255, 0, 0.5), rgba(0, 255, 0, 0.8) 50%, rgba(0, 255, 0, 0.5));
+  border-top: 2px dashed rgba(255, 255, 255, 0.4);
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.4);
+}
+.lobby-lobby-id-info {
+  text-align: center;
+  width: 300px;
+  padding: 25px 0px 10px 0px;
 }
 .lobby-nation-options-container {
-  float: right;
+  width: 300px;
+  padding-bottom: 16px;
   text-align: center;
+  vertical-align: top;
 }
 .lobby-nation-options-container table {
-  width: 775px;
-  padding-top: 10px;
+  width: 300px;
 }
 .lobby-nation-options-container table tr td {
-  padding: 10px 0px;
+  height: 50px;
+  /* padding: 10px 0px 0px 0px; */
 }
 .lobby-nation-options-container table tr td div {
   width: 200px;
+  display: inline-block;
+}
+.lobby-nation-options-container table tr td div p {
+  height: 20px;
+  width: 200px;
+  margin: 0px;
+  padding-top: 8px;
   display: inline-block;
 }
 .lobby-nation-options-container table tr td button {
@@ -210,19 +230,29 @@ body {
   display: inline-block;
 }
 .lobby-nation-points-cell {
+  padding: 0px;
 }
-.lobby-prelaunch-container {
-  display: block;
-}
-.lobby-prelaunch-container p {
-  width: 1000px;
+.lobby-game-options-container {
+  width: 300px;
   text-align: center;
-  padding-bottom: 20px;
+  vertical-align: top;
 }
-.lobby-prelaunch-button {
-  display: block;
-  width: 1000px;
-  margin: auto;
+.lobby-game-options-container div {
+  width: 250px;
+  float: right;
+}
+.lobby-game-options-container div p {
+  padding: 16px 0px;
+  margin: 0px;
+}
+.lobby-game-options-container div p:first-child {
+  padding-bottom: 28px;
+}
+.lobby-game-options-container div button {
+  width: 200px;
+}
+.lobby-players-container, .lobby-nation-options-container, .lobby-game-options-container {
+  display: inline-block;
 }
 
 
@@ -230,12 +260,7 @@ body {
 .game-main-container {
 }
 .game-content-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.6);
-  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
+  width: auto;
 }
 .game-playfield-container {
   position: relative;
