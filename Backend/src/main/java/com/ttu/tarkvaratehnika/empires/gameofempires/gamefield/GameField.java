@@ -101,7 +101,7 @@ public class GameField {
     }
 
     // private in order to restrict modification simultaneously from multiple threads
-    private void addPersonToCell(Person person, int x, int y) {
+    public void addPersonToCell(Person person, int x, int y) {
         InGameObject object = field[x][y];
         if (object instanceof Person) {
             object = ((Person) object).removeEffect();

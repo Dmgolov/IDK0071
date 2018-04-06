@@ -53,7 +53,9 @@ public class Person implements BasicPerson {
 
     @Override
     public void act() {
+        System.out.println(nation.getUsername() + " person is acting");
         if (!resistDisease()) { // if person dies, remove
+            System.out.println(nation.getUsername() + " dies");
             nation.removePersonFromCoordinates(positionX, positionY);
             return;
         }
@@ -61,8 +63,10 @@ public class Person implements BasicPerson {
         if (hasFreeNeighbourCells(neighbourCells)) { //check near cells.
             Coordinates newLocation = neighbourCells.get(random.nextInt(neighbourCells.size()));
             if (reproduce()) { // if can reproduce, add new person to new cell
+                System.out.println(nation.getUsername() + " reproducing");
                 nation.setPersonToCoordinates(newLocation.getX(), newLocation.getY());
             } else { // if cannot reproduce, move to new cell
+                System.out.println(nation.getUsername() + " moving");
                 nation.movePersonToCoordinates(this, newLocation.getX(), newLocation.getY(), positionX, positionY);
             }
         }
@@ -95,13 +99,13 @@ public class Person implements BasicPerson {
     @Override
     public boolean reproduce() {
         int result = random.nextInt(PersonValues.REPRODUCTION_CHANCE);
-        return growthRate >= result;
+        return growthRate > result;
     }
 
     @Override
     public boolean resistDisease() {
         int result = random.nextInt(PersonValues.DISEASE_CHANCE);
-        return luck >= result;
+        return luck > result;
     }
 
     //TODO: implement better way to compare stats

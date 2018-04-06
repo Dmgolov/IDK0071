@@ -62,6 +62,8 @@ public class Nation implements Runnable {
             people.remove(object);
             updatedPositions.put(new Coordinates(x, y), null);
             System.out.println("removed");
+        } else {
+            System.out.println("not instance of person: " + object.toString());
         }
     }
 
@@ -75,7 +77,15 @@ public class Nation implements Runnable {
             positionY = random.nextInt(field.getMapHeight());
             object = field.getObjectInCell(positionX, positionY);
         }
-        setPersonToCoordinates(positionX, positionY);
+        addFirstPersonToField(positionX, positionY);
+    }
+
+    private void addFirstPersonToField(int x, int y) {
+        person = new Person(this.person);
+        person.setPositionX(x);
+        person.setPositionY(y);
+        people.add(person);
+        field.addPersonToCell(person, x, y);
     }
 
     public boolean isActive() {
