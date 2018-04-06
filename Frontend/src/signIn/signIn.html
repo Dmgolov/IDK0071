@@ -4,11 +4,10 @@
     <div class="sign-in-content-container">
       <logo></logo>
       <div class="sign-in-menu-container">
-        <input placeholder="Email" type="email" value.bind="email">
-        <input placeholder="Password" type="password" value.bind="password">
-        <button click.delegate="signIn()">Sign In</button>
-        <br>
-        <button click.delegate="goBack()">Back</button>
+        <input class="menu-input menu-element" placeholder="Email" type="email" value.bind="email">
+        <input class="menu-input menu-element" placeholder="Password" type="password" value.bind="password">
+        <button class="menu-button menu-element" click.delegate="signIn()">Sign In</button>
+        <button class="menu-button menu-element" click.delegate="goBack()">Back</button>
       </div>
     </div>
   </div>

@@ -4,12 +4,11 @@
     <div class="sign-up-content-container">
       <logo></logo>
       <div class="sign-up-menu-container">
-        <input placeholder="Username" type="text" value.bind="username">
-        <input placeholder="Email" type="email" value.bind="email">
-        <input placeholder="Password" type="password" value.bind="password">
-        <button click.delegate="signUp()">Sign Up</button>
-        <br>
-        <button click.delegate="goBack()">Back</button>
+        <input class="menu-input menu-element" placeholder="Username" type="text" value.bind="username">
+        <input class="menu-input menu-element" placeholder="Email" type="email" value.bind="email">
+        <input class="menu-input menu-element" placeholder="Password" type="password" value.bind="password">
+        <button class="menu-button menu-element" click.delegate="signUp()">Sign Up</button>
+        <button class="menu-button menu-element"click.delegate="goBack()">Back</button>
       </div>
     </div>
   </div>

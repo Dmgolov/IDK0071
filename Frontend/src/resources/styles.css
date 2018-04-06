@@ -49,6 +49,38 @@ body {
 }
 
 
+/* menu elements CSS (used in index.html, signIn.html, signUp.html) */
+.menu-element {
+  font-family: 'Unibody-pixel';
+  margin-bottom: 10px;
+  border: none;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0));
+  border-top: 2px dashed rgba(255, 255, 255, 0.4);
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.4);
+}
+.menu-element:hover {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.5));
+  border-top: 2px dashed rgba(0, 0, 0, 0.4);
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.4);
+}
+.menu-element:focus {
+  outline: none;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.5));
+  border-top: 2px dashed rgba(0, 0, 0, 0.4);
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.4);
+}
+.menu-button {
+  height: 30px;
+  text-align: center;
+  width: 300px;
+}
+.menu-input {
+  height: 26px;
+  text-align: center;
+  width: 300px;
+}
+
+
 /* Home page CSS */
 .home-main-container {
 }
@@ -65,23 +97,17 @@ body {
   text-align: center;
 }
 .home-menu-container p {
+  height: 36px;
+  width: 300px;
   margin-top: 0px;
 }
-.home-menu-container button {
-  height: 22px;
-  text-align: center;
-  display: block;
-  width: 300px;
-  margin: auto;
-}
-.home-menu-container .home-half-button {
+.home-menu-container p span:first-child {
   float: left;
-  width: 150px;
+  padding: 5px 10px 5px 20px;
 }
-.home-menu-container input {
-  height: 22px;
-  text-align: center;
-  width: 296px;
+.home-menu-container p span:last-child {
+  float: right;
+  padding: 5px 20px 5px 10px;
 }
 
 
@@ -100,18 +126,6 @@ body {
 .sign-up-menu-container {
   text-align: center;
 }
-.sign-up-menu-container button {
-  height: 22px;
-  text-align: center;
-  display: block;
-  width: 300px;
-  margin: auto;
-}
-.sign-up-menu-container input {
-  height: 22px;
-  text-align: center;
-  width: 296px;
-}
 
 
 /* Sign in page CSS */
@@ -128,18 +142,6 @@ body {
 }
 .sign-in-menu-container {
   text-align: center;
-}
-.sign-in-menu-container button {
-  height: 22px;
-  text-align: center;
-  display: block;
-  width: 300px;
-  margin: auto;
-}
-.sign-in-menu-container input {
-  height: 22px;
-  text-align: center;
-  width: 296px;
 }
 
 

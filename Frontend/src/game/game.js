@@ -6,7 +6,6 @@ import {Endpoint} from 'aurelia-api';
 
 @inject(UtilityInfo, Router, AuthService, Endpoint.of('game'))
 export class Game {
-  // this.gameCanvas: HTMLCanvasElement;
   constructor(utilityInfo, router, authService, gameEndpoint) {
     this.utilityInfo = utilityInfo;
     this.utilityInfo.requestUsernameUpdate();
