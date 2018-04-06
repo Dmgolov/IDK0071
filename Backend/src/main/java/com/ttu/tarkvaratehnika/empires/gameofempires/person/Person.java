@@ -110,16 +110,6 @@ public class Person implements BasicPerson {
         return strength > another.getStrength();
     }
 
-    public void setStartingLocation() {
-        positionX = random.nextInt(field.getMapWidth());
-        positionY = random.nextInt(field.getMapHeight());
-        while (field.getObjectInCell(positionX, positionY) instanceof Person) {
-            positionX = random.nextInt(field.getMapWidth());
-            positionY = random.nextInt(field.getMapHeight());
-        }
-        nation.addPerson(this);
-    }
-
     public void addEffect(InGameObject inGameObject) {
         this.effectedBy = inGameObject;
     }
