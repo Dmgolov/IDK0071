@@ -29,7 +29,6 @@ public class ImageConverter {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Color color = new Color(image.getRGB(x, y));
-                System.out.println(String.format("%d %d %d", color.getRed(), color.getGreen(), color.getBlue()));
                 String RGB = String.format("%d %d %d", color.getRed(), color.getGreen(), color.getBlue());
                 switch (RGB) {
                     case "141 179 96":

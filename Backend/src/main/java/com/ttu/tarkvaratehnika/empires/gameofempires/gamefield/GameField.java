@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Terrain;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class GameField {
     private GameMap gameMap;
     private InGameObject[][] field;
     private final Map<Coordinates, Person> lastUpdate = new HashMap<>();
-    private String mapName = "narutoMap.png";
+    private String mapName = "gameMap5.png";
 
     public void loadField() throws IOException {
         field = ImageConverter.createField(mapName);
