@@ -25,8 +25,9 @@ body {
 .app-main-container {
   width: 100vw;
   height: 100vh;
-  background-image: /*linear-gradient(to right, rgba(225, 225, 225, 0), rgba(225, 225, 225, 0.5) 40%, rgba(225, 225, 225, 0.5) 60%, rgba(225, 225, 225, 0)),*/
-                    url('scripts/images/cellpiresAnimation.gif');
+  /* background-image: linear-gradient(to right, rgba(225, 225, 225, 0), rgba(225, 225, 225, 0.5) 40%, rgba(225, 225, 225, 0.5) 60%, rgba(225, 225, 225, 0)),
+                    url('scripts/images/cellpiresAnimation.gif');  */
+  background-image: url('scripts/images/cellpiresAnimationNoiseAndBlur.gif');
   background-repeat: no-repeat;
   background-size: cover;
 }
