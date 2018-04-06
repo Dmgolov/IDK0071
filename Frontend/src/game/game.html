@@ -4,19 +4,6 @@
       <div ref="playfieldContainer" class="game-playfield-container">
         <canvas ref="gameCanvas" class="game-canvas" width="1200" height="600"></canvas>
         <div class="game-stats-container">
-<<<<<<< HEAD
-          <div class="game-playtime-container">
-            <span>Age ${stepCounter}</span>
-          </div>
-          <div class="game-players-container">
-            <table ref="table" class="game-playerTable">
-              <tr repeat.for="player of players">
-                <td><font color="#f00">${player.name}</font></td>
-                <td>${player.playerScore}</td>
-              </tr>
-            </table>
-          </div>
-=======
           <table class="game-playersTable">
             <tr>
               <td colspan="2">Age ${stepCounter}</td>
@@ -37,7 +24,6 @@
               <td><div class="game-winner-color" css="background-color: ${winner.color};"></div></td>
             </tr>
           </table>
->>>>>>> master
         </div>
       </div>
     </div>
