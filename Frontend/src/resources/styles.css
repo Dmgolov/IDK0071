@@ -15,8 +15,26 @@
 }
 
 
+/* body element CSS*/
+body {
+  margin: 0px;
+}
+
+
+/* CSS for app.html elements */
+.app-main-container {
+  width: 100vw;
+  height: 100vh;
+  background-image: /*linear-gradient(to right, rgba(225, 225, 225, 0), rgba(225, 225, 225, 0.5) 40%, rgba(225, 225, 225, 0.5) 60%, rgba(225, 225, 225, 0)),*/
+                    url('scripts/images/cellpiresAnimation.gif');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
 /* Custom elements CSS */
 .custom-logo-container{
+  height: 215px;
   font-size: 35px;
   text-align: center;
   padding-bottom: 25px;
@@ -34,9 +52,13 @@
 .home-main-container {
 }
 .home-content-container {
+  position: absolute;
   width: 300px;
-  margin: auto;
-  margin-top: 100px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
 }
 .home-menu-container {
   text-align: center;
@@ -45,6 +67,7 @@
   margin-top: 0px;
 }
 .home-menu-container button {
+  height: 22px;
   text-align: center;
   display: block;
   width: 300px;
@@ -55,6 +78,7 @@
   width: 150px;
 }
 .home-menu-container input {
+  height: 22px;
   text-align: center;
   width: 296px;
 }
@@ -64,20 +88,26 @@
 .sign-up-main-container {
 }
 .sign-up-content-container {
+  position: absolute;
   width: 300px;
-  margin: auto;
-  margin-top: 100px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
 }
 .sign-up-menu-container {
   text-align: center;
 }
 .sign-up-menu-container button {
+  height: 22px;
   text-align: center;
   display: block;
   width: 300px;
   margin: auto;
 }
 .sign-up-menu-container input {
+  height: 22px;
   text-align: center;
   width: 296px;
 }
@@ -87,20 +117,26 @@
 .sign-in-main-container {
 }
 .sign-in-content-container {
+  position: absolute;
   width: 300px;
-  margin: auto;
-  margin-top: 100px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
 }
 .sign-in-menu-container {
   text-align: center;
 }
 .sign-in-menu-container button {
+  height: 22px;
   text-align: center;
   display: block;
   width: 300px;
   margin: auto;
 }
 .sign-in-menu-container input {
+  height: 22px;
   text-align: center;
   width: 296px;
 }
@@ -110,18 +146,24 @@
 .lobby-main-container {
 }
 .lobby-content-container {
+  position: absolute;
   width: 1000px;
-  margin: auto;
-  background-color: rgba(0, 0, 0, 0.05);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
 }
 .lobby-gamemode-container {
   text-align: center;
 }
 .lobby-gamemode-container button {
+  height: 22px;
   display: inline;
   width: 457px;
 }
 .lobby-lobby-id-info {
+  height: 19px;
   text-align: center;
   width: 1000px;
   padding: 25px 0px 10px 0px;
@@ -185,6 +227,12 @@
 .game-main-container {
 }
 .game-content-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
 }
 .game-playfield-container {
   position: relative;

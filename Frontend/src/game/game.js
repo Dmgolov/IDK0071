@@ -161,7 +161,8 @@ export class Game {
       .then(data => {
         this.isGameFinished = true;
         this.winner = new Player(data.name, data.color);
-        this.winnerContainer.style.zIndex = '4';
+        this.gameCanvas.style.zIndex = '1';
+        this.winnerContainer.style.zIndex = '3';
       })
       .catch(console.error);
     }
