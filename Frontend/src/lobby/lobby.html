@@ -1,10 +1,10 @@
 <template>
   <div class="lobby-main-container">
-    <div class="lobby-content-container">
+    <div class="centered-element lobby-content-container">
       <div class="lobby-gamemode-container">
-        <button click.trigger="sendGameMode('single')" disabled.bind="canDisplayNationOptions" css="background-color: ${utilityInfo.gameMode === 'single' ? 'green; color: white' : ''}">Single</button>
-        <span>Game mode</span>
-        <button click.trigger="sendGameMode('multi')" disabled.bind="canDisplayNationOptions" css="background-color: ${utilityInfo.gameMode === 'multi' ? 'green; color: white' : ''}">Multiplayer</button>
+        <p class="menu-element">Game mode</p>
+        <button class="menu-button menu-element" click.delegate="sendGameMode('single')" disabled.bind="canDisplayNationOptions" css="${utilityInfo.gameMode === 'single' ? 'background-color: green; color: white' : ''}">Single</button>
+        <button class="menu-button menu-element" click.delegate="sendGameMode('multi')" disabled.bind="canDisplayNationOptions" css="${utilityInfo.gameMode === 'multi' ? 'background-color: green; color: white' : ''}">Multiplayer</button>
       </div>
       <div css="display: ${canDisplayNationOptions ? '': 'none'}">
         <div class="lobby-lobby-id-info">Lobby id is ${utilityInfo.lobbyId}</div>
