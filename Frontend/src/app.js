@@ -17,17 +17,7 @@ export class App {
   }
 
   configureRouter(config, router) {
-<<<<<<< HEAD
-        this.router = router;
-        config.title = 'Empires game (Aurelia)';
-        config.map([
-          { route: ['', 'home'], name: 'home', moduleId: 'home/index' },
-          { route: 'lobby', name: 'lobby', moduleId: 'lobby/lobby', nav: true, title: 'Lobby' },
-          { route: 'game', name: 'game', moduleId: 'game/game', nav: true, title: 'Game'},
-          { route: 'mapTool', name: 'mapTool', moduleId: 'mapTool/mapTool', nav: true, title: 'Map Tool'},
-        ]);
-      }
-=======
+
     this.router = router;
 
     config.title = 'Empires game (Aurelia)';
@@ -40,7 +30,7 @@ export class App {
       { route: 'signUp', name: 'signUp', moduleId: 'signUp/signUp', nav: true, title: 'Sign Up'},
       { route: 'lobby', name: 'lobby', moduleId: 'lobby/lobby', nav: true, title: 'Lobby', auth: true},
       { route: 'game', name: 'game', moduleId: 'game/game', nav: true, title: 'Game', auth: true},
+      { route: 'mapTool', name: 'mapTool', moduleId: 'mapTool/mapTool', nav: true, title: 'Map Tool'},
     ]);
   }
->>>>>>> master
 }

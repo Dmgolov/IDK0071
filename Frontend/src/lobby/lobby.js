@@ -4,13 +4,7 @@ import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
 
-<<<<<<< HEAD
-import environment from '../environment';
-
-@inject(LobbyInfo, Router)
-=======
 @inject(UtilityInfo, Router, AuthService, Endpoint.of('lobby'))
->>>>>>> master
 export class Lobby {
   constructor(utilityInfo, router, authService, lobbyEndpoint) {
     this.utilityInfo = utilityInfo;

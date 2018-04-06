@@ -2,22 +2,6 @@
   <require from="../customElements/logo.html"></require>
   <div class="home-main-container">
     <div class="home-content-container">
-<<<<<<< HEAD
-      <div class="home-logo-container">
-        <p>Empires</p>
-        <p>by</p>
-        <p>DIV team</p>
-      </div>
-      <div class="home-buttons-container">
-        <!-- <button class="home-account-button" type="submit">Sing In</button>
-        <button class="home-account-button" type="submit">Sing Up</button> -->
-        <input placeholder="Player name" value.bind="lobbyInfo.playerName">
-        <button click.trigger="createLobby()">Create Lobby</button>
-        <button click.trigger="connectToLobby()">Connect to lobby</button>
-        <input placeholder="Lobby ID" value.bind="lobbyInfo.lobbyId">
-        <button click.trigger="uploadMapPage()">Upload map template</button>
-        <button>Browse map templates</button>
-=======
       <logo></logo>
       <div class="home-menu-container">
         <p if.bind="authService.authenticated">Player: ${utilityInfo.username}</p>
@@ -26,11 +10,10 @@
         <button click.delegate="createLobby()" if.bind="authService.authenticated">Create Lobby</button>
         <button click.delegate="connectToLobby()" if.bind="authService.authenticated">Connect to lobby</button>
         <input placeholder="Lobby ID" value.bind="utilityInfo.lobbyId" if.bind="authService.authenticated">
-        <button if.bind="authService.authenticated">Upload map template</button>
+        <button if.bind="authService.authenticated" click.delegate="router.navigate('mapTool')">Upload map template</button>
         <button if.bind="authService.authenticated">Browse map templates</button>
         <br if.bind="authService.authenticated">
         <button click.delegate="signOut()" if.bind="authService.authenticated">Sign Out</button>
->>>>>>> master
       </div>
     </div>
   </div>

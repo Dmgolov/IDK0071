@@ -4,14 +4,7 @@ import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
 
-<<<<<<< HEAD
-import environment from '../environment';
-
-
-@inject(LobbyInfo, Router)
-=======
 @inject(UtilityInfo, Router, AuthService, Endpoint.of('game'))
->>>>>>> master
 export class Game {
   // this.gameCanvas: HTMLCanvasElement;
   constructor(utilityInfo, router, authService, gameEndpoint) {
@@ -41,18 +34,10 @@ export class Game {
 
   //  get players from server and initialize them
   setPlayers() {
-<<<<<<< HEAD
-    let client = new HttpClient();
-    let players = [];
-
-    client.fetch(environment.apiBaseUrl + "/lobby/check?lobbyId=" + this.lobbyInfo.lobbyId)
-      .then(response => response.json())
-=======
     if (this.authService.isAuthenticated()) {
       this.gameEndpoint.post('players', {
         "lobbyId": this.utilityInfo.lobbyId
       })
->>>>>>> master
       .then(data => {
         for(let playerData of data) {
           let player = new Player(playerData.name, playerData.color);

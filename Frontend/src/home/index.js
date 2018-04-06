@@ -4,14 +4,7 @@ import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
 
-<<<<<<< HEAD
-import environment from '../environment';
-
-
-@inject(LobbyInfo, Router)
-=======
 @inject(UtilityInfo, Router, AuthService, Endpoint.of('auth'), Endpoint.of('lobby'))
->>>>>>> master
 export class Home {
   constructor(utilityInfo, router, authService, authEndpoint, lobbyEndpoint) {
     this.utilityInfo = utilityInfo;
@@ -29,24 +22,11 @@ export class Home {
     this.authService.logout();
   }
 
-<<<<<<< HEAD
-    let client = new HttpClient();
-    client.fetch(environment.apiBaseUrl + "/lobby/new", {
-      "method": "POST",
-      "body": json({"playerName": this.lobbyInfo.playerName}),
-      headers: {
-        'Origin': environment.apiBaseUrl,
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => response.json())
-=======
   createLobby() {
     if (this.authService.isAuthenticated()) {
       this.lobbyEndpoint.post('new', {
         "playerName": this.utilityInfo.username
       })
->>>>>>> master
       .then(data => {
         this.utilityInfo.lobbyId = data.lobbyId;
         this.router.navigate('lobby');
