@@ -99,13 +99,13 @@ public class Person implements BasicPerson {
     @Override
     public boolean reproduce() {
         int result = random.nextInt(PersonValues.REPRODUCTION_CHANCE);
-        return growthRate > result;
+        return growthRate >= result;
     }
 
     @Override
     public boolean resistDisease() {
         int result = random.nextInt(PersonValues.DISEASE_CHANCE);
-        return luck > result;
+        return luck >= result;
     }
 
     //TODO: implement better way to compare stats
