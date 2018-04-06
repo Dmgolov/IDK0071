@@ -1,10 +1,10 @@
 <template>
-  <require from="../styles.css"></require>
   <div class="game-main-container">
     <div class="game-content-container">
       <div ref="playfieldContainer" class="game-playfield-container">
         <canvas ref="gameCanvas" class="game-canvas" width="1200" height="600"></canvas>
         <div class="game-stats-container">
+<<<<<<< HEAD
           <div class="game-playtime-container">
             <span>Age ${stepCounter}</span>
           </div>
@@ -16,6 +16,28 @@
               </tr>
             </table>
           </div>
+=======
+          <table class="game-playersTable">
+            <tr>
+              <td colspan="2">Age ${stepCounter}</td>
+            </tr>
+            <tr repeat.for="player of players">
+              <td>${player.name}</td>
+              <td css="background-color: ${player.color};"></td>
+            </tr>
+          </table>
+        </div>
+        <div ref="winnerContainer" class="game-winner-container">
+          <table class="game-winnerTable">
+            <tr>
+              <td colspan="2">WINNER</td>
+            </tr>
+            <tr>
+              <td>${winner.name}</td>
+              <td><div class="game-winner-color" css="background-color: ${winner.color};"></div></td>
+            </tr>
+          </table>
+>>>>>>> master
         </div>
       </div>
     </div>

@@ -1,0 +1,324 @@
+/* Adding fonts */
+@font-face {
+    font-family: 'Unibody-pixel';
+    src: url('scripts/fonts/Unibody8Pro-Regular.otf');
+}
+@font-face {
+    font-family: 'Unibody-pixel';
+    src: url('scripts/fonts/Unibody8Pro-Bold.otf');
+    font-weight: bold;
+}
+@font-face {
+    font-family: 'Unibody-pixel';
+    src: url('scripts/fonts/Unibody8Pro-RegularItalic.otf');
+    font-style: italic;
+}
+
+
+/* body element CSS*/
+body {
+  margin: 0px;
+}
+
+
+/* CSS for app.html elements */
+.app-main-container {
+  width: 100vw;
+  height: 100vh;
+  /* background-image: linear-gradient(to right, rgba(225, 225, 225, 0), rgba(225, 225, 225, 0.5) 40%, rgba(225, 225, 225, 0.5) 60%, rgba(225, 225, 225, 0)),
+                    url('scripts/images/cellpiresAnimation.gif');  */
+  background-image: url('scripts/images/cellpiresAnimationNoiseAndBlur.gif');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+/* Custom elements CSS */
+.custom-logo-container{
+  height: 215px;
+  font-size: 35px;
+  text-align: center;
+  padding-bottom: 25px;
+  font-family: 'Unibody-pixel';
+}
+.custom-logo-container p {
+  margin: 0px;
+}
+.custom-logo-container p:first-child {
+  font-weight: bold;
+}
+
+
+/* Home page CSS */
+.home-main-container {
+}
+.home-content-container {
+  position: absolute;
+  width: 300px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
+}
+.home-menu-container {
+  text-align: center;
+}
+.home-menu-container p {
+  margin-top: 0px;
+}
+.home-menu-container button {
+  height: 22px;
+  text-align: center;
+  display: block;
+  width: 300px;
+  margin: auto;
+}
+.home-menu-container .home-half-button {
+  float: left;
+  width: 150px;
+}
+.home-menu-container input {
+  height: 22px;
+  text-align: center;
+  width: 296px;
+}
+
+
+/* Sign up page CSS */
+.sign-up-main-container {
+}
+.sign-up-content-container {
+  position: absolute;
+  width: 300px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
+}
+.sign-up-menu-container {
+  text-align: center;
+}
+.sign-up-menu-container button {
+  height: 22px;
+  text-align: center;
+  display: block;
+  width: 300px;
+  margin: auto;
+}
+.sign-up-menu-container input {
+  height: 22px;
+  text-align: center;
+  width: 296px;
+}
+
+
+/* Sign in page CSS */
+.sign-in-main-container {
+}
+.sign-in-content-container {
+  position: absolute;
+  width: 300px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
+}
+.sign-in-menu-container {
+  text-align: center;
+}
+.sign-in-menu-container button {
+  height: 22px;
+  text-align: center;
+  display: block;
+  width: 300px;
+  margin: auto;
+}
+.sign-in-menu-container input {
+  height: 22px;
+  text-align: center;
+  width: 296px;
+}
+
+
+/* Lobby page CSS */
+.lobby-main-container {
+}
+.lobby-content-container {
+  position: absolute;
+  width: 1000px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
+}
+.lobby-gamemode-container {
+  text-align: center;
+}
+.lobby-gamemode-container button {
+  height: 22px;
+  display: inline;
+  width: 457px;
+}
+.lobby-lobby-id-info {
+  height: 19px;
+  text-align: center;
+  width: 1000px;
+  padding: 25px 0px 10px 0px;
+}
+.lobby-game-options-container {
+}
+.lobby-players-container {
+  float: left;
+}
+.lobby-player-cell {
+  width: 150px;
+  padding-left: 10px;
+}
+.lobby-ready-button-cell {
+  padding: 0px 4px;
+}
+.lobby-ready-button-cell button {
+  width: 50px;
+  height: 50px;
+  padding: 0px;
+  border-radius: 25px;
+}
+.lobby-nation-options-container {
+  float: right;
+  text-align: center;
+}
+.lobby-nation-options-container table {
+  width: 775px;
+  padding-top: 10px;
+}
+.lobby-nation-options-container table tr td {
+  padding: 10px 0px;
+}
+.lobby-nation-options-container table tr td div {
+  width: 200px;
+  display: inline-block;
+}
+.lobby-nation-options-container table tr td button {
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+}
+.lobby-nation-points-cell {
+}
+.lobby-prelaunch-container {
+  display: block;
+}
+.lobby-prelaunch-container p {
+  width: 1000px;
+  text-align: center;
+  padding-bottom: 20px;
+}
+.lobby-prelaunch-button {
+  display: block;
+  width: 1000px;
+  margin: auto;
+}
+
+
+/* Game page CSS */
+.game-main-container {
+}
+.game-content-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
+}
+.game-playfield-container {
+  position: relative;
+  background-color: none;
+  margin: auto;
+}
+.game-canvas {
+  position: absolute;
+  z-index: 3;
+  margin: auto;
+}
+.game-canvas:hover {
+  z-index: 1;
+}
+.game-stats-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  opacity: 0.5;
+}
+.game-stats-container:hover {
+  z-index: 4;
+  opacity: 1;
+}
+.game-playersTable {
+  text-align: center;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+.game-playersTable tr td {
+  height: 30px;
+  padding: 0px 10px;
+  border: 2px dashed rgba(0, 0, 0, 0.25);
+}
+.game-playersTable tr td:first-child {
+  background-color: rgba(255, 255, 255, 0.75);
+}
+.game-playersTable tr:first-child td:first-child {
+  font-size: 20px;
+}
+.game-playersTable tr:nth-child(n+1) td:last-child {
+  width: 30px;
+}
+.game-winner-container {
+  position: absolute;
+  width: 500px;
+  height: 100px;
+  top: 50%;
+  left: 50%;
+  margin-left: -250px;
+  margin-top: -50px;
+  z-index: 0;
+  font-size: 20px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.game-winner-container:hover {
+  background-color: rgb(255, 255, 255);
+}
+.game-winnerTable {
+  width: auto;
+  height: auto;
+  margin: auto;
+  margin-top: 9px;
+  border-spacing: 0px;
+}
+.game-winnerTable tr:first-child td {
+  width: auto;
+  height: 30px;
+  padding: 0px;
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.25);
+}
+.game-winnerTable tr:last-child td:first-child {
+  width: auto;
+  height: 50px;
+  padding: 0px 10px;
+}
+.game-winnerTable tr:last-child td:last-child {
+  width: 50px;
+  height: 50px;
+  padding: 0px;
+}
+.game-winner-color {
+  width: 40px;
+  height: 40px;
+  margin: 5px;
+}

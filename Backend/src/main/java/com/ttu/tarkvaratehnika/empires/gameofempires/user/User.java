@@ -16,16 +16,10 @@ public class User {
     private String name;
     @Column(nullable = false, length = Constants.PASSWORD_LENGTH)
     private String password;
-    @Column(nullable = false, length = Constants.SALT_BYTE_ARRAY_LENGTH)
+    @Column(unique = true, nullable = false)
+    private String email;
+    @Column(nullable = false)
     private String salt;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -49,5 +43,13 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

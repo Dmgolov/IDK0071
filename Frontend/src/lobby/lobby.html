@@ -1,14 +1,13 @@
 <template>
-  <require from="../styles.css"></require>
   <div class="lobby-main-container">
     <div class="lobby-content-container">
       <div class="lobby-gamemode-container">
-        <button click.trigger="sendGameMode('single')" disabled.bind="canDisplayNationOptions" css="background-color: ${lobbyInfo.gameMode === 'single' ? 'green; color: white' : ''}">Single</button>
+        <button click.trigger="sendGameMode('single')" disabled.bind="canDisplayNationOptions" css="background-color: ${utilityInfo.gameMode === 'single' ? 'green; color: white' : ''}">Single</button>
         <span>Game mode</span>
-        <button click.trigger="sendGameMode('multi')" disabled.bind="canDisplayNationOptions" css="background-color: ${lobbyInfo.gameMode === 'multi' ? 'green; color: white' : ''}">Multiplayer</button>
+        <button click.trigger="sendGameMode('multi')" disabled.bind="canDisplayNationOptions" css="background-color: ${utilityInfo.gameMode === 'multi' ? 'green; color: white' : ''}">Multiplayer</button>
       </div>
       <div css="display: ${canDisplayNationOptions ? '': 'none'}">
-        <div class="lobby-lobby-id-info">Lobby id is ${lobbyInfo.lobbyId}</div>
+        <div class="lobby-lobby-id-info">Lobby id is ${utilityInfo.lobbyId}</div>
         <div class="lobby-game-options-container">
           <div class="lobby-players-container">
             <table>

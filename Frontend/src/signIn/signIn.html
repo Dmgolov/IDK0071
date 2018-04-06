@@ -1,0 +1,15 @@
+<template>
+  <require from="../customElements/logo.html"></require>
+  <div class="sign-in-main-container">
+    <div class="sign-in-content-container">
+      <logo></logo>
+      <div class="sign-in-menu-container">
+        <input placeholder="Email" type="email" value.bind="email">
+        <input placeholder="Password" type="password" value.bind="password">
+        <button click.delegate="signIn()">Sign In</button>
+        <br>
+        <button click.delegate="goBack()">Back</button>
+      </div>
+    </div>
+  </div>
+</template>
