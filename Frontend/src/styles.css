@@ -139,3 +139,11 @@
 .game-playerTable {
 
 }
+
+/* Upload page CSS */
+
+.mapUpload-content-container {
+  wdth: 300px;
+  margin: auto;
+  margin-top: 100px;
+}
