@@ -62,12 +62,8 @@ public class Person implements BasicPerson {
     }
 
     @Override
-<<<<<<< HEAD
     public void act() throws IOException {
-=======
-    public void act() {
         System.out.println(nation.getUsername() + " person is acting");
->>>>>>> master
         if (!resistDisease()) { // if person dies, remove
             System.out.println(nation.getUsername() + " dies");
             nation.removePersonFromCoordinates(positionX, positionY);
@@ -97,7 +93,8 @@ public class Person implements BasicPerson {
                 int newX = Math.floorMod(positionX + x, field.getMapWidth());
                 int newY = Math.floorMod(positionY + y, field.getMapHeight());
                 InGameObject object = field.getObjectInCell(newX, newY);
-                if (!(object instanceof Person)
+                InGameObject cell = field.getObjectInCell(positionX, positionY);
+                if (!(object instanceof Person || cell instanceof Terrain && !((Terrain) cell).isPassable())
                         && !nation.getUpdatedPositions().containsKey(new Coordinates(newX, newY))
                         && object instanceof Terrain && ((Terrain) object).isPassable()) {
                     freeCells.add(new Coordinates(newX, newY));
@@ -129,21 +126,7 @@ public class Person implements BasicPerson {
         return strength > another.getStrength();
     }
 
-<<<<<<< HEAD
-    public void setStartingLocation() {
-        positionX = random.nextInt(field.getMapWidth());
-        positionY = random.nextInt(field.getMapHeight());
-        InGameObject cell = field.getObjectInCell(positionX, positionY);
-        while (cell instanceof Person || cell instanceof Terrain && !((Terrain) cell).isPassable()) {
-            positionX = random.nextInt(field.getMapWidth());
-            positionY = random.nextInt(field.getMapHeight());
-            cell = field.getObjectInCell(positionX, positionY);
-        }
-        nation.addPerson(this);
-    }
 
-=======
->>>>>>> master
     public void addEffect(InGameObject inGameObject) {
         this.effectedBy = inGameObject;
     }

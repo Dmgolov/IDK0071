@@ -3,6 +3,7 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.nation;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Terrain;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.PersonValues;
@@ -72,11 +73,11 @@ public class Nation implements Runnable {
         Random random = new Random();
         int positionX = random.nextInt(field.getMapWidth());
         int positionY = random.nextInt(field.getMapHeight());
-        InGameObject object = field.getObjectInCell(positionX, positionY);
-        while (object instanceof Person) {
+        InGameObject cell = field.getObjectInCell(positionX, positionY);
+        while (cell instanceof Person || cell instanceof Terrain && !((Terrain) cell).isPassable()) {
             positionX = random.nextInt(field.getMapWidth());
             positionY = random.nextInt(field.getMapHeight());
-            object = field.getObjectInCell(positionX, positionY);
+            cell = field.getObjectInCell(positionX, positionY);
         }
         addFirstPersonToField(positionX, positionY);
     }

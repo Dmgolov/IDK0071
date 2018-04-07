@@ -187,4 +187,6 @@ public class LobbyController {
         lobbies.remove(lobby);
         results.put(lobby.getLobbyId(), "{\"name\":\"" + winner + "\", \"color\":\"" + color + "\"}");
     }
+
+
 }
