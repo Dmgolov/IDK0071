@@ -19,9 +19,7 @@ export class MapTool {
     if (this.authService.isAuthenticated()) {
 
       let mapImage = this.mapInput.files[0];
-      if (mapImage === undefined) {
-        mapImage = new File([""], "EMPTY_FILE");
-      }
+      mapImage = mapImage === undefined ? new File([""], "EMPTY_FILE" : mapImage;
       let formData = new FormData();
       formData.append('username', this.utilityInfo.username);
       formData.append('mapImage', mapImage);
