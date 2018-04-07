@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,10 +28,10 @@ public class GameMapController {
 
     @GetMapping("/")
     public String index() {
-        return "upload";
+        return "map/upload";
     }
 
-    @PostMapping("/upload")
+    @PostMapping(path = "/map/upload", consumes = {MediaType.IMAGE_PNG_VALUE})
     public String singleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
         if (file.isEmpty()) {
@@ -40,9 +41,12 @@ public class GameMapController {
             byte[] bytes = file.getBytes();
             Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
             Files.write(path, bytes);
+            redirectAttributes.addFlashAttribute("message",
+                    "You successfully uploaded '" + file.getOriginalFilename() + "'");
         } catch (IOException e) {
             e.printStackTrace();
         }
         return "UPLOADED";
     }
+
 }
