@@ -3,7 +3,6 @@ import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
-import {HttpClient} from 'aurelia-fetch-client';
 
 @inject(UtilityInfo, Router, AuthService, Endpoint.of('map'))
 export class MapTool {
