@@ -37,10 +37,6 @@ export class Home {
 
   connectToLobby() {
     if (this.authService.isAuthenticated()) {
-      console.log({
-        "playerName": this.utilityInfo.username,
-        "lobbyId": this.utilityInfo.lobbyId
-      });
       this.lobbyEndpoint.post('connect', {
         "playerName": this.utilityInfo.username,
         "lobbyId": this.utilityInfo.lobbyId
