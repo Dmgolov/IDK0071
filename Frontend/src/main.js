@@ -9,7 +9,8 @@ export function configure(aurelia) {
       configure
         .registerEndpoint('auth', environment.serverUrlBase + 'auth/')
         .registerEndpoint('lobby', environment.serverUrlBase + 'lobby/')
-        .registerEndpoint('game', environment.serverUrlBase + 'game/');
+        .registerEndpoint('game', environment.serverUrlBase + 'game/')
+        .registerEndpoint('map', environment.serverUrlBase + 'map/');
     })
     /* configure aurelia-authentication */
     .plugin('aurelia-authentication', baseConfig => {

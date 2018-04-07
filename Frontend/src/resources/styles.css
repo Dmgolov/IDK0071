@@ -363,3 +363,11 @@ body {
   height: 40px;
   margin: 5px;
 }
+
+
+/* mapUpload page CSS */
+.mapUplaod-main-container {
+}
+.mapUpload-content-container {
+  width: 300px;
+}

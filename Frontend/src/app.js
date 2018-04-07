@@ -30,7 +30,7 @@ export class App {
       { route: 'signUp', name: 'signUp', moduleId: 'signUp/signUp', nav: true, title: 'Sign Up'},
       { route: 'lobby', name: 'lobby', moduleId: 'lobby/lobby', nav: true, title: 'Lobby', auth: true},
       { route: 'game', name: 'game', moduleId: 'game/game', nav: true, title: 'Game', auth: true},
-      { route: 'mapTool', name: 'mapTool', moduleId: 'mapTool/mapTool', nav: true, title: 'Map Tool'},
+      { route: 'mapUpload', name: 'mapUpload', moduleId: 'mapUpload/mapUpload', nav: true, title: 'Map Upload', auth: true},
     ]);
   }
 }

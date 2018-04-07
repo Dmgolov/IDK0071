@@ -1,6 +1,6 @@
 export default {
   endpoint: 'auth',
-  configureEndpoints: ['auth', 'lobby', 'game'],
+  configureEndpoints: ['auth', 'lobby', 'game', 'map'],
   // baseUrl: 'http://localhost:8080',
   loginRoute: '/signIn',
   loginOnSignup: false,
