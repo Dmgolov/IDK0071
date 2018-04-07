@@ -62,7 +62,31 @@ public class Nation implements Runnable {
         if (object instanceof Person) {
             people.remove(object);
             updatedPositions.put(new Coordinates(x, y), null);
+            System.out.println("removed");
+        } else {
+            System.out.println("not instance of person: " + object.toString());
         }
+    }
+
+    public void setStartingLocation() {
+        Random random = new Random();
+        int positionX = random.nextInt(field.getMapWidth());
+        int positionY = random.nextInt(field.getMapHeight());
+        InGameObject object = field.getObjectInCell(positionX, positionY);
+        while (object instanceof Person) {
+            positionX = random.nextInt(field.getMapWidth());
+            positionY = random.nextInt(field.getMapHeight());
+            object = field.getObjectInCell(positionX, positionY);
+        }
+        addFirstPersonToField(positionX, positionY);
+    }
+
+    private void addFirstPersonToField(int x, int y) {
+        person = new Person(this.person);
+        person.setPositionX(x);
+        person.setPositionY(y);
+        people.add(person);
+        field.addPersonToCell(person, x, y);
     }
 
     public boolean isActive() {
@@ -128,6 +152,7 @@ public class Nation implements Runnable {
     @Override
     public void run() {
         while (isActive()) {
+            System.out.println(username + " has " + people.size() + " people");
             //System.out.println("Spreading " + username);
             try {
                 spread();

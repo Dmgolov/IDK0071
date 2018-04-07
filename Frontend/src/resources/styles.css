@@ -211,11 +211,12 @@ body {
 }
 .lobby-nation-options-container table tr td {
   height: 50px;
-  /* padding: 10px 0px 0px 0px; */
+  padding: 0px 0px 10px 0px;
 }
 .lobby-nation-options-container table tr td div {
   width: 200px;
   display: inline-block;
+  vertical-align: top;
 }
 .lobby-nation-options-container table tr td div p {
   height: 20px;
@@ -225,9 +226,22 @@ body {
   display: inline-block;
 }
 .lobby-nation-options-container table tr td button {
-  width: 30px;
-  height: 30px;
+  font-family: 'Unibody-pixel';
+  font-size: 24px;
+  font-weight: bold;
+  width: 40px;
+  height: 50px;
   display: inline-block;
+  vertical-align: top;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0));
+  border: 2px dashed rgba(255, 255, 255, 0.4);
+}
+.lobby-nation-options-container table tr td button:hover {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.5));
+  border: 2px dashed rgba(0, 0, 0, 0.4);
+}
+.lobby-nation-options-container table tr td button:focus {
+  outline: none;
 }
 .lobby-nation-points-cell {
   padding: 0px;

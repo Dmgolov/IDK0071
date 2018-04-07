@@ -62,8 +62,14 @@ public class Person implements BasicPerson {
     }
 
     @Override
+<<<<<<< HEAD
     public void act() throws IOException {
+=======
+    public void act() {
+        System.out.println(nation.getUsername() + " person is acting");
+>>>>>>> master
         if (!resistDisease()) { // if person dies, remove
+            System.out.println(nation.getUsername() + " dies");
             nation.removePersonFromCoordinates(positionX, positionY);
             return;
         }
@@ -71,8 +77,10 @@ public class Person implements BasicPerson {
         if (hasFreeNeighbourCells(neighbourCells)) { //check near cells.
             Coordinates newLocation = neighbourCells.get(random.nextInt(neighbourCells.size()));
             if (reproduce()) { // if can reproduce, add new person to new cell
+                System.out.println(nation.getUsername() + " reproducing");
                 nation.setPersonToCoordinates(newLocation.getX(), newLocation.getY());
             } else { // if cannot reproduce, move to new cell
+                System.out.println(nation.getUsername() + " moving");
                 nation.movePersonToCoordinates(this, newLocation.getX(), newLocation.getY(), positionX, positionY);
             }
         }
@@ -121,6 +129,7 @@ public class Person implements BasicPerson {
         return strength > another.getStrength();
     }
 
+<<<<<<< HEAD
     public void setStartingLocation() {
         positionX = random.nextInt(field.getMapWidth());
         positionY = random.nextInt(field.getMapHeight());
@@ -133,6 +142,8 @@ public class Person implements BasicPerson {
         nation.addPerson(this);
     }
 
+=======
+>>>>>>> master
     public void addEffect(InGameObject inGameObject) {
         this.effectedBy = inGameObject;
     }
