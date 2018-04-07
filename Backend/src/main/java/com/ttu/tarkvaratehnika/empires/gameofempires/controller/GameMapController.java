@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 @RestController
 public class GameMapController {
 
-    private static String UPLOADED_FOLDER = "C:/uploadFiles/";
+    private static String UPLOADED_FOLDER = "uploadedFiles/";
 
     @GetMapping("/")
     public String index() {
@@ -36,6 +36,7 @@ public class GameMapController {
             return "PLEASE, DO NOT UPLOAD EMPTY FILE";
         }
         try {
+            new File(UPLOADED_FOLDER).mkdirs();
             byte[] bytes = file.getBytes();
             Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
             Files.write(path, bytes);
