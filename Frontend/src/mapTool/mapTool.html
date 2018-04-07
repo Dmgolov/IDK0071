@@ -1,8 +1,10 @@
 <template>
-  <div map-main-container>
-    <form method="POST" action="http://localhost:8080/upload" enctype="multipart/form-data">
-      <input type="file" name="file"><br><br>
-      <input type="submit" value="Submit">
-    </form>
+  <div class="mapUplaod-main-container">
+      <div class="centered-element mapUpload-content-container">
+        <form method="POST" action="http://localhost:8080/upload" enctype="multipart/form-data">
+          <input class="menu-button menu-element" type="file"><br><br>
+          <input class="menu-button menu-element" type="submit" value="Submit">
+        </form>
+      </div>
   </div>
 </template>
