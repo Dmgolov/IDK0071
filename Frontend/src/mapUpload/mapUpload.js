@@ -16,30 +16,15 @@ export class MapTool {
   }
 
   sendMapImage() {
-    let mapImage = this.mapInput.files[0];
-    let formData = new FormData();
-    formData.append('username', this.utilityInfo.username);
-    formData.append('mapImage', mapImage);
-    //
-    // this.mapEndpoint.post('upload', formData)
-    // .then(data => {
-    //   console.log(data);
-    // })
-    // .catch(console.error);
-
     if (this.authService.isAuthenticated()) {
-      // let httpClient = new HttpClient();
-      //
-      // httpClient.fetch('http://localhost:8080/map/upload', {
-      //   method: 'POST',
-      //   body: formData;
-      // });
 
-
-
-
-
-
+      let mapImage = this.mapInput.files[0];
+      if (mapImage === undefined) {
+        mapImage = new File([""], "EMPTY_FILE");
+      }
+      let formData = new FormData();
+      formData.append('username', this.utilityInfo.username);
+      formData.append('mapImage', mapImage);
 
       this.mapEndpoint.client.fetch('upload', {
         method: 'POST',
@@ -48,24 +33,5 @@ export class MapTool {
       .then()
       .catch(console.error);
     }
-
-    // let headers = new Headers();
-    // headers.append('Authorization', `Bearer ${localStorage.getItem('id_token')}`);
-    // //myHeaders.append('Content-Type', 'application/x-www-form-urlencoded');
-    //
-    // return this.http.fetch(`${this.apiController}`, {
-    //      method: 'post',
-    //      headers: myHeaders,
-    //      body: data
-    //  })
-    //  .then(response => {
-    //      if (response.status >= 200 && response.status < 400) {
-    //          return response.json().catch(() => null);
-    //      }
-    //
-    //      throw response;
-    //  })
-    //  .then(result => { return result; })
-    //  .catch(errorProcessor);
   }
 }
