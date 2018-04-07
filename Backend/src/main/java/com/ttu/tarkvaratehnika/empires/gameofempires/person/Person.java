@@ -53,7 +53,9 @@ public class Person implements BasicPerson {
 
     @Override
     public void act() {
+        System.out.println(nation.getUsername() + " person is acting");
         if (!resistDisease()) { // if person dies, remove
+            System.out.println(nation.getUsername() + " dies");
             nation.removePersonFromCoordinates(positionX, positionY);
             return;
         }
@@ -61,8 +63,10 @@ public class Person implements BasicPerson {
         if (hasFreeNeighbourCells(neighbourCells)) { //check near cells.
             Coordinates newLocation = neighbourCells.get(random.nextInt(neighbourCells.size()));
             if (reproduce()) { // if can reproduce, add new person to new cell
+                System.out.println(nation.getUsername() + " reproducing");
                 nation.setPersonToCoordinates(newLocation.getX(), newLocation.getY());
             } else { // if cannot reproduce, move to new cell
+                System.out.println(nation.getUsername() + " moving");
                 nation.movePersonToCoordinates(this, newLocation.getX(), newLocation.getY(), positionX, positionY);
             }
         }
@@ -108,16 +112,6 @@ public class Person implements BasicPerson {
     @Override
     public boolean captureCell(Person another) {
         return strength > another.getStrength();
-    }
-
-    public void setStartingLocation() {
-        positionX = random.nextInt(field.getMapWidth());
-        positionY = random.nextInt(field.getMapHeight());
-        while (field.getObjectInCell(positionX, positionY) instanceof Person) {
-            positionX = random.nextInt(field.getMapWidth());
-            positionY = random.nextInt(field.getMapHeight());
-        }
-        nation.addPerson(this);
     }
 
     public void addEffect(InGameObject inGameObject) {

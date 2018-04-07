@@ -41,7 +41,7 @@ public class GameLobby {
         nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
         if (!gameField.isMapSet()) gameField.setGameMap(SessionSettings.DEFAULT_MAP);
         gameField.loadField();
-        nations.forEach(nation -> nation.getPerson().setStartingLocation());
+        nations.forEach(Nation::setStartingLocation);
         try {
             Thread.sleep(SessionSettings.START_DELAY);
         } catch (InterruptedException e) {
@@ -75,7 +75,6 @@ public class GameLobby {
     public Optional<Nation> enterSession(String username) {
         if (hasFreeSpaces() && !hasStarted) {
             Nation nation = new Nation(username, availableColors.get(0), this);
-            System.out.println(availableColors);
             availableColors.remove(0);
             nations.add(nation);
             return Optional.of(nation);
@@ -171,7 +170,6 @@ public class GameLobby {
         //System.out.println("Added wait: " + waiting);
         if (allNationsWaiting()) {
             System.out.println("Updating game map");
-            System.out.println(usedColors);
             sendUpdateToMap();
         }
     }
