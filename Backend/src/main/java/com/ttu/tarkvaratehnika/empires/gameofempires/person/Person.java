@@ -9,7 +9,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Person implements BasicPerson {
+public class Person implements InGameObject {
 
     private Nation nation;
     private GameField field;
@@ -53,7 +53,6 @@ public class Person implements BasicPerson {
         luck = another.luck;
     }
 
-    @Override
     public void act() {
         if (!resistDisease()) {
             die();
@@ -86,7 +85,6 @@ public class Person implements BasicPerson {
         field.removePersonFromCell(positionX, positionY);
     }
 
-    @Override
     public List<Coordinates> getFreeNeighbourCells() {
         List<Coordinates> freeCells = new ArrayList<>();
         for (int x = -1; x < 2; x++) {
@@ -151,17 +149,14 @@ public class Person implements BasicPerson {
         }
     }
 
-    @Override
     public boolean canReproduce() {
         return random.nextInt(Math.max(PersonValues.REPRODUCTION_CHANCE - growthRate, 1)) == 0;
     }
 
-    @Override
     public boolean resistDisease() {
         return random.nextInt(Math.max(PersonValues.DISEASE_CHANCE - luck, 1)) == 0;
     }
 
-    @Override
     public boolean captureCell(Person another) {
         return this.getAttackStrength() > another.getDefence();
     }
