@@ -31,6 +31,7 @@ export class App {
       { route: 'lobby', name: 'lobby', moduleId: 'lobby/lobby', nav: true, title: 'Lobby', auth: true},
       { route: 'game', name: 'game', moduleId: 'game/game', nav: true, title: 'Game', auth: true},
       { route: 'mapUpload', name: 'mapUpload', moduleId: 'mapUpload/mapUpload', nav: true, title: 'Map Upload', auth: true},
+      { route: 'browseMaps', name: 'browseMaps', moduleId: 'browseMaps/browseMaps', nav: true, title: 'Browse Maps'},
     ]);
   }
 }

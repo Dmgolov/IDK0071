@@ -13,7 +13,7 @@
         <button class="menu-button menu-element" click.delegate="createLobby()"  if.bind="authService.authenticated">Create Lobby</button>
         <input class="menu-input menu-element" placeholder="Lobby ID" value.bind="utilityInfo.lobbyId" if.bind="authService.authenticated">
         <button class="menu-button menu-element" click.delegate="connectToLobby()" if.bind="authService.authenticated">Connect to lobby</button>
-        <button class="menu-button menu-element" if.bind="authService.authenticated">Browse map templates</button>
+        <button class="menu-button menu-element" click.delegate="router.navigate('browseMaps')" if.bind="authService.authenticated">Browse map templates</button>
         <button class="menu-button menu-element" click.delegate="router.navigate('mapUpload')" if.bind="authService.authenticated">Upload map template</button>
         <button class="menu-button menu-element" click.delegate="signOut()" if.bind="authService.authenticated">Sign Out</button>
       </div>
