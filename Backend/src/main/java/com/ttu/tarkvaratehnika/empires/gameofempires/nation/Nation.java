@@ -30,7 +30,6 @@ public class Nation implements Runnable {
     }
 
     private void spread() {
-        //here initiates finding new positions for people
         List<Person> tempPeople;
         synchronized (people) {
             tempPeople = new ArrayList<>(people);
@@ -90,20 +89,12 @@ public class Nation implements Runnable {
         return people;
     }
 
-    public Person getPerson() {
-        return person;
-    }
-
     public String getUsername() {
         return username;
     }
 
     public String getTeamColor() {
         return teamColor;
-    }
-
-    public GameLobby getSession() {
-        return session;
     }
 
     public int getNumOfPeople() {
@@ -122,9 +113,7 @@ public class Nation implements Runnable {
     public void run() {
         while (isActive()) {
             System.out.println(username + " has " + people.size() + " people");
-            //System.out.println("Spreading " + username);
             spread();
-            //System.out.println("Ending turn " + username);
             synchronized (session) {
                 session.endTurn();
                 try {
@@ -135,6 +124,5 @@ public class Nation implements Runnable {
                 }
             }
         }
-        //System.out.println("Shutting down " + username);
     }
 }

@@ -12,7 +12,7 @@ public interface BasicPerson extends InGameObject {
 
     List<Coordinates> getFreeNeighbourCells() throws IOException;
 
-    boolean reproduce();
+    boolean canReproduce();
 
     boolean resistDisease();
 

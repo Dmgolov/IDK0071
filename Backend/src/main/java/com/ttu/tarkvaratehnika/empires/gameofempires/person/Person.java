@@ -23,11 +23,9 @@ public class Person implements BasicPerson {
     private int growthRate;
     private int luck;
 
-    private InGameObject effectedBy;
+    private Terrain terrain;
 
     private Random random = new Random();
-
-    private List<Coordinates> deadCells = new ArrayList<>();
 
     private Person(Nation nation, GameField field) {
         this.nation = nation;
@@ -57,21 +55,35 @@ public class Person implements BasicPerson {
 
     @Override
     public void act() {
-        if (!resistDisease()) { // if person dies, remove
-            field.removePersonFromCell(positionX, positionY);
+        if (!resistDisease()) {
+            die();
             return;
         }
         mutate(PersonValues.MUTATION_CHANCE);
         List<Coordinates> neighbourCells = getFreeNeighbourCells();
-        if (hasFreeNeighbourCells(neighbourCells)) { //check near cells.
+        if (hasFreeNeighbourCells(neighbourCells)) {
             Coordinates newLocation = neighbourCells.get(random.nextInt(neighbourCells.size()));
-            if (reproduce()) { // if can reproduce, add new person to new cell
-                mutate(PersonValues.MUTATION_CHANCE + PersonValues.REPRODUCTION_MUTATION_RESIST);
-                field.addPersonToCell(new Person(this), newLocation.getX(), newLocation.getY());
-            } else { // if cannot reproduce, move to new cell
-                field.movePerson(this, newLocation.getX(), newLocation.getY(), positionX, positionY);
+            if (canReproduce()) {
+                reproduce(newLocation.getX(), newLocation.getY());
+            } else {
+                move(newLocation.getX(), newLocation.getY());
             }
+        } else {
+            die();
         }
+    }
+
+    private void move(int newX, int newY) {
+        field.movePerson(this, newX, newY, positionX, positionY);
+    }
+
+    private void reproduce(int x, int y) {
+        mutate(PersonValues.MUTATION_CHANCE + PersonValues.REPRODUCTION_MUTATION_RESIST);
+        field.addPersonToCell(new Person(this), x, y);
+    }
+
+    private void die() {
+        field.removePersonFromCell(positionX, positionY);
     }
 
     @Override
@@ -140,7 +152,7 @@ public class Person implements BasicPerson {
     }
 
     @Override
-    public boolean reproduce() {
+    public boolean canReproduce() {
         return random.nextInt(Math.max(PersonValues.REPRODUCTION_CHANCE - growthRate, 1)) == 0;
     }
 
@@ -149,28 +161,40 @@ public class Person implements BasicPerson {
         return random.nextInt(Math.max(PersonValues.DISEASE_CHANCE - luck, 1)) == 0;
     }
 
-    //TODO: implement better way to compare stats
     @Override
     public boolean captureCell(Person another) {
-        return this.getAttackStrength() > another.getAttackStrength();
+        return this.getAttackStrength() > another.getDefence();
     }
 
     private double getAttackStrength() {
         double attack = strength;
         int criticalHitResult = random.nextInt(Math.max(PersonValues.CRIT_CHANCE - dexterity, 1));
         if (criticalHitResult == 0) attack *= PersonValues.CRIT_MULTIPLIER;
-        return attack;
+        return attack * terrain.getAttackMultiplier();
     }
 
-
-    public void addEffect(InGameObject inGameObject) {
-        this.effectedBy = inGameObject;
+    private double getDefence() {
+        double defence = vitality;
+        double intelligenceModificator = intelligence / 10.0;
+        return defence * (terrain.getDefenceMultiplier() + intelligenceModificator);
     }
 
-    public InGameObject removeEffect() {
-        InGameObject effect = Terrain.findByColor(effectedBy.getColorHex());
-        effectedBy = null;
+    public void addEffect(Terrain terrain) {
+        this.terrain = terrain;
+    }
+
+    public Terrain removeEffect() {
+        Terrain effect = Terrain.findByColor(terrain.getColorHex());
+        this.terrain = null;
         return effect;
+    }
+
+    public void removeFromNation() {
+        nation.removePerson(this);
+    }
+
+    public void addToNation() {
+        nation.addPerson(this);
     }
 
     public void setPositionX(int positionX) {
@@ -193,60 +217,8 @@ public class Person implements BasicPerson {
         return nation;
     }
 
-    public void setNation(Nation nation) {
-        this.nation = nation;
-    }
-
-    public int getVitality() {
-        return vitality;
-    }
-
-    public void setVitality(int vitality) {
-        this.vitality = vitality;
-    }
-
-    public int getStrength() {
-        return strength;
-    }
-
-    public void setStrength(int strength) {
-        this.strength = strength;
-    }
-
-    public int getDexterity() {
-        return dexterity;
-    }
-
-    public void setDexterity(int dexterity) {
-        this.dexterity = dexterity;
-    }
-
-    public int getIntelligence() {
-        return intelligence;
-    }
-
-    public void setIntelligence(int intelligence) {
-        this.intelligence = intelligence;
-    }
-
-    public int getGrowthRate() {
-        return growthRate;
-    }
-
-    public void setGrowthRate(int growthRate) {
-        this.growthRate = growthRate;
-    }
-
-    public InGameObject getEffectedBy() {
-        return effectedBy;
-    }
-
-    public int getLuck() {
-        return luck;
-    }
-
-    public void setLuck(int luck) {
-        this.luck = luck;
+    public Terrain getEffectedBy() {
+        return terrain;
     }
 
     @Override

@@ -47,27 +47,6 @@ public class GameLobby {
         nations.forEach(nation -> new Thread(nation).start());
     }
 
-    private Optional<Nation> checkWinner() {
-        long active = nations.stream().filter(Nation::isActive).count();
-        if (active == 1) {
-            return nations.stream().filter(Nation::isActive).findFirst();
-        } else if (active == 0) {
-            return Optional.of(new Nation("none", null, this));
-        } else if (numOfTurns >= SessionSettings.MAX_TURNS) {
-            return nations.stream().max(Comparator.comparingInt(Nation::getNumOfPeople));
-        }
-        return Optional.empty();
-    }
-
-    public void changeToSinglePlayer() {
-        singleMode = true;
-        int i;
-        for (i = 0; hasFreeSpaces(); i++) {
-            enterSession("bot" + i).ifPresent(nation -> nation.setReady(true));
-        }
-        botsPlayersCount = i;
-    }
-
     public Optional<Nation> enterSession(String username) {
         if (hasFreeSpaces() && !hasStarted) {
             Nation nation = new Nation(username, availableColors.get(0), this);
@@ -91,6 +70,15 @@ public class GameLobby {
         return false;
     }
 
+    public void changeToSinglePlayer() {
+        singleMode = true;
+        int i;
+        for (i = 0; hasFreeSpaces(); i++) {
+            enterSession("bot" + i).ifPresent(nation -> nation.setReady(true));
+        }
+        botsPlayersCount = i;
+    }
+
     public void readyCheck(String username, boolean ready, Map<String, Integer> stats) throws IOException {
         nations.stream()
                 .filter(nation -> nation.getUsername().equals(username))
@@ -99,17 +87,6 @@ public class GameLobby {
             nation.setPersonWithStats(stats);
         });
         if (nations.stream().filter(Nation::isReady).count() == nations.size()) startSession();
-    }
-
-    public List<Map<String, Object>> checkPlayerState() {
-        List<Map<String, Object>> data = new ArrayList<>();
-        nations.forEach(nation -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("isReady", nation.isReady());
-            map.put("name", nation.getUsername());
-            data.add(map);
-        });
-        return data;
     }
 
     public Optional<JsonObject> sendUpdateToUser(String username, int turnNr) {
@@ -162,6 +139,18 @@ public class GameLobby {
         }
     }
 
+    private Optional<Nation> checkWinner() {
+        long active = nations.stream().filter(Nation::isActive).count();
+        if (active == 1) {
+            return nations.stream().filter(Nation::isActive).findFirst();
+        } else if (active == 0) {
+            return Optional.of(new Nation("none", null, this));
+        } else if (numOfTurns >= SessionSettings.MAX_TURNS) {
+            return nations.stream().max(Comparator.comparingInt(Nation::getNumOfPeople));
+        }
+        return Optional.empty();
+    }
+
     private boolean allNationsWaiting() {
         return waiting >= nations.stream().filter(Nation::isActive).count();
     }
@@ -170,16 +159,8 @@ public class GameLobby {
         return nations.size() < SessionSettings.DEFAULT_MAX_USERS;
     }
 
-    public Set<Nation> getNations() {
-        return nations;
-    }
-
     public GameField getGameField() {
         return gameField;
-    }
-
-    public void setGameField(GameField gameField) {
-        this.gameField = gameField;
     }
 
     public String getLobbyName() {
@@ -212,6 +193,17 @@ public class GameLobby {
         } else {
             return generateNationColor();
         }
+    }
+
+    public List<Map<String, Object>> checkPlayerState() {
+        List<Map<String, Object>> data = new ArrayList<>();
+        nations.forEach(nation -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("isReady", nation.isReady());
+            map.put("name", nation.getUsername());
+            data.add(map);
+        });
+        return data;
     }
 
     public List<Map<String, String>> getPlayerColors() {

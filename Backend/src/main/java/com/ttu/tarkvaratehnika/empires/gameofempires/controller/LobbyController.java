@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
-import com.ttu.tarkvaratehnika.empires.gameofempires.processor.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,12 +21,10 @@ public class LobbyController {
     private Gson gson = new Gson();
 
     private AccountService accountService;
-    private TemplateService templateService;
 
     @Autowired
-    public LobbyController(AccountService accountService, TemplateService templateService) {
+    public LobbyController(AccountService accountService) {
         this.accountService = accountService;
-        this.templateService = templateService;
     }
 
     @PostMapping(path = "/lobby/new", consumes = "application/json")
@@ -62,7 +59,7 @@ public class LobbyController {
     }
 
     @PostMapping(path = "/game/initialMap", consumes = "application/json")
-    public @ResponseBody String getInitialMap(@RequestBody String data) throws IOException {
+    public @ResponseBody String getInitialMap(@RequestBody String data) {
         long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
         Optional<GameLobby> searchedLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
                 .findFirst();
@@ -182,7 +179,6 @@ public class LobbyController {
         return "{\"status\":\"notFound\"}";
     }
 
-    //TODO: would be good, if results would be cleared from map after some time
     public void terminateLobby(GameLobby lobby, String winner, String color) {
         lobbies.remove(lobby);
         results.put(lobby.getLobbyId(), "{\"name\":\"" + winner + "\", \"color\":\"" + color + "\"}");

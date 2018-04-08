@@ -5,7 +5,6 @@ import java.util.Map;
 
 public class PersonValues {
 
-    public static final int MAX_STAT = 20;
     public static final int REPRODUCTION_CHANCE = 20;
     public static final int DISEASE_CHANCE = 1;
     public static final int MUTATION_CHANCE = 4;

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Terrain;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class GameField {
         field = ImageConverter.createField(mapName);
     }
 
-    public JsonArray getInitialMap() throws IOException {
+    public JsonArray getInitialMap() {
         JsonArray array = new JsonArray();
         System.out.println("Width " + getMapWidth());
         System.out.println("Height " + getMapHeight());
@@ -96,19 +97,21 @@ public class GameField {
             InGameObject object = field[y][x];
             if (object instanceof Person) {
                 Person another = (Person) object;
+                person.addEffect(another.getEffectedBy());
                 if (person.captureCell(another)) {
-                    another.getNation().removePerson(another);
+                    another.removeFromNation();
                     currentUpdate.add(new Coordinates(x, y));
                     person.addEffect(another.removeEffect());
-                    person.getNation().addPerson(person);
+                    person.addToNation();
                     field[y][x] = person;
                 } else {
-                    person.getNation().removePerson(person);
+                    person.removeFromNation();
+                    person.removeEffect();
                 }
             } else {
-                person.addEffect(object);
+                person.addEffect((Terrain) object);
                 field[y][x] = person;
-                person.getNation().addPerson(person);
+                person.addToNation();
                 currentUpdate.add(new Coordinates(x, y));
             }
         }
@@ -120,7 +123,7 @@ public class GameField {
             if (object instanceof Person) {
                 Person person = (Person) object;
                 field[y][x] = person.removeEffect();
-                person.getNation().removePerson(person);
+                person.removeFromNation();
                 currentUpdate.add(new Coordinates(x, y));
             }
         }
