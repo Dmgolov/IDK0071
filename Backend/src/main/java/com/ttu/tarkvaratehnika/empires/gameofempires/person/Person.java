@@ -1,19 +1,13 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.person;
 
-import com.google.gson.JsonArray;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
-import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Terrain;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Person implements BasicPerson {
 
@@ -62,28 +56,26 @@ public class Person implements BasicPerson {
     }
 
     @Override
-    public void act() throws IOException {
-        System.out.println(nation.getUsername() + " person is acting");
+    public void act() {
         if (!resistDisease()) { // if person dies, remove
-            System.out.println(nation.getUsername() + " dies");
-            nation.removePersonFromCoordinates(positionX, positionY);
+            field.removePersonFromCell(positionX, positionY);
             return;
         }
+        mutate(PersonValues.MUTATION_CHANCE);
         List<Coordinates> neighbourCells = getFreeNeighbourCells();
         if (hasFreeNeighbourCells(neighbourCells)) { //check near cells.
             Coordinates newLocation = neighbourCells.get(random.nextInt(neighbourCells.size()));
             if (reproduce()) { // if can reproduce, add new person to new cell
-                System.out.println(nation.getUsername() + " reproducing");
-                nation.setPersonToCoordinates(newLocation.getX(), newLocation.getY());
+                mutate(PersonValues.MUTATION_CHANCE + PersonValues.REPRODUCTION_MUTATION_RESIST);
+                field.addPersonToCell(new Person(this), newLocation.getX(), newLocation.getY());
             } else { // if cannot reproduce, move to new cell
-                System.out.println(nation.getUsername() + " moving");
-                nation.movePersonToCoordinates(this, newLocation.getX(), newLocation.getY(), positionX, positionY);
+                field.movePerson(this, newLocation.getX(), newLocation.getY(), positionX, positionY);
             }
         }
     }
 
     @Override
-    public List<Coordinates> getFreeNeighbourCells() throws IOException {
+    public List<Coordinates> getFreeNeighbourCells() {
         List<Coordinates> freeCells = new ArrayList<>();
         for (int x = -1; x < 2; x++) {
             for (int y = -1; y < 2; y++) {
@@ -93,11 +85,14 @@ public class Person implements BasicPerson {
                 int newX = Math.floorMod(positionX + x, field.getMapWidth());
                 int newY = Math.floorMod(positionY + y, field.getMapHeight());
                 InGameObject object = field.getObjectInCell(newX, newY);
-                InGameObject cell = field.getObjectInCell(positionX, positionY);
-                if (!(object instanceof Person || cell instanceof Terrain && !((Terrain) cell).isPassable())
-                        && !nation.getUpdatedPositions().containsKey(new Coordinates(newX, newY))
-                        && object instanceof Terrain && ((Terrain) object).isPassable()) {
-                    freeCells.add(new Coordinates(newX, newY));
+                if (object instanceof Person) {
+                    if (((Person) object).isEnemy(this)) {
+                        freeCells.add(new Coordinates(newX, newY));
+                    }
+                } else if (object instanceof Terrain) {
+                    if (((Terrain) object).isPassable()) {
+                        freeCells.add(new Coordinates(newX, newY));
+                    }
                 }
             }
         }
@@ -108,22 +103,63 @@ public class Person implements BasicPerson {
         return !neighbourCells.isEmpty();
     }
 
+    private boolean isEnemy(Person another) {
+        return !nation.equals(another.getNation());
+    }
+
+    private void mutate(int chance) {
+        int result = random.nextInt(chance);
+        if (result == 0) {
+            int statChange = ThreadLocalRandom.current().nextInt(PersonValues.MIN_STAT_CHANGE, PersonValues.MAX_STAT_CHANGE + 1);
+            changeRandomStat(statChange);
+        }
+    }
+
+    private void changeRandomStat(int change) {
+        int statNum = random.nextInt(PersonValues.DEFAULT_STATS.size());
+        switch (statNum) {
+            case 0:
+                vitality += change;
+                break;
+            case 1:
+                strength += change;
+                break;
+            case 2:
+                dexterity += change;
+                break;
+            case 3:
+                intelligence += change;
+                break;
+            case 4:
+                luck += change;
+                break;
+            case 5:
+                growthRate += change;
+                break;
+        }
+    }
+
     @Override
     public boolean reproduce() {
-        int result = random.nextInt(PersonValues.REPRODUCTION_CHANCE);
-        return growthRate >= result;
+        return random.nextInt(Math.max(PersonValues.REPRODUCTION_CHANCE - growthRate, 1)) == 0;
     }
 
     @Override
     public boolean resistDisease() {
-        int result = random.nextInt(PersonValues.DISEASE_CHANCE);
-        return luck >= result;
+        return random.nextInt(Math.max(PersonValues.DISEASE_CHANCE - luck, 1)) == 0;
     }
 
     //TODO: implement better way to compare stats
     @Override
     public boolean captureCell(Person another) {
-        return strength > another.getStrength();
+        return this.getAttackStrength() > another.getAttackStrength();
+    }
+
+    private double getAttackStrength() {
+        double attack = strength;
+        int criticalHitResult = random.nextInt(Math.max(PersonValues.CRIT_CHANCE - dexterity, 1));
+        if (criticalHitResult == 0) attack *= PersonValues.CRIT_MULTIPLIER;
+        return attack;
     }
 
 
@@ -132,7 +168,7 @@ public class Person implements BasicPerson {
     }
 
     public InGameObject removeEffect() {
-        InGameObject effect = effectedBy;
+        InGameObject effect = Terrain.findByColor(effectedBy.getColorHex());
         effectedBy = null;
         return effect;
     }

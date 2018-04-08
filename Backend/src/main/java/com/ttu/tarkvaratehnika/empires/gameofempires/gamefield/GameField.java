@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
-import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Terrain;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
 import java.io.IOException;
@@ -15,7 +14,8 @@ public class GameField {
 
     private GameMap gameMap;
     private InGameObject[][] field;
-    private final Map<Coordinates, Person> lastUpdate = new HashMap<>();
+    private Set<Coordinates> currentUpdate = new HashSet<>();
+    private final Set<Coordinates> lastUpdate = new HashSet<>();
     private String mapName = "gameMap5.png";
 
     public void loadField() throws IOException {
@@ -54,24 +54,18 @@ public class GameField {
         }
     }
 
-    public void updateMap(Map<Coordinates, Person> updatedCells) {
-        for (Coordinates key : updatedCells.keySet()) {
-            if (updatedCells.get(key) != null) {
-                addPersonToCell(updatedCells.get(key), key.getX(), key.getY());
-            } else {
-                removePersonFromCell(key.getX(), key.getY());
-            }
-        }
+    public void updateMap() {
         synchronized (lastUpdate) {
-            lastUpdate.putAll(updatedCells);
+            lastUpdate.addAll(currentUpdate);
+            currentUpdate = new HashSet<>();
         }
     }
 
     public JsonObject getLastMapUpdate(int turnNr) {
         JsonObject jsonToReturn = new JsonObject();
-        Map<Coordinates, Person> totalUpdate;
+        Set<Coordinates> totalUpdate;
         synchronized (lastUpdate) {
-            totalUpdate = new HashMap<>(lastUpdate);
+            totalUpdate = new HashSet<>(lastUpdate);
         }
         turnNr++;
         JsonArray updatedCells = getUpdatedCellsAsJsonArray(totalUpdate);
@@ -82,40 +76,60 @@ public class GameField {
     }
 
     // populating array with map updates since turn N
-    private JsonArray getUpdatedCellsAsJsonArray(Map<Coordinates, Person> updatedCells) {
+    private JsonArray getUpdatedCellsAsJsonArray(Set<Coordinates> updatedCells) {
         JsonArray updatedCellsAsJsonArray = new JsonArray();
-        for (Coordinates coordinates : updatedCells.keySet()) {
+        for (Coordinates coordinates : updatedCells) {
             JsonObject singleCell = new JsonObject();
             int x = coordinates.getX(), y = coordinates.getY();
             singleCell.addProperty("x", x);
             singleCell.addProperty("y", y);
-            Optional<Person> optionalPerson = Optional.ofNullable(updatedCells.get(coordinates));
-            if (optionalPerson.isPresent()) {
-                singleCell.addProperty("color", updatedCells.get(coordinates).getColorHex());
-            } else {
-                // TODO: redo so that returns actual color of terrain
-                singleCell.addProperty("color", field[y][x].getColorHex());
-            }
+            singleCell.addProperty("color", field[y][x].getColorHex());
             updatedCellsAsJsonArray.add(singleCell);
         }
         return updatedCellsAsJsonArray;
     }
 
-    // private in order to restrict modification simultaneously from multiple threads
     public void addPersonToCell(Person person, int x, int y) {
-        InGameObject object = field[y][x];
-        if (object instanceof Person) {
-            object = ((Person) object).removeEffect();
+        person.setPositionX(x);
+        person.setPositionY(y);
+        synchronized (field) {
+            InGameObject object = field[y][x];
+            if (object instanceof Person) {
+                Person another = (Person) object;
+                if (person.captureCell(another)) {
+                    another.getNation().removePerson(another);
+                    currentUpdate.add(new Coordinates(x, y));
+                    person.addEffect(another.removeEffect());
+                    person.getNation().addPerson(person);
+                    field[y][x] = person;
+                } else {
+                    person.getNation().removePerson(person);
+                }
+            } else {
+                person.addEffect(object);
+                field[y][x] = person;
+                person.getNation().addPerson(person);
+                currentUpdate.add(new Coordinates(x, y));
+            }
         }
-        person.addEffect(object);
-        field[y][x] = person;
     }
 
-    // private in order to restrict modification simultaneously from multiple threads
-    private void removePersonFromCell(int x, int y) {
-        InGameObject object = field[y][x];
-        if (object instanceof Person) {
-            field[y][x] = ((Person) object).getEffectedBy();
+    public void removePersonFromCell(int x, int y) {
+        synchronized (field) {
+            InGameObject object = field[y][x];
+            if (object instanceof Person) {
+                Person person = (Person) object;
+                field[y][x] = person.removeEffect();
+                person.getNation().removePerson(person);
+                currentUpdate.add(new Coordinates(x, y));
+            }
+        }
+    }
+
+    public void movePerson(Person person, int newX, int newY, int oldX, int oldY) {
+        synchronized (field) {
+            removePersonFromCell(oldX, oldY);
+            addPersonToCell(person, newX, newY);
         }
     }
 

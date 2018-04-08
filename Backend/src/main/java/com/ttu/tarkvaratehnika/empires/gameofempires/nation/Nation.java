@@ -1,6 +1,5 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.nation;
 
-import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Terrain;
@@ -8,7 +7,6 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 import com.ttu.tarkvaratehnika.empires.gameofempires.person.PersonValues;
 
-import java.io.IOException;
 import java.util.*;
 
 public class Nation implements Runnable {
@@ -22,8 +20,7 @@ public class Nation implements Runnable {
     private Person person;
     private boolean ready;
 
-    private Set<Person> people = new HashSet<>();
-    private Map<Coordinates, Person> updatedPositions = new HashMap<>();
+    private final Set<Person> people = new HashSet<>();
 
     public Nation(String username, String teamColor, GameLobby session) {
         this.username = username;
@@ -32,40 +29,14 @@ public class Nation implements Runnable {
         field = session.getGameField();
     }
 
-    private void spread() throws IOException {
+    private void spread() {
         //here initiates finding new positions for people
-        List<Person> tempPeople = new ArrayList<>(people);
+        List<Person> tempPeople;
+        synchronized (people) {
+            tempPeople = new ArrayList<>(people);
+        }
         for (Person person : tempPeople) {
             person.act();
-        }
-        //this shares data about nation updated state to the map
-        session.addUpdatedState(updatedPositions);
-        updatedPositions = new HashMap<>();
-    }
-
-    public void setPersonToCoordinates(int x, int y) {
-        Person person = new Person(this.person);
-        person.setPositionX(x);
-        person.setPositionY(y);
-        people.add(person);
-        updatedPositions.put(new Coordinates(x, y), person);
-    }
-
-    public void movePersonToCoordinates(Person person, int newX, int newY, int oldX, int oldY) {
-        person.setPositionX(newX);
-        person.setPositionY(newY);
-        updatedPositions.put(new Coordinates(oldX, oldY), null);
-        updatedPositions.put(new Coordinates(newX, newY), person);
-    }
-
-    public void removePersonFromCoordinates(int x, int y) {
-        InGameObject object = field.getObjectInCell(x, y);
-        if (object instanceof Person) {
-            people.remove(object);
-            updatedPositions.put(new Coordinates(x, y), null);
-            System.out.println("removed");
-        } else {
-            System.out.println("not instance of person: " + object.toString());
         }
     }
 
@@ -84,9 +55,6 @@ public class Nation implements Runnable {
 
     private void addFirstPersonToField(int x, int y) {
         person = new Person(this.person);
-        person.setPositionX(x);
-        person.setPositionY(y);
-        people.add(person);
         field.addPersonToCell(person, x, y);
     }
 
@@ -95,11 +63,15 @@ public class Nation implements Runnable {
     }
 
     public void removePerson(Person person) {
-        people.remove(person);
+        synchronized (people) {
+            people.remove(person);
+        }
     }
 
     public void addPerson(Person person) {
-        people.add(person);
+        synchronized (people) {
+            people.add(person);
+        }
     }
 
     public void setPersonWithStats(Map<String, Integer> stats) {
@@ -112,10 +84,6 @@ public class Nation implements Runnable {
 
     public boolean hasSelectedPersonType() {
         return person != null;
-    }
-
-    public Map<Coordinates, Person> getUpdatedPositions() {
-        return updatedPositions;
     }
 
     public Set<Person> getPeople() {
@@ -155,11 +123,7 @@ public class Nation implements Runnable {
         while (isActive()) {
             System.out.println(username + " has " + people.size() + " people");
             //System.out.println("Spreading " + username);
-            try {
-                spread();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            spread();
             //System.out.println("Ending turn " + username);
             synchronized (session) {
                 session.endTurn();

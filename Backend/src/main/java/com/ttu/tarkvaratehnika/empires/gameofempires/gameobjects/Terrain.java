@@ -6,7 +6,7 @@ public enum Terrain implements InGameObject {
     DESERT("#FA9418", true),
     FOREST("#056618", true),
     OCEAN("#000070", false),
-    RIVER("#0000FF", false);
+    RIVER("#0000FF", true);
 
     private final String colorHex;
     private final boolean isPassable;
@@ -14,7 +14,14 @@ public enum Terrain implements InGameObject {
     Terrain(String colorHex, boolean isPassable){
         this.colorHex = colorHex;
         this.isPassable = isPassable;
-    };
+    }
+
+    public static Terrain findByColor(String colorHex) {
+        for (Terrain terrain : values()) {
+            if (terrain.getColorHex().equals(colorHex)) return terrain;
+        }
+        return Terrain.PLAINS;
+    }
 
     public boolean isPassable() {
         return this.isPassable;

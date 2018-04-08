@@ -2,14 +2,11 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 
 import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.controller.LobbyController;
-import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
-import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GameLobby {
 
@@ -22,9 +19,7 @@ public class GameLobby {
     private GameField gameField = new GameField();
 
     private String lobbyName;
-    private String lobbyPass;
     private Set<Nation> nations = new HashSet<>();
-    private Map<Coordinates, Person> cellsToUpdate = new HashMap<>();
     private final List<String> receivedUpdate = new ArrayList<>();
     private List<String> usedColors = new ArrayList<>(5);
     private List<String> availableColors = new ArrayList<>(Arrays.asList(generateNationColor(), generateNationColor(), generateNationColor(), generateNationColor()));
@@ -117,38 +112,6 @@ public class GameLobby {
         return data;
     }
 
-    private void sendUpdateToMap() {
-        gameField.updateMap(cellsToUpdate);
-        cellsToUpdate = new HashMap<>();
-    }
-
-    private Set<Coordinates> findKeysWithNonNullValues(Map<Coordinates, Person> peopleLocation) {
-        return peopleLocation.keySet().stream().filter(key -> peopleLocation.get(key) != null).collect(Collectors.toSet());
-    }
-
-    public synchronized void addUpdatedState(Map<Coordinates, Person> nationUpdate) {
-        // Checks for overlapping keys with non-null values
-        //System.out.println("Checking multiples");
-        Set<Coordinates> overlappingKeys = findKeysWithNonNullValues(cellsToUpdate);
-        if (overlappingKeys.retainAll(findKeysWithNonNullValues(nationUpdate))) {
-            // Compares 2 people and removes one of them
-            // TODO: check, if works fast enough
-            //System.out.println("iterating keys");
-            for (Coordinates key : overlappingKeys) {
-                Person person1 = cellsToUpdate.get(key);
-                Person person2 = nationUpdate.get(key);
-                if (person2.captureCell(person1)) {
-                    person1.getNation().removePerson(person1);
-                } else {
-                    person2.getNation().removePerson(person2);
-                    nationUpdate.remove(key);
-                }
-            }
-        }
-        //System.out.println("adding cells");
-        cellsToUpdate.putAll(nationUpdate);
-    }
-
     public Optional<JsonObject> sendUpdateToUser(String username, int turnNr) {
         if (!receivedUpdate.contains(username) && allNationsWaiting() && gameField.hasLastUpdate()) {
             System.out.println(username + " received update");
@@ -168,10 +131,14 @@ public class GameLobby {
 
     public synchronized void endTurn() {
         waiting++;
-        //System.out.println("Added wait: " + waiting);
         if (allNationsWaiting()) {
             System.out.println("Updating game map");
-            sendUpdateToMap();
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            gameField.updateMap();
         }
     }
 
@@ -179,14 +146,9 @@ public class GameLobby {
         if (allNationsWaiting()) {
             waiting = 0;
             numOfTurns++;
-            //System.out.println("Turn nr: " + numOfTurns);
-            //System.out.println("Checking winner");
             if (checkWinner().isPresent()) {
-                //System.out.println("Terminating lobby");
                 Nation winner = checkWinner().get();
                 controller.terminateLobby(this, winner.getUsername(), winner.getTeamColor());
-                //System.out.println("Winner: " + checkWinner().get().getUsername());
-                //nations.forEach(nation -> System.out.println(nation.getUsername() + " has " + nation.getNumOfPeople() + " people"));
                 nations.forEach(nation -> nation.getPeople().clear());
                 synchronized (this) {
                     notifyAll();
@@ -197,16 +159,14 @@ public class GameLobby {
             synchronized (this) {
                 notifyAll();
             }
-        } else {
-            //System.out.println("more nations to wait");
         }
     }
 
-    public boolean allNationsWaiting() {
+    private boolean allNationsWaiting() {
         return waiting >= nations.stream().filter(Nation::isActive).count();
     }
 
-    public boolean hasFreeSpaces() {
+    private boolean hasFreeSpaces() {
         return nations.size() < SessionSettings.DEFAULT_MAX_USERS;
     }
 
@@ -228,14 +188,6 @@ public class GameLobby {
 
     public void setLobbyName(String lobbyName) {
         this.lobbyName = lobbyName;
-    }
-
-    public String getLobbyPass() {
-        return lobbyPass;
-    }
-
-    public void setLobbyPass(String lobbyPass) {
-        this.lobbyPass = lobbyPass;
     }
 
     public long getLobbyId() {
