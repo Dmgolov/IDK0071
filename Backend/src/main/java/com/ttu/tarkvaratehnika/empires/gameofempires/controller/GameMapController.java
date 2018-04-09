@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.ServletContext;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -30,13 +31,6 @@ public class GameMapController {
     private static String UPLOADED_FOLDER = "uploadedFiles/";
     private Gson gson = new Gson();
     private ServletContext servletContext;
-
-    @Autowired
-    public GameMapController(ServletContext servletContext)
-    {
-        this.servletContext = servletContext;
-    }
-
 
     @GetMapping("/")
     public String index() {
@@ -79,9 +73,9 @@ public class GameMapController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/map/image", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @RequestMapping(value = "/map/image", method = RequestMethod.POST, produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] sendImageToUsers() throws IOException {
-        InputStream in = getClass().getClassLoader().getResourceAsStream("uploadFiles/gameMap5.png");
+        InputStream in = new FileInputStream("uploadFiles/gameMap5.png");
         return IOUtils.toByteArray(in);
     }
 
