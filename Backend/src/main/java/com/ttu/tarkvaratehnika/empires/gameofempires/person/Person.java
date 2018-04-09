@@ -81,7 +81,7 @@ public class Person implements InGameObject {
         field.addPersonToCell(new Person(this), x, y);
     }
 
-    private void die() {
+    void die() {
         field.removePersonFromCell(positionX, positionY);
     }
 
@@ -117,7 +117,7 @@ public class Person implements InGameObject {
         return !nation.equals(another.getNation());
     }
 
-    private void mutate(int chance) {
+    void mutate(int chance) {
         int result = random.nextInt(chance);
         if (result == 0) {
             int statChange = ThreadLocalRandom.current().nextInt(PersonValues.MIN_STAT_CHANGE, PersonValues.MAX_STAT_CHANGE + 1);
@@ -125,7 +125,7 @@ public class Person implements InGameObject {
         }
     }
 
-    private void changeRandomStat(int change) {
+    void changeRandomStat(int change) {
         int statNum = random.nextInt(PersonValues.DEFAULT_STATS.size());
         switch (statNum) {
             case 0:
@@ -170,8 +170,8 @@ public class Person implements InGameObject {
 
     private double getDefence() {
         double defence = vitality;
-        double intelligenceModificator = intelligence / 10.0;
-        return defence * (terrain.getDefenceMultiplier() + intelligenceModificator);
+        double intelligenceModifier = intelligence / 10.0;
+        return defence * (terrain.getDefenceMultiplier() + intelligenceModifier);
     }
 
     public void addEffect(Terrain terrain) {
@@ -214,6 +214,14 @@ public class Person implements InGameObject {
 
     public Terrain getEffectedBy() {
         return terrain;
+    }
+
+    public void setRandom(Random random) {
+        this.random= random;
+    }
+
+    int getVitality() {
+        return vitality;
     }
 
     @Override

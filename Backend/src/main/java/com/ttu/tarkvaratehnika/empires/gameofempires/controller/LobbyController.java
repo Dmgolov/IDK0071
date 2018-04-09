@@ -58,7 +58,6 @@ public class LobbyController {
                 if (mode.equals(SessionSettings.SINGLE_PLAYER)) {
                     searchedLobby.get().changeToSinglePlayer();
                 } else if (mode.equals(SessionSettings.MULTI_PLAYER)) {
-                    // TODO: change or remove, when multiplayer will be finished
                     searchedLobby.get().setSingleMode(false);
                 }
                 return "{\"status\":\"changed\"}";

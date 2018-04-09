@@ -22,7 +22,6 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
     compile('org.mariadb.jdbc:mariadb-java-client:1.5.8')
 
@@ -30,4 +29,5 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-web')
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.18.0'
 }

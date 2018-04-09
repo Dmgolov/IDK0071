@@ -29,7 +29,7 @@ public class Nation implements Runnable {
         field = session.getGameField();
     }
 
-    private void spread() {
+    void spread() {
         List<Person> tempPeople;
         synchronized (people) {
             tempPeople = new ArrayList<>(people);
@@ -53,7 +53,8 @@ public class Nation implements Runnable {
     }
 
     private void addFirstPersonToField(int x, int y) {
-        person = new Person(this.person);
+        Person person = new Person(this.person);
+        people.add(person);
         field.addPersonToCell(person, x, y);
     }
 
@@ -99,6 +100,14 @@ public class Nation implements Runnable {
 
     public int getNumOfPeople() {
         return people.size();
+    }
+
+    GameField getField() {
+        return field;
+    }
+
+    Person getPerson() {
+        return person;
     }
 
     public void setReady(boolean ready) {

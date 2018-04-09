@@ -76,8 +76,7 @@ public class GameField {
         return jsonToReturn;
     }
 
-    // populating array with map updates since turn N
-    private JsonArray getUpdatedCellsAsJsonArray(Set<Coordinates> updatedCells) {
+    JsonArray getUpdatedCellsAsJsonArray(Set<Coordinates> updatedCells) {
         JsonArray updatedCellsAsJsonArray = new JsonArray();
         for (Coordinates coordinates : updatedCells) {
             JsonObject singleCell = new JsonObject();
@@ -154,5 +153,17 @@ public class GameField {
 
     public void setGameMap(GameMap gameMap) {
         this.gameMap = gameMap;
+    }
+
+    void setField(InGameObject[][] field) {
+        this.field = field;
+    }
+
+    Set<Coordinates> getCurrentUpdate() {
+        return currentUpdate;
+    }
+
+    Set<Coordinates> getLastUpdate() {
+        return lastUpdate;
     }
 }
