@@ -4,7 +4,6 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.securityconstants.Constants
 
 import javax.persistence.*;
 
-//TODO: add all needed values for User table and getters/setters for transferring data from and to the database
 @Entity
 public class User {
 
@@ -51,5 +50,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

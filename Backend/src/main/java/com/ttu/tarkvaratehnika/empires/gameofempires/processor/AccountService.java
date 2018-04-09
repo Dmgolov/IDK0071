@@ -76,10 +76,8 @@ public class AccountService {
         return false;
     }
 
-    // TODO: implement later when signing in will be ready in frontend
     public boolean isLoggedIn(String token) {
-//        return loggedInUsers.containsKey(token) && isSessionActive(token, LocalDateTime.now());
-        return true;
+        return loggedInUsers.containsKey(token) && isSessionActive(token, LocalDateTime.now());
     }
 
     private String generateToken(String email, LocalDateTime dateTime) throws UnsupportedEncodingException {

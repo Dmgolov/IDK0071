@@ -7,8 +7,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-//TODO: implement logic for what needs to be done, when server/app is booted. Maybe do it in separate classes.
-//Initial start-up
 @SpringBootApplication
 public class GameOfEmpiresApplication {
 

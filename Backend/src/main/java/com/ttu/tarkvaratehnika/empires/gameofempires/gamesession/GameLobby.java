@@ -4,21 +4,23 @@ import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.controller.LobbyController;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
+import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class GameLobby {
 
     private static long id = 0;
     private int numOfTurns = 0;
+    private LocalDateTime startTime;
 
-    private LobbyController controller;
+    private SessionService sessionService;
     private final long lobbyId;
 
     private GameField gameField = new GameField();
 
-    private String lobbyName;
     private Set<Nation> nations = new HashSet<>();
     private final List<String> receivedUpdate = new ArrayList<>();
     private List<String> usedColors = new ArrayList<>(5);
@@ -28,8 +30,8 @@ public class GameLobby {
     private boolean singleMode;
     private boolean hasStarted = false;
 
-    public GameLobby(LobbyController controller) {
-        this.controller = controller;
+    public GameLobby(SessionService sessionService) {
+        this.sessionService = sessionService;
         lobbyId = ++id;
     }
 
@@ -44,6 +46,7 @@ public class GameLobby {
             System.out.println(e.getMessage());
         }
         hasStarted = true;
+        startTime = LocalDateTime.now();
         nations.forEach(nation -> new Thread(nation).start());
     }
 
@@ -63,7 +66,7 @@ public class GameLobby {
             availableColors.add(nation.get().getTeamColor());
             nations.remove(nation.get());
             if (nations.size() == 0) {
-                controller.terminateLobby(this, null, null);
+                sessionService.terminateLobby(this, null, null);
             }
             return true;
         }
@@ -74,7 +77,7 @@ public class GameLobby {
         singleMode = true;
         int i;
         for (i = 0; hasFreeSpaces(); i++) {
-            enterSession("bot" + i).ifPresent(nation -> nation.setReady(true));
+            enterSession("Bot " + i).ifPresent(nation -> nation.setReady(true));
         }
         botsPlayersCount = i;
     }
@@ -125,7 +128,7 @@ public class GameLobby {
             numOfTurns++;
             if (checkWinner().isPresent()) {
                 Nation winner = checkWinner().get();
-                controller.terminateLobby(this, winner.getUsername(), winner.getTeamColor());
+                sessionService.terminateLobby(this, winner.getUsername(), winner.getTeamColor());
                 nations.forEach(nation -> nation.getPeople().clear());
                 synchronized (this) {
                     notifyAll();
@@ -163,16 +166,16 @@ public class GameLobby {
         return gameField;
     }
 
-    public String getLobbyName() {
-        return lobbyName;
-    }
-
-    public void setLobbyName(String lobbyName) {
-        this.lobbyName = lobbyName;
-    }
-
     public long getLobbyId() {
         return lobbyId;
+    }
+
+    public int getNumOfTurns() {
+        return numOfTurns;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
     public boolean isSingleMode() {
@@ -184,9 +187,8 @@ public class GameLobby {
     }
 
     private String generateNationColor() {
-        String nationColor = "";
         Random random = new Random();
-        nationColor = SessionSettings.NATION_COLORS[random.nextInt(4)];
+        String nationColor = SessionSettings.NATION_COLORS[random.nextInt(4)];
         if (!usedColors.contains(nationColor)){
             usedColors.add(nationColor);
             return nationColor;

@@ -6,183 +6,120 @@ import com.google.gson.reflect.TypeToken;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
+import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping(path = "/lobby")
 public class LobbyController {
 
-    private Set<GameLobby> lobbies = new HashSet<>();
-    private Map<Long, String> results = new HashMap<>();
     private Gson gson = new Gson();
 
+    private SessionService sessionService;
     private AccountService accountService;
 
     @Autowired
-    public LobbyController(AccountService accountService) {
+    public LobbyController(AccountService accountService, SessionService sessionService) {
         this.accountService = accountService;
+        this.sessionService = sessionService;
     }
 
-    @PostMapping(path = "/lobby/new", consumes = "application/json")
-    public @ResponseBody String createLobby(@RequestBody String data) {
-        String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
-        if (accountService.isLoggedIn(username)) {
-            GameLobby lobby = new GameLobby(this);
-            lobbies.add(lobby);
-            lobby.setLobbyName("");
+    @PostMapping(path = "/new", consumes = "application/json")
+    public @ResponseBody String createLobby(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+        if (accountService.isLoggedIn(token)) {
+            String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
+            GameLobby lobby = new GameLobby(sessionService);
             lobby.enterSession(username);
+            sessionService.addLobby(lobby);
             return "{\"lobbyId\":" + lobby.getLobbyId() + "}";
         }
         return "{\"lobbyId\":0}";
     }
 
-    @GetMapping(path = "/lobby/defaultSettings")
-    public @ResponseBody String getDefaultOptions() {
-        return "{\"nationPoints\":" + SessionSettings.NATION_POINTS + "}";
-    }
-
-    @PostMapping(path = "/game/mapSettings", consumes = "application/json")
-    public @ResponseBody String getMapSettings(@RequestBody String data) {
-        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
-        Optional<GameLobby> searchedLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
-                .findFirst();
-        if (searchedLobby.isPresent()) {
-            return String.format("{\"width\":%d,\"height\":%d}", searchedLobby.get().getGameField().getMapWidth(),
-                    searchedLobby.get().getGameField().getMapHeight());
-        } else {
-            return "{\"width\":0,\"height\":0}";
+    @GetMapping(path = "/defaultSettings")
+    public @ResponseBody String getDefaultOptions(@RequestHeader(name = "Authorization", required = false) String token) {
+        if (accountService.isLoggedIn(token)) {
+            return "{\"nationPoints\":" + SessionSettings.NATION_POINTS + "}";
         }
+        return "{\"nationPoints\":0}";
     }
 
-    @PostMapping(path = "/game/initialMap", consumes = "application/json")
-    public @ResponseBody String getInitialMap(@RequestBody String data) {
-        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
-        Optional<GameLobby> searchedLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
-                .findFirst();
-        if (searchedLobby.isPresent()) {
-            return gson.toJson(searchedLobby.get().getGameField().getInitialMap());
-        } else {
-            return "{}";
-        }
-    }
-
-    @PostMapping(path = "/lobby/mode", consumes = "application/json")
-    public @ResponseBody String changeMode(@RequestBody String data) {
-        String mode = gson.fromJson(data, JsonObject.class).get("mode").getAsString();
-        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
-        Optional<GameLobby> searchedLobby = lobbies.stream()
-                .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
-        if (searchedLobby.isPresent()) {
-            if (mode.equals(SessionSettings.SINGLE_PLAYER)) {
-                searchedLobby.get().changeToSinglePlayer();
-            } else if (mode.equals(SessionSettings.MULTI_PLAYER)) {
-                // TODO: change or remove, when multiplayer will be finished
-                searchedLobby.get().setSingleMode(false);
+    @PostMapping(path = "/mode", consumes = "application/json")
+    public @ResponseBody String changeMode(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+        if (accountService.isLoggedIn(token)) {
+            String mode = gson.fromJson(data, JsonObject.class).get("mode").getAsString();
+            long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
+            Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
+            if (searchedLobby.isPresent()) {
+                if (mode.equals(SessionSettings.SINGLE_PLAYER)) {
+                    searchedLobby.get().changeToSinglePlayer();
+                } else if (mode.equals(SessionSettings.MULTI_PLAYER)) {
+                    // TODO: change or remove, when multiplayer will be finished
+                    searchedLobby.get().setSingleMode(false);
+                }
+                return "{\"status\":\"changed\"}";
             }
-            return "{\"status\":\"changed\"}";
         }
         return "{\"status\":\"failed\"}";
     }
 
-    @PostMapping(path = "/lobby/connect", consumes = "application/json")
-    public @ResponseBody String connectToLobby(@RequestBody String data) {
-        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
-        Optional<GameLobby> searchedLobby = lobbies.stream()
-                .filter(lobby -> lobby.getLobbyId() == lobbyId)
-                .findFirst();
-        String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
-        if (searchedLobby.isPresent() && searchedLobby.get().enterSession(username).isPresent()) {
-            String mode = searchedLobby.get().isSingleMode() ? "single" : "multi";
-            return "{\"status\":\"success\", \"gameMode\":\"" + mode + "\"}";
+    @PostMapping(path = "/connect", consumes = "application/json")
+    public @ResponseBody String connectToLobby(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+        if (accountService.isLoggedIn(token)) {
+            long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
+            Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
+            String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
+            if (searchedLobby.isPresent() && searchedLobby.get().enterSession(username).isPresent()) {
+                String mode = searchedLobby.get().isSingleMode() ? "single" : "multi";
+                return "{\"status\":\"success\", \"gameMode\":\"" + mode + "\"}";
+            }
         }
         return "{\"status\":\"failed\"}";
     }
 
-    @RequestMapping(path = "/lobby/leave")
-    public @ResponseBody boolean leaveLobby(@RequestParam String username, @RequestParam long lobbyId) {
-        Optional<GameLobby> searchedLobby = lobbies.stream()
-                .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
-        return searchedLobby.isPresent() && searchedLobby.get().leaveSession(username);
+    @RequestMapping(path = "/leave")
+    public @ResponseBody boolean leaveLobby(@RequestHeader(name = "Authorization", required = false) String token, @RequestParam String username, @RequestParam long lobbyId) {
+        if (accountService.isLoggedIn(token)) {
+            Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
+            return searchedLobby.isPresent() && searchedLobby.get().leaveSession(username);
+        }
+        return false;
     }
 
-    @PostMapping(path = "/lobby/ready", consumes = "application/json")
-    public @ResponseBody String setPlayerReadyState(@RequestBody String data) {
-        JsonObject json = gson.fromJson(data, JsonObject.class);
-        Map<String, Integer> stats = gson
-                .fromJson(json.get("nationAttributes").toString(), new TypeToken<Map<String, Integer>>(){}.getType());
-        JsonObject jsonObject = gson.fromJson(json.get("player"), JsonObject.class);
-        lobbies.stream()
-                .filter(lobby -> lobby.getLobbyId() == json.get("lobbyId").getAsLong())
-                .findFirst().ifPresent(lobby -> {
-            try {
-                lobby.readyCheck(jsonObject.get("name").getAsString(),
-                        jsonObject.get("isReady").getAsBoolean(), stats);
-            } catch (IOException e) {
-                e.printStackTrace();
+    @PostMapping(path = "/ready", consumes = "application/json")
+    public @ResponseBody String setPlayerReadyState(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+        if (accountService.isLoggedIn(token)) {
+            JsonObject json = gson.fromJson(data, JsonObject.class);
+            Map<String, Integer> stats = gson
+                    .fromJson(json.get("nationAttributes").toString(), new TypeToken<Map<String, Integer>>(){}.getType());
+            JsonObject jsonObject = gson.fromJson(json.get("player"), JsonObject.class);
+            long lobbyId = json.get("lobbyId").getAsLong();
+            String username = jsonObject.get("name").getAsString();
+            boolean isReady = jsonObject.get("isReady").getAsBoolean();
+            Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
+            if (searchedLobby.isPresent()) {
+                try {
+                    searchedLobby.get().readyCheck(username, isReady, stats);
+                } catch (IOException e) {
+                    return "{\"status\":\"failed\", \"error\":\"" + e.getMessage() + "\"}";
+                }
             }
-        });
-        return "{\"status\":\"ready\"}";
-    }
-
-    @PostMapping(path = "/lobby/check", consumes = "application/json")
-    public @ResponseBody String checkPlayerState(@RequestBody String data) {
-        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
-        Optional<GameLobby> gameLobby = lobbies.stream().filter(lobby -> lobby.getLobbyId() == lobbyId)
-                .findAny();
-        return gameLobby.isPresent() ? gson.toJson(gameLobby.get().checkPlayerState()) : "{\"status\":\"notFound\"}";
-    }
-
-    @RequestMapping(path = "/lobby/all")
-    public @ResponseBody String getLobbyNames(@RequestParam String filter) {
-        return gson.toJson(lobbies.stream().map(GameLobby::getLobbyName)
-                .filter(name -> name.contains(filter))
-                .collect(Collectors.toList()));
-    }
-
-    @PostMapping(path = "/game/state", consumes = "application/json")
-    public @ResponseBody String getGameState(@RequestBody String data) {
-        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
-        Optional<GameLobby> searchedLobby = lobbies.stream()
-                .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
-        if (!searchedLobby.isPresent()) {
-            return results.containsKey(lobbyId) ? "{\"status\":\"finished\"}" : "{\"status\":\"notFound\"}";
+            return "{\"status\":\"ready\"}";
         }
-        int turnNr = gson.fromJson(data, JsonObject.class).get("turnNr").getAsInt();
-        String username = gson.fromJson(data, JsonObject.class).get("name").getAsString();
-        GameLobby lobby = searchedLobby.get();
-        Optional<JsonObject> update = lobby.sendUpdateToUser(username, turnNr);
-        if (update.isPresent()) {
-            lobby.checkIfEveryoneReceivedUpdate();
-            return update.get().toString();
-        }
-        return "{\"status\":\"received\"}";
+        return "{\"status\":\"failed\"}";
     }
 
-    @PostMapping(path = "/game/winner", consumes = "application/json")
-    public @ResponseBody String getGameWinner(@RequestBody String data) {
-        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
-        return results.getOrDefault(lobbyId, "{\"winner\":\"notFound\"}");
-    }
-
-    @PostMapping(path = "game/players", consumes = "application/json")
-    public @ResponseBody String getPlayerColors(@RequestBody String data) {
-        long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
-        Optional<GameLobby> searchedLobby = lobbies.stream()
-                .filter(lobby -> lobby.getLobbyId() == lobbyId).findFirst();
-        if (searchedLobby.isPresent()) {
-            return gson.toJson(searchedLobby.get().getPlayerColors());
+    @PostMapping(path = "/check", consumes = "application/json")
+    public @ResponseBody String checkPlayerState(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+        if (accountService.isLoggedIn(token)) {
+            long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
+            Optional<GameLobby> gameLobby = sessionService.findLobbyById(lobbyId);
+            return gameLobby.isPresent() ? gson.toJson(gameLobby.get().checkPlayerState()) : "{\"status\":\"notFound\"}";
         }
         return "{\"status\":\"notFound\"}";
     }
-
-    public void terminateLobby(GameLobby lobby, String winner, String color) {
-        lobbies.remove(lobby);
-        results.put(lobby.getLobbyId(), "{\"name\":\"" + winner + "\", \"color\":\"" + color + "\"}");
-    }
-
-
 }
