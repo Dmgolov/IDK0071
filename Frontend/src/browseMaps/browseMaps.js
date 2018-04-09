@@ -54,11 +54,38 @@ export class BrowseMaps{
 
   showMap() {
     if (this.authService.isAuthenticated()) {
+
+      let myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Accept", "image/*");
+
       this.mapEndpoint.client.fetch('image', {
-        method: 'GET'
+        method: 'POST',
+        headers: myHeaders,
+        body: {"imageName": this.imageName}
       })
+      .then(response => response.blob())
       .then(data => {
-        console.log(data);
+        let blobURL = URL.createObjectURL(data);
+        let image = new Image();
+        image.src = blobURL;
+        image.onload = () => {
+          if (image.width == image.height) {
+            image.width = 200;
+            image.height = 100;
+          } else if (image.width > image.height) {
+            image.width = 200;
+            image.height = 100;
+          } else if (image.width < image.height) {
+            image.width = 100;
+            image.height = 200;
+          }
+
+          while (this.imageContainer.firstChild) {
+            this.imageContainer.removeChild(this.imageContainer.firstChild);
+          }
+          this.imageContainer.appendChild(image);
+        };
       })
       .catch(console.error);
     }
