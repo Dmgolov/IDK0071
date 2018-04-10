@@ -181,17 +181,6 @@ public class PersonTest {
     }
 
     @Test
-    public void testActDeathFromOverpopulation() {
-        Person person = Mockito.mock(Person.class);
-        Mockito.doCallRealMethod().when(person).act();
-        Mockito.doReturn(true).when(person).resistDisease();
-        Mockito.doReturn(false).when(person).hasFreeNeighbourCells(Mockito.anyList());
-        Mockito.doNothing().when(person).mutate(Mockito.anyInt());
-        person.act();
-        Mockito.verify(person, Mockito.times(1)).die();
-    }
-
-    @Test
     public void testActMayResultInReproduction() {
         Person person = Mockito.mock(Person.class);
         Mockito.doCallRealMethod().when(person).act();
