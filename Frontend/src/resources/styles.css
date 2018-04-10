@@ -99,6 +99,9 @@ body {
   display: inline-block;
   overflow: hidden;
 }
+.menu-select {
+  text-align-last: center;
+}
 
 
 /* Home page CSS */
@@ -374,14 +377,21 @@ body {
 
 
 /* mapUpload page CSS */
-.mapUplaod-main-container {
+.map-uplaod-main-container {
 }
-.mapUpload-content-container {
+.map-upload-content-container {
   width: 300px;
 }
 
 /* browseMaps page CSS */
-.browseMaps-main-container{
+.browse-maps-main-container {
 }
-.browseMaps-content-container{
+.browse-maps-content-container {
+  width: 300px;
+}
+.browse-maps-image-container {
+  width: auto;
+  margin: auto;
+}
+.browse-maps-maps-list-container {
 }

@@ -1,16 +1,12 @@
 <template>
-  <div class="browseMaps-main-container">
-    <div class="browseMaps-content-container">
-      <div ref="imageContainer"></div>
-      <div class="gameMapsList-container">
-        <select id="maps" click.delegate="selectMap()">
-          <option repeat.for="image of images">${image}</option>
+  <div class="browse-maps-main-container">
+    <div class="centered-element browse-maps-content-container">
+      <div ref="imageContainer" class="browse-maps-image-container"></div>
+      <div class="browse-maps-maps-list-container">
+        <select ref="mapSelector" class="menu-select menu-button menu-element" change.delegate="selectMap()">
+          <option selected disabled hidden>Choose map</option>
+          <option repeat.for="mapName of maps">${mapName}</option>
         </select>
-        <!-- <table>
-          <tr repeat.for="image of images">
-            <td>${image}</td>
-          </tr>
-        </table> -->
       </div>
     </div>
   </div>

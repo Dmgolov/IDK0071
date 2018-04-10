@@ -14,45 +14,20 @@ export class BrowseMaps{
     this.authService = authService;
     this.mapEndpoint = mapEndpoint;
 
-    this.imageName = 'gameMap5.png';  // name of image, which is choosen by user
-    this.images = [];
+    this.imageName = '';  // name of image, which is choosen by user
+    this.maps = [];
+    this.setMapsArray();
   }
 
-  attached() {
-    this.showMapsList();
-
-    // this.showMap();
-  }
-
-  showMapsList() {
+  setMapsArray() {
     if (this.authService.isAuthenticated()) {
       this.mapEndpoint.post('browse', {
         "startIndex" : 0
       })
       .then(data => {
-        console.log(this.images);
-        console.log(data);
-        for (let imageN of data){
-          this.images.push(imageN);
+        for (let mapName of data) {
+          this.maps.push(mapName);
         }
-      })
-      .catch(console.error);
-    }
-  }
-
-  showMap2() {
-    let myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Accept", "image/*");
-
-    if (this.authService.isAuthenticated()) {
-      this.mapEndpoint.client.fetch('image', {
-        method: 'POST',
-        headers: myHeaders,
-        body: {"imageName": this.imageName}
-      })
-      .then(data => {
-        console.log(data);
       })
       .catch(console.error);
     }
@@ -68,7 +43,6 @@ export class BrowseMaps{
         method: 'POST',
         headers: myHeaders,
         body: json({"imageName": this.imageName})
-      
       })
       .then(response => response.blob())
       .then(data => {
@@ -77,14 +51,17 @@ export class BrowseMaps{
         image.src = blobURL;
         image.onload = () => {
           if (image.width == image.height) {
-            image.width = 200;
-            image.height = 100;
+            image.height = 300;
+            image.width = 300;
+            this.imageContainer.style.width = 300 + 'px';
           } else if (image.width > image.height) {
-            image.width = 200;
-            image.height = 100;
+            image.height = 150;
+            image.width = 300;
+            this.imageContainer.style.width = 300 + 'px';
           } else if (image.width < image.height) {
-            image.width = 100;
-            image.height = 200;
+            image.height = 300;
+            image.width = 150;
+            this.imageContainer.style.width = 150 + 'px';
           }
 
           while (this.imageContainer.firstChild) {
@@ -98,11 +75,39 @@ export class BrowseMaps{
   }
 
   selectMap(){
-    let element = document.getElementById('maps');
-    let mapName = element.options[element.selectedIndex].innerHTML;
-    this.imageName = mapName;
+    let selectedMapIndex = this.mapSelector.selectedIndex;
+    this.imageName = this.mapSelector.options[selectedMapIndex].text;
     this.showMap();
-    console.log(this.imageName);
+
+    console.log(this.getIndentStyleForOption(this.imageName));
+  }
+
+  /*
+  * These functions are not used in project;
+  * These may be used for getting text-indent style for text in some container.
+  *
+  getTextWidth(text) {
+    let textSpan = document.createElement('span');
+    textSpan.innerHTML = text;
+    textSpan.style.fontSize = '13.3333px'
+    this.imageContainer.appendChild(textSpan);
+    let textWidth = textSpan.offsetWidth;
+    textSpan.remove();
+    return textWidth;
+  }
+
+  getIndentForOption(text) {
+    let textWidth = this.getTextWidth(text);
+    let selectorWidth = this.mapSelector.clientWidth;
+    let indentWidth = (selectorWidth - textWidth) / 2;
+    return indentWidth;
+  }
+
+  getIndentStyleForOption(text) {
+    let indentWidth = this.getIndentForOption(text);
+    let indentStyle = 'text-indent: ' + indentWidth + 'px;';
+    return indentStyle;
+    */
   }
 
 }
