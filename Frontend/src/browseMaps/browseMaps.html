@@ -3,7 +3,14 @@
     <div class="browseMaps-content-container">
       <div ref="imageContainer"></div>
       <div class="gameMapsList-container">
-        
+        <select id="maps" click.delegate="selectMap()">
+          <option repeat.for="image of images">${image}</option>
+        </select>
+        <!-- <table>
+          <tr repeat.for="image of images">
+            <td>${image}</td>
+          </tr>
+        </table> -->
       </div>
     </div>
   </div>
