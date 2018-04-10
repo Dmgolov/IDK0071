@@ -17,7 +17,7 @@ public class GameField {
     private InGameObject[][] field;
     private Set<Coordinates> currentUpdate = new HashSet<>();
     private final Set<Coordinates> lastUpdate = new HashSet<>();
-    private String mapName = "";
+    private String mapName = "gameMap5.png";
 
     public GameField(String mapName){
         this.mapName = mapName;

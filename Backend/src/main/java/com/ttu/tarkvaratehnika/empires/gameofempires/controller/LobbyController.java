@@ -7,10 +7,14 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @RestController
@@ -121,5 +125,14 @@ public class LobbyController {
             return gameLobby.isPresent() ? gson.toJson(gameLobby.get().checkPlayerState()) : "{\"status\":\"notFound\"}";
         }
         return "{\"status\":\"notFound\"}";
+    }
+
+    @ResponseBody
+    @RequestMapping(path = "/lobby/image", consumes = "application/json", method = RequestMethod.POST, produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] sendImageToLobby(@RequestBody String imageName) throws IOException {
+        System.out.println(imageName);
+        String selectedMap = gson.fromJson(imageName, JsonObject.class).get("imageName").getAsString();
+        InputStream in = new FileInputStream("uploadFiles/" + selectedMap);
+        return IOUtils.toByteArray(in);
     }
 }
