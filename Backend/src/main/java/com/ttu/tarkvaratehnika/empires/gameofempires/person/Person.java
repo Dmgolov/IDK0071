@@ -14,7 +14,7 @@ public class Person implements InGameObject {
     private Nation nation;
     private GameField field;
 
-    private int positionX, positionY;
+    private transient int positionX, positionY;
 
     private int vitality;
     private int strength;
@@ -23,9 +23,9 @@ public class Person implements InGameObject {
     private int growthRate;
     private int luck;
 
-    private Terrain terrain;
+    private transient Terrain terrain;
 
-    private Random random = new Random();
+    private transient Random random = new Random();
 
     private Person(Nation nation, GameField field) {
         this.nation = nation;
@@ -42,7 +42,6 @@ public class Person implements InGameObject {
         luck = stats.get("Luck");
     }
 
-    //Copy-constructor
     public Person(Person another) {
         this(another.nation, another.field);
         vitality = another.vitality;
@@ -72,11 +71,11 @@ public class Person implements InGameObject {
         }
     }
 
-    private void move(int newX, int newY) {
+    void move(int newX, int newY) {
         field.movePerson(this, newX, newY, positionX, positionY);
     }
 
-    private void reproduce(int x, int y) {
+    void reproduce(int x, int y) {
         mutate(PersonValues.MUTATION_CHANCE + PersonValues.REPRODUCTION_MUTATION_RESIST);
         field.addPersonToCell(new Person(this), x, y);
     }
@@ -85,7 +84,7 @@ public class Person implements InGameObject {
         field.removePersonFromCell(positionX, positionY);
     }
 
-    public List<Coordinates> getFreeNeighbourCells() {
+    List<Coordinates> getFreeNeighbourCells() {
         List<Coordinates> freeCells = new ArrayList<>();
         for (int x = -1; x < 2; x++) {
             for (int y = -1; y < 2; y++) {
@@ -109,11 +108,11 @@ public class Person implements InGameObject {
         return freeCells;
     }
 
-    private boolean hasFreeNeighbourCells(List<Coordinates> neighbourCells) {
+    boolean hasFreeNeighbourCells(List<Coordinates> neighbourCells) {
         return !neighbourCells.isEmpty();
     }
 
-    private boolean isEnemy(Person another) {
+    boolean isEnemy(Person another) {
         return !nation.equals(another.getNation());
     }
 
@@ -149,11 +148,11 @@ public class Person implements InGameObject {
         }
     }
 
-    public boolean canReproduce() {
+    boolean canReproduce() {
         return random.nextInt(Math.max(PersonValues.REPRODUCTION_CHANCE - growthRate, 1)) == 0;
     }
 
-    public boolean resistDisease() {
+    boolean resistDisease() {
         return random.nextInt(Math.max(PersonValues.DISEASE_CHANCE - luck, 1)) == 0;
     }
 
@@ -161,14 +160,14 @@ public class Person implements InGameObject {
         return this.getAttackStrength() > another.getDefence();
     }
 
-    private double getAttackStrength() {
+    double getAttackStrength() {
         double attack = strength;
         int criticalHitResult = random.nextInt(Math.max(PersonValues.CRIT_CHANCE - dexterity, 1));
         if (criticalHitResult == 0) attack *= PersonValues.CRIT_MULTIPLIER;
         return attack * terrain.getAttackMultiplier();
     }
 
-    private double getDefence() {
+    double getDefence() {
         double defence = vitality;
         double intelligenceModifier = intelligence / 10.0;
         return defence * (terrain.getDefenceMultiplier() + intelligenceModifier);
@@ -222,11 +221,6 @@ public class Person implements InGameObject {
 
     int getVitality() {
         return vitality;
-    }
-
-    @Override
-    public String toString() {
-        return "Person of " + nation.getUsername();
     }
 
     @Override

@@ -151,12 +151,17 @@ public class GameField {
         return field.length;
     }
 
+<<<<<<< HEAD
     public boolean isMapSet() {
         return gameMap != null;
     }
 
     public void setGameMap(String mapName) {
         this.mapName = mapName;
+=======
+    public void setGameMap(GameMap gameMap) {
+        this.gameMap = gameMap;
+>>>>>>> 1bf4b6b1dd68dd0180a2d44731316264498a6357
     }
 
     void setField(InGameObject[][] field) {
