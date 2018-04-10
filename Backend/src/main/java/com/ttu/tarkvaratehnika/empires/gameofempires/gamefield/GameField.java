@@ -61,7 +61,9 @@ public class GameField {
 
     public void updateMap() {
         synchronized (lastUpdate) {
-            lastUpdate.addAll(currentUpdate);
+            synchronized (currentUpdate) {
+                lastUpdate.addAll(currentUpdate);
+            }
             currentUpdate = new HashSet<>();
         }
     }
@@ -103,7 +105,9 @@ public class GameField {
                 person.addEffect(another.getEffectedBy());
                 if (person.captureCell(another)) {
                     another.removeFromNation();
-                    currentUpdate.add(new Coordinates(x, y));
+                    synchronized (currentUpdate) {
+                        currentUpdate.add(new Coordinates(x, y));
+                    }
                     person.addEffect(another.removeEffect());
                     person.addToNation();
                     field[y][x] = person;
@@ -115,7 +119,9 @@ public class GameField {
                 person.addEffect((Terrain) object);
                 field[y][x] = person;
                 person.addToNation();
-                currentUpdate.add(new Coordinates(x, y));
+                synchronized (currentUpdate) {
+                    currentUpdate.add(new Coordinates(x, y));
+                }
             }
         }
     }
@@ -127,7 +133,9 @@ public class GameField {
                 Person person = (Person) object;
                 field[y][x] = person.removeEffect();
                 person.removeFromNation();
-                currentUpdate.add(new Coordinates(x, y));
+                synchronized (currentUpdate) {
+                    currentUpdate.add(new Coordinates(x, y));
+                }
             }
         }
     }
