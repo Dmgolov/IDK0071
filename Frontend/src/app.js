@@ -20,7 +20,7 @@ export class App {
 
     this.router = router;
 
-    config.title = 'Empires game (Aurelia)';
+    config.title = 'Cellpires';
 
     config.addPipelineStep('authorize', AuthenticateStep);
 
