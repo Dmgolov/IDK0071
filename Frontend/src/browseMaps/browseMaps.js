@@ -78,8 +78,6 @@ export class BrowseMaps{
     let selectedMapIndex = this.mapSelector.selectedIndex;
     this.imageName = this.mapSelector.options[selectedMapIndex].text;
     this.showMap();
-
-    console.log(this.getIndentStyleForOption(this.imageName));
   }
 
   /*
@@ -107,7 +105,8 @@ export class BrowseMaps{
     let indentWidth = this.getIndentForOption(text);
     let indentStyle = 'text-indent: ' + indentWidth + 'px;';
     return indentStyle;
-    */
+
   }
+  */
 
 }
