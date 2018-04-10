@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 @RestController
 public class GameMapController {
 
-    private static String UPLOADED_FOLDER = "uploadedFiles/";
+    private static String UPLOADED_FOLDER = "maps/";
     private Gson gson = new Gson();
     private IOUtils utils;
 
@@ -37,17 +37,8 @@ public class GameMapController {
     @RequestMapping(path = "/map/image", consumes = "application/json", method = RequestMethod.POST, produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] sendImageToUsers(@RequestBody String imageName) throws IOException {
         System.out.println(imageName);
-        String selectedMap = gson.fromJson(imageName, JsonObject.class).get("imageName").getAsString();
-        InputStream in = new FileInputStream("uploadFiles/" + selectedMap);
-        return IOUtils.toByteArray(in);
-    }
-
-    @ResponseBody
-    @RequestMapping(path = "/lobby/image", consumes = "application/json", method = RequestMethod.POST, produces = MediaType.IMAGE_PNG_VALUE)
-    public byte[] sendImageToLobby(@RequestBody String imageName) throws IOException {
-        System.out.println(imageName);
-        String selectedMap = gson.fromJson(imageName, JsonObject.class).get("imageName").getAsString();
-        InputStream in = new FileInputStream("uploadFiles/" + selectedMap);
+        String selectedMap = gson.fromJson(imageName, JsonObject.class).get("mapName").getAsString();
+        InputStream in = new FileInputStream("maps/" + selectedMap);
         return IOUtils.toByteArray(in);
     }
 
@@ -84,7 +75,7 @@ public class GameMapController {
 
     private String sendListOfMaps(){
         List<String> fileList = new LinkedList<>();
-        File directory = new File("uploadFiles/");
+        File directory = new File("maps/");
         Optional<File[]> files = Optional.ofNullable(directory.listFiles());
         if (files.isPresent()){
             File[] filesArray = files.get();

@@ -122,7 +122,7 @@ public class GameLobby {
         }
     }
 
-    private void startNewTurn() {
+    void startNewTurn() {
         if (allNationsWaiting()) {
             waiting = 0;
             numOfTurns++;
@@ -142,7 +142,7 @@ public class GameLobby {
         }
     }
 
-    private Optional<Nation> checkWinner() {
+    Optional<Nation> checkWinner() {
         long active = nations.stream().filter(Nation::isActive).count();
         if (active == 1) {
             return nations.stream().filter(Nation::isActive).findFirst();
@@ -154,7 +154,7 @@ public class GameLobby {
         return Optional.empty();
     }
 
-    private boolean allNationsWaiting() {
+    boolean allNationsWaiting() {
         return waiting >= nations.stream().filter(Nation::isActive).count();
     }
 
@@ -170,6 +170,10 @@ public class GameLobby {
         this.gameField = gameField;
     }
 
+    public void setHasStarted(boolean hasStarted) {
+        this.hasStarted = hasStarted;
+    }
+
     public long getLobbyId() {
         return lobbyId;
     }
@@ -180,6 +184,18 @@ public class GameLobby {
 
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    Set<Nation> getNations() {
+        return nations;
+    }
+
+    void setNations(Set<Nation> nations) {
+        this.nations = nations;
+    }
+
+    void setSessionService(SessionService sessionService) {
+        this.sessionService = sessionService;
     }
 
     public boolean isSingleMode() {

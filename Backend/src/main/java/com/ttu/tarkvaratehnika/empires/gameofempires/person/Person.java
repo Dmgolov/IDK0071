@@ -66,8 +66,6 @@ public class Person implements InGameObject {
             } else {
                 move(newLocation.getX(), newLocation.getY());
             }
-        } else {
-            die();
         }
     }
 
