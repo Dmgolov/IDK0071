@@ -91,6 +91,14 @@ body {
   height: 26px;
   width: 300px;
 }
+.menu-choose-file {
+  display: none;
+}
+.menu-choose-file-label {
+  font-size: 13.3333px;
+  display: inline-block;
+  overflow: hidden;
+}
 
 
 /* Home page CSS */

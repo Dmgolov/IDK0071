@@ -12,6 +12,13 @@ export class MapTool {
     this.router = router;
     this.authService = authService;
     this.mapEndpoint = mapEndpoint;
+
+    this.fileName = 'Choose file';
+  }
+
+  showFileName() {
+    let file = this.mapInput.files[0];
+    this.fileName = file === undefined ? 'Choose file' : file.name;
   }
 
   sendMapImage() {
