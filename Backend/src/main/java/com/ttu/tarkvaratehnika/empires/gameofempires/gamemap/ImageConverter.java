@@ -17,6 +17,7 @@ import java.util.List;
 
 public class ImageConverter {
     private static final String MAP_FOLDER = "uploadFiles\\";
+    public String mapName = "";
 
     public static InGameObject[][] createField(String mapName) throws IOException {
         Path path = Paths.get(MAP_FOLDER + mapName);

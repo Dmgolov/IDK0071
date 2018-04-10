@@ -3,6 +3,7 @@ import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
+import {json} from 'aurelia-fetch-client';
 
 @inject(UtilityInfo, Router, AuthService, Endpoint.of('lobby'))
 export class Lobby {
@@ -19,6 +20,9 @@ export class Lobby {
     this.authPlayer;
 
     this.nationPoints;
+
+    this.images = [];
+    this.imageName = 'gameMap5.png';  // name of image, which is choosen by user
 
     // this.nationAttributes = [
     //   [new Attribute("Vitality", 0), new Attribute("Reproduction", 0)],
@@ -45,6 +49,7 @@ export class Lobby {
     this.setDefaultSettings();
     this.setGameStartMessage(false);
     this.timerId = setInterval(this.update.bind(this), 1000);
+    this.getMapsList();
   }
 
   changeNationAttributeValue(name, points) {
@@ -59,7 +64,8 @@ export class Lobby {
   }
 
   getReadyStateInfo() {
-    let info = {player: this.authPlayer, nationAttributes: {}, lobbyId: this.utilityInfo.lobbyId};
+    let info = {player: this.authPlayer, nationAttributes: {}, lobbyId: this.utilityInfo.lobbyId, mapName: this.imageName};
+    console.log(info);
     for(let row of this.nationAttributes) {
       for(let attribute of row) {
         info.nationAttributes[attribute.name] = attribute.points;
@@ -168,6 +174,30 @@ export class Lobby {
     } else {
       this.gameStartMessage = "Waiting players";
     }
+  }
+
+  getMapsList(){
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.post('browse', {
+        "startIndex" : 0
+      })
+      .then(data => {
+        console.log(this.images);
+        console.log(data);
+        for (let mapName of data){
+          this.images.push(mapName);
+        }
+      })
+      .catch(console.error);
+    }
+  }
+
+  selectMap(){
+    let element = document.getElementById('maps');
+    console.log(element);
+    let mapName = element.options[element.selectedIndex].innerHTML;
+    this.imageName = mapName;
+    console.log(this.imageName);
   }
 
 }

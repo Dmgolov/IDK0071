@@ -42,6 +42,16 @@ public class GameMapController {
         return IOUtils.toByteArray(in);
     }
 
+    @ResponseBody
+    @RequestMapping(path = "/lobby/image", consumes = "application/json", method = RequestMethod.POST, produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] sendImageToLobby(@RequestBody String imageName) throws IOException {
+        System.out.println(imageName);
+        String selectedMap = gson.fromJson(imageName, JsonObject.class).get("imageName").getAsString();
+        InputStream in = new FileInputStream("uploadFiles/" + selectedMap);
+        return IOUtils.toByteArray(in);
+    }
+
+
     @PostMapping(path = "/map/upload", consumes = "multipart/form-data")
     public String singleFileUpload(@RequestParam("mapImage") MultipartFile file) {
         if (file.isEmpty()) {
@@ -62,7 +72,17 @@ public class GameMapController {
     public @ResponseBody
     String browseMapPage() throws IOException{
         System.out.println("MAPS");
-        InputStream image = getClass().getResourceAsStream("/uploadFiles/gameMap5.png");
+        return sendListOfMaps();
+    }
+
+    @PostMapping(value = "/lobby/browse", consumes = {"application/json"})
+    public @ResponseBody
+    String listOfMapsInLobby() throws IOException{
+        System.out.println("MAPS");
+        return sendListOfMaps();
+    }
+
+    private String sendListOfMaps(){
         List<String> fileList = new LinkedList<>();
         File directory = new File("uploadFiles/");
         Optional<File[]> files = Optional.ofNullable(directory.listFiles());

@@ -17,7 +17,11 @@ public class GameField {
     private InGameObject[][] field;
     private Set<Coordinates> currentUpdate = new HashSet<>();
     private final Set<Coordinates> lastUpdate = new HashSet<>();
-    private String mapName = "gameMap5.png";
+    private String mapName = "";
+
+    public GameField(String mapName){
+        this.mapName = mapName;
+    }
 
     public void loadField() throws IOException {
         field = ImageConverter.createField(mapName);
@@ -151,8 +155,8 @@ public class GameField {
         return gameMap != null;
     }
 
-    public void setGameMap(GameMap gameMap) {
-        this.gameMap = gameMap;
+    public void setGameMap(String mapName) {
+        this.mapName = mapName;
     }
 
     void setField(InGameObject[][] field) {

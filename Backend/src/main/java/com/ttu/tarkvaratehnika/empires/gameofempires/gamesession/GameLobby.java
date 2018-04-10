@@ -19,7 +19,7 @@ public class GameLobby {
     private SessionService sessionService;
     private final long lobbyId;
 
-    private GameField gameField = new GameField();
+    private GameField gameField = new GameField("gameMap5.png");
 
     private Set<Nation> nations = new HashSet<>();
     private final List<String> receivedUpdate = new ArrayList<>();
@@ -81,12 +81,13 @@ public class GameLobby {
         botsPlayersCount = i;
     }
 
-    public void readyCheck(String username, boolean ready, Map<String, Integer> stats) throws IOException {
+    public void readyCheck(String username, boolean ready, Map<String, Integer> stats, String mapName) throws IOException {
         nations.stream()
                 .filter(nation -> nation.getUsername().equals(username))
                 .findFirst().ifPresent(nation -> {
             nation.setReady(ready);
             nation.setPersonWithStats(stats);
+            gameField.setGameMap(mapName);
         });
         if (nations.stream().filter(Nation::isReady).count() == nations.size()) startSession();
     }
@@ -163,6 +164,10 @@ public class GameLobby {
 
     public GameField getGameField() {
         return gameField;
+    }
+
+    public void setGameField(GameField gameField){
+        this.gameField = gameField;
     }
 
     public long getLobbyId() {

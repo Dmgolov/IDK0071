@@ -99,10 +99,11 @@ public class LobbyController {
             long lobbyId = json.get("lobbyId").getAsLong();
             String username = jsonObject.get("name").getAsString();
             boolean isReady = jsonObject.get("isReady").getAsBoolean();
+            String mapName = gson.fromJson(data, JsonObject.class).get("mapName").getAsString();
             Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
             if (searchedLobby.isPresent()) {
                 try {
-                    searchedLobby.get().readyCheck(username, isReady, stats);
+                    searchedLobby.get().readyCheck(username, isReady, stats, mapName);
                 } catch (IOException e) {
                     return "{\"status\":\"failed\", \"error\":\"" + e.getMessage() + "\"}";
                 }

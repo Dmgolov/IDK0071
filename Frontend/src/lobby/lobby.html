@@ -37,7 +37,10 @@
         <div class="lobby-game-options-container">
           <div>
             <p>Lobby id is ${utilityInfo.lobbyId}</p>
-            <button class="menu-element">Choose map</button>
+            <!-- <button class="menu-element">Choose map</button> -->
+            <select id="maps" click.delegate="selectMap()">
+              <option repeat.for="image of images">${image}</option>
+            </select>
             <p>${gameStartMessage}</p>
           </div>
         </div>
