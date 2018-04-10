@@ -104,6 +104,7 @@ export class Game {
           this.map.cells.push(cell);
         }
         this.drawInitialMap();
+        this.gameStatsContainer.style.display = "initial";
         this.updateMap();
       })
       .catch(console.error);
@@ -161,6 +162,7 @@ export class Game {
         this.isGameFinished = true;
         this.winner = new Player(data.name, data.color);
         this.gameCanvas.style.zIndex = '1';
+        this.winnerContainer.style.display = "initial";
         this.winnerContainer.style.zIndex = '3';
       })
       .catch(console.error);
