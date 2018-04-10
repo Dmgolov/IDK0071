@@ -37,7 +37,6 @@ public class GameLobby {
 
     private void startSession() throws IOException {
         nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
-        if (!gameField.isMapSet()) gameField.setGameMap(SessionSettings.DEFAULT_MAP);
         gameField.loadField();
         nations.forEach(Nation::setStartingLocation);
         try {

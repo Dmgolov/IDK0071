@@ -12,6 +12,5 @@ public class SessionSettings {
     public static final String SINGLE_PLAYER = "single";
     public static final String MULTI_PLAYER = "multi";
 
-    public static final GameMap DEFAULT_MAP = GameMap.LARGE_MAP;
     public static final String[] NATION_COLORS = new String[]{"#B4110F", "#A40FA6", "#663300", "#7587db"};
 }

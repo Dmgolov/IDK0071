@@ -3,6 +3,7 @@ import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
+import {json} from 'aurelia-fetch-client';
 
 @inject(UtilityInfo, Router, AuthService, Endpoint.of('map'))
 export class BrowseMaps{
@@ -14,12 +15,13 @@ export class BrowseMaps{
     this.mapEndpoint = mapEndpoint;
 
     this.imageName = 'gameMap5.png';  // name of image, which is choosen by user
+    this.images = [];
   }
 
   attached() {
     this.showMapsList();
 
-    this.showMap();
+    // this.showMap();
   }
 
   showMapsList() {
@@ -28,7 +30,11 @@ export class BrowseMaps{
         "startIndex" : 0
       })
       .then(data => {
+        console.log(this.images);
         console.log(data);
+        for (let imageN of data){
+          this.images.push(imageN);
+        }
       })
       .catch(console.error);
     }
@@ -54,7 +60,6 @@ export class BrowseMaps{
 
   showMap() {
     if (this.authService.isAuthenticated()) {
-
       let myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
       myHeaders.append("Accept", "image/*");
@@ -62,7 +67,8 @@ export class BrowseMaps{
       this.mapEndpoint.client.fetch('image', {
         method: 'POST',
         headers: myHeaders,
-        body: {"imageName": this.imageName}
+        body: json({"imageName": this.imageName})
+      
       })
       .then(response => response.blob())
       .then(data => {
@@ -89,6 +95,14 @@ export class BrowseMaps{
       })
       .catch(console.error);
     }
+  }
+
+  selectMap(){
+    let element = document.getElementById('maps');
+    let mapName = element.options[element.selectedIndex].innerHTML;
+    this.imageName = mapName;
+    this.showMap();
+    console.log(this.imageName);
   }
 
 }

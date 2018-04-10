@@ -2,6 +2,7 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,11 +31,15 @@ public class GameMapController {
 
     private static String UPLOADED_FOLDER = "uploadedFiles/";
     private Gson gson = new Gson();
-    private ServletContext servletContext;
+    private IOUtils utils;
 
-    @GetMapping("/")
-    public String index() {
-        return "upload";
+    @ResponseBody
+    @RequestMapping(path = "/map/image", consumes = "application/json", method = RequestMethod.POST, produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] sendImageToUsers(@RequestBody String imageName) throws IOException {
+        System.out.println(imageName);
+        String selectedMap = gson.fromJson(imageName, JsonObject.class).get("imageName").getAsString();
+        InputStream in = new FileInputStream("uploadFiles/" + selectedMap);
+        return IOUtils.toByteArray(in);
     }
 
     @PostMapping(path = "/map/upload", consumes = "multipart/form-data")
@@ -70,13 +75,6 @@ public class GameMapController {
             fileList = Arrays.asList(filesName);
         }
         return gson.toJson(fileList);
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/map/image", method = RequestMethod.POST, produces = MediaType.IMAGE_PNG_VALUE)
-    public byte[] sendImageToUsers() throws IOException {
-        InputStream in = new FileInputStream("uploadFiles/gameMap5.png");
-        return IOUtils.toByteArray(in);
     }
 
 }
