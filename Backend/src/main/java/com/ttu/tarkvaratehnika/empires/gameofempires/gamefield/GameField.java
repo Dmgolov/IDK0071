@@ -147,10 +147,6 @@ public class GameField {
         return field.length;
     }
 
-    public boolean isMapSet() {
-        return gameMap != null;
-    }
-
     public void setGameMap(GameMap gameMap) {
         this.gameMap = gameMap;
     }
