@@ -5,14 +5,15 @@ import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
 import {json} from 'aurelia-fetch-client';
 
-@inject(UtilityInfo, Router, AuthService, Endpoint.of('lobby'))
+@inject(UtilityInfo, Router, AuthService, Endpoint.of('lobby'), Endpoint.of('map'))
 export class Lobby {
-  constructor(utilityInfo, router, authService, lobbyEndpoint) {
+  constructor(utilityInfo, router, authService, lobbyEndpoint, mapEndpoint) {
     this.utilityInfo = utilityInfo;
     this.utilityInfo.requestUsernameUpdate();
     this.router = router;
     this.authService = authService;
     this.lobbyEndpoint = lobbyEndpoint;
+    this.mapEndpoint = mapEndpoint;
 
     this.canDisplayNationOptions = this.utilityInfo.gameMode !== '';
 
@@ -21,14 +22,9 @@ export class Lobby {
 
     this.nationPoints;
 
-    this.images = [];
-    this.imageName = 'gameMap5.png';  // name of image, which is choosen by user
+    this.maps = [];
+    this.mapName = 'gameMap5.png';  // name of image, which is choosen by user
 
-    // this.nationAttributes = [
-    //   [new Attribute("Vitality", 0), new Attribute("Reproduction", 0)],
-    //   [new Attribute("Strength", 0), new Attribute("Intelligence", 0)],
-    //   [new Attribute("Dexterity", 0), new Attribute("Luck", 0)]
-    // ];
     this.nationAttributes = [
       [new Attribute("Vitality", 0)],
       [new Attribute("Reproduction", 0)],
@@ -48,8 +44,8 @@ export class Lobby {
     this.setPlayers();
     this.setDefaultSettings();
     this.setGameStartMessage(false);
+    this.setMapsArray();
     this.timerId = setInterval(this.update.bind(this), 1000);
-    this.getMapsList();
   }
 
   changeNationAttributeValue(name, points) {
@@ -64,7 +60,7 @@ export class Lobby {
   }
 
   getReadyStateInfo() {
-    let info = {player: this.authPlayer, nationAttributes: {}, lobbyId: this.utilityInfo.lobbyId, mapName: this.imageName};
+    let info = {player: this.authPlayer, nationAttributes: {}, lobbyId: this.utilityInfo.lobbyId, mapName: this.mapName};
     console.log(info);
     for(let row of this.nationAttributes) {
       for(let attribute of row) {
@@ -176,16 +172,14 @@ export class Lobby {
     }
   }
 
-  getMapsList(){
+  setMapsArray() {
     if (this.authService.isAuthenticated()) {
-      this.lobbyEndpoint.post('browse', {
+      this.mapEndpoint.post('browse', {
         "startIndex" : 0
       })
       .then(data => {
-        console.log(this.images);
-        console.log(data);
-        for (let mapName of data){
-          this.images.push(mapName);
+        for (let mapName of data) {
+          this.maps.push(mapName);
         }
       })
       .catch(console.error);
@@ -193,11 +187,8 @@ export class Lobby {
   }
 
   selectMap(){
-    let element = document.getElementById('maps');
-    console.log(element);
-    let mapName = element.options[element.selectedIndex].innerHTML;
-    this.imageName = mapName;
-    console.log(this.imageName);
+    let selectedMapIndex = this.mapSelector.selectedIndex;
+    this.mapName = this.mapSelector.options[selectedMapIndex].text;
   }
 
 }

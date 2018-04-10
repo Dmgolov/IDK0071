@@ -5,7 +5,7 @@
       <div class="browse-maps-maps-list-container">
         <select ref="mapSelector" class="menu-select menu-button menu-element" change.delegate="selectMap()">
           <option selected disabled hidden>Choose map</option>
-          <option repeat.for="mapName of maps">${mapName}</option>
+          <option repeat.for="mapTitle of maps">${mapTitle}</option>
         </select>
       </div>
     </div>

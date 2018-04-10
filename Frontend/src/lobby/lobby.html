@@ -37,9 +37,9 @@
         <div class="lobby-game-options-container">
           <div>
             <p>Lobby id is ${utilityInfo.lobbyId}</p>
-            <!-- <button class="menu-element">Choose map</button> -->
-            <select id="maps" click.delegate="selectMap()">
-              <option repeat.for="image of images">${image}</option>
+            <select ref="mapSelector" class="menu-select menu-button menu-element" change.delegate="selectMap()">
+              <option selected disabled hidden>${mapName}</option>
+              <option repeat.for="mapTitle of maps">${mapTitle}</option>
             </select>
             <p>${gameStartMessage}</p>
           </div>

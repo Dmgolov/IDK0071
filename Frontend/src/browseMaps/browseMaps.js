@@ -14,7 +14,7 @@ export class BrowseMaps{
     this.authService = authService;
     this.mapEndpoint = mapEndpoint;
 
-    this.imageName = '';  // name of image, which is choosen by user
+    this.mapName = '';  // name of image, which is choosen by user
     this.maps = [];
     this.setMapsArray();
   }
@@ -42,7 +42,7 @@ export class BrowseMaps{
       this.mapEndpoint.client.fetch('image', {
         method: 'POST',
         headers: myHeaders,
-        body: json({"imageName": this.imageName})
+        body: json({"mapName": this.mapName})
       })
       .then(response => response.blob())
       .then(data => {
@@ -76,7 +76,7 @@ export class BrowseMaps{
 
   selectMap(){
     let selectedMapIndex = this.mapSelector.selectedIndex;
-    this.imageName = this.mapSelector.options[selectedMapIndex].text;
+    this.mapName = this.mapSelector.options[selectedMapIndex].text;
     this.showMap();
   }
 
