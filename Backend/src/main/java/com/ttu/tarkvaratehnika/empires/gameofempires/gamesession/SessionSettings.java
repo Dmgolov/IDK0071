@@ -1,6 +1,5 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 
-import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 
 public class SessionSettings {
 

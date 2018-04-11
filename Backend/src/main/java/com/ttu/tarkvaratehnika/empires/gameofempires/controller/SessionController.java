@@ -2,14 +2,12 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ObjectInputStream;
 import java.util.*;
 
 @RestController

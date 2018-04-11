@@ -2,17 +2,12 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
-import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import org.apache.commons.io.IOUtils;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,7 +19,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @RestController
 public class GameMapController {

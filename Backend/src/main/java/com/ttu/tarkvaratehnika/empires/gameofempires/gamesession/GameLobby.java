@@ -1,7 +1,6 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 
 import com.google.gson.JsonObject;
-import com.ttu.tarkvaratehnika.empires.gameofempires.controller.LobbyController;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
@@ -29,18 +28,19 @@ public class GameLobby {
     private int botsPlayersCount = 0;
     private boolean singleMode;
     private boolean hasStarted = false;
+    private int startDelay = SessionSettings.START_DELAY;
 
     public GameLobby(SessionService sessionService) {
         this.sessionService = sessionService;
         lobbyId = ++id;
     }
 
-    private void startSession() throws IOException {
+    void startSession() throws IOException {
         nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
         gameField.loadField();
         nations.forEach(Nation::setStartingLocation);
         try {
-            Thread.sleep(SessionSettings.START_DELAY);
+            Thread.sleep(startDelay);
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
@@ -237,5 +237,9 @@ public class GameLobby {
             data.add(playerData);
         }
         return data;
+    }
+
+    void setStartDelay(int timeInMilliseconds) {
+        startDelay = timeInMilliseconds;
     }
 }

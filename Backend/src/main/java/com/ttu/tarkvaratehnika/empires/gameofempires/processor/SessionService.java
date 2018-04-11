@@ -43,7 +43,7 @@ public class SessionService {
         results.put(lobby.getLobbyId(), "{\"name\":\"" + winner + "\", \"color\":\"" + color + "\"}");
     }
 
-    private void saveGameToDatabase(GameLobby lobby, String winner) {
+    void saveGameToDatabase(GameLobby lobby, String winner) {
         Game game = new Game();
         game.setGameId(Long.toString(lobby.getLobbyId()));
         game.setStartTime(lobby.getStartTime());
@@ -51,5 +51,9 @@ public class SessionService {
         game.setWinner(winner);
         game.setNumOfTurns(lobby.getNumOfTurns());
         gameRepository.save(game);
+    }
+
+    Set<GameLobby> getLobbies() {
+        return lobbies;
     }
 }

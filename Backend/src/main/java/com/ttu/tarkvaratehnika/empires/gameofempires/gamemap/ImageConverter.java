@@ -1,8 +1,5 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamemap;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.Coordinates;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.InGameObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects.Terrain;
 
@@ -12,8 +9,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ImageConverter {
     private static final String MAP_FOLDER = "maps\\";

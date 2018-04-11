@@ -1,6 +1,5 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gameobjects;
 
-//Base for terrain types (eg. water, swamp, etc.), which can have effect on people
 public enum Terrain implements InGameObject {
     PLAINS("#8DB360", true, 1, 1),
     DESERT("#FA9418", true, 0.9, 1.1),
