@@ -1,29 +1,51 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.gamemap;
 
-public enum GameMap {
-    BASIC_MAP("basic", 100, 100),
-    LARGE_MAP("large", 60, 60),
-    EARTH("earth", 300, 200);
+import javax.persistence.*;
+import java.sql.Date;
 
-    private String mapName;
-    private int mapWidth;
-    private int mapHeight;
+@Entity
+public class GameMap {
 
-    GameMap(final String mapName, final int mapWidth, final int mapHeight) {
-        this.mapName = mapName;
-        this.mapWidth = mapWidth;
-        this.mapHeight = mapHeight;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Column(nullable = false, unique = true)
+    private String name;
+    @Column(nullable = false)
+    private String author;
+    @Column(nullable = false)
+    private Date creationDate;
+
+    public String getName() {
+        return name;
     }
 
-    public String getMapName() {
-        return mapName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public int getMapWidth() {
-        return mapWidth;
+    public String getAuthor() {
+        return author;
     }
 
-    public int getMapHeight() {
-        return mapHeight;
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

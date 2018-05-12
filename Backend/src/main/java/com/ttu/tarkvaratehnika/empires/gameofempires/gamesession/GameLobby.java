@@ -4,6 +4,9 @@ import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
+import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameRepository;
+import com.ttu.tarkvaratehnika.empires.gameofempires.stats.InGameStats;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -11,7 +14,6 @@ import java.util.*;
 
 public class GameLobby {
 
-    private static long id = 0;
     private int numOfTurns = 0;
     private LocalDateTime startTime;
 
@@ -30,9 +32,9 @@ public class GameLobby {
     private boolean hasStarted = false;
     private int startDelay = SessionSettings.START_DELAY;
 
-    public GameLobby(SessionService sessionService) {
+    public GameLobby(SessionService sessionService, long id) {
         this.sessionService = sessionService;
-        lobbyId = ++id;
+        lobbyId = id;
     }
 
     void startSession() throws IOException {
@@ -96,7 +98,12 @@ public class GameLobby {
         if (!receivedUpdate.contains(username) && allNationsWaiting() && gameField.hasLastUpdate()) {
             System.out.println(username + " received update");
             receivedUpdate.add(username);
-            return Optional.of(gameField.getLastMapUpdate(turnNr));
+            Optional<JsonObject> update = Optional.of(gameField.getLastMapUpdate(turnNr));
+            if (update.isPresent()) {
+                JsonObject jsonObject = update.get();
+                jsonObject.add("stats", InGameStats.getNationStatistics(nations));
+                return update;
+            }
         }
         return Optional.empty();
     }

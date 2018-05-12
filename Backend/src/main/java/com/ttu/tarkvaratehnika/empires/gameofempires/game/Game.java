@@ -1,29 +1,31 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.game;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.time.LocalDateTime;
+import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 public class Game {
 
     @Id
-    private String gameId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long gameId;
 
+    @Column(nullable = false)
     private String winner;
     @Column(nullable = false)
-    private LocalDateTime startTime;
+    private String winnerColor;
     @Column(nullable = false)
-    private LocalDateTime endTime;
+    private Timestamp startTime;
+    @Column(nullable = false)
+    private Timestamp endTime;
     @Column(nullable = false)
     private int numOfTurns;
 
-    public String getGameId() {
+    public long getGameId() {
         return gameId;
     }
 
-    public void setGameId(String gameId) {
+    public void setGameId(long gameId) {
         this.gameId = gameId;
     }
 
@@ -35,19 +37,27 @@ public class Game {
         this.winner = winner;
     }
 
-    public LocalDateTime getStartTime() {
+    public String getWinnerColor() {
+        return winnerColor;
+    }
+
+    public void setWinnerColor(String winnerColor) {
+        this.winnerColor = winnerColor;
+    }
+
+    public Timestamp getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(Timestamp startTime) {
         this.startTime = startTime;
     }
 
-    public LocalDateTime getEndTime() {
+    public Timestamp getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    public void setEndTime(Timestamp endTime) {
         this.endTime = endTime;
     }
 

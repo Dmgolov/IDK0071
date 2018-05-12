@@ -53,7 +53,7 @@ public class SessionController {
 
     @PostMapping(path = "/state", consumes = "application/json")
     public @ResponseBody String getGameState(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
-        if (accountService.isLoggedIn(token)) {
+//        if (accountService.isLoggedIn(token)) {
             long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
             Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
             if (!searchedLobby.isPresent()) {
@@ -67,7 +67,7 @@ public class SessionController {
                 lobby.checkIfEveryoneReceivedUpdate();
                 return update.get().toString();
             }
-        }
+//        }
         return "{\"status\":\"received\"}";
     }
 

@@ -7,6 +7,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
+import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameRepository;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -25,18 +26,22 @@ public class LobbyController {
 
     private SessionService sessionService;
     private AccountService accountService;
+    private GameRepository gameRepository;
 
     @Autowired
-    public LobbyController(AccountService accountService, SessionService sessionService) {
+    public LobbyController(AccountService accountService, SessionService sessionService, GameRepository gameRepository) {
         this.accountService = accountService;
         this.sessionService = sessionService;
+        this.gameRepository = gameRepository;
     }
 
     @PostMapping(path = "/new", consumes = "application/json")
     public @ResponseBody String createLobby(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
         if (accountService.isLoggedIn(token)) {
             String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
-            GameLobby lobby = new GameLobby(sessionService);
+            Optional<Long> lastId = gameRepository.getMaxId();
+            long newId = lastId.isPresent() ? lastId.get() + 1 : 1;
+            GameLobby lobby = new GameLobby(sessionService, newId);
             lobby.enterSession(username);
             sessionService.addLobby(lobby);
             return "{\"lobbyId\":" + lobby.getLobbyId() + "}";

@@ -13,14 +13,18 @@ import java.util.*;
 
 public class GameField {
 
-    private GameMap gameMap;
-    private InGameObject[][] field;
+    private InGameObject[][] field = new InGameObject[][]{};
     private Set<Coordinates> currentUpdate = new HashSet<>();
     private final Set<Coordinates> lastUpdate = new HashSet<>();
     private String mapName = "gameMap5.png";
 
-    public GameField(String mapName){
+    public GameField(String mapName) {
         this.mapName = mapName;
+        try {
+            loadField();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void loadField() throws IOException {
@@ -147,21 +151,12 @@ public class GameField {
         }
     }
 
-    public String getMapName() {
-        return gameMap.getMapName();
-    }
-
     public int getMapWidth() {
         return field[0].length;
     }
 
     public int getMapHeight() {
         return field.length;
-    }
-
-
-    public boolean isMapSet() {
-        return gameMap != null;
     }
 
     public void setGameMap(String mapName) {

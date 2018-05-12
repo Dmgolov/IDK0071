@@ -217,12 +217,32 @@ public class Person implements InGameObject {
         this.random= random;
     }
 
-    int getVitality() {
+    public int getVitality() {
         return vitality;
     }
 
     @Override
     public String getColorHex() {
         return nation.getTeamColor();
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public int getDexterity() {
+        return dexterity;
+    }
+
+    public int getGrowthRate() {
+        return growthRate;
+    }
+
+    public int getIntelligence() {
+        return intelligence;
+    }
+
+    public int getLuck() {
+        return luck;
     }
 }
