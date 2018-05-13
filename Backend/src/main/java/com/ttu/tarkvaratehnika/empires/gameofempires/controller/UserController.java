@@ -1,6 +1,7 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,18 +41,25 @@ public class UserController {
 
     @PostMapping(path = "/auth/signin", consumes = "application/json")
     public @ResponseBody String signIn(@RequestBody String data) throws UnsupportedEncodingException {
-        String email = gson.fromJson(data, JsonObject.class).get("email").getAsString();
-        String pass = gson.fromJson(data, JsonObject.class).get("password").getAsString();
-        Optional<String> token = accountService.logIn(email, pass);
         JsonObject response;
-        if (token.isPresent()) {
-            response = generateDefaultResponse("success", "null");
-            response.addProperty("token", token.get());
+        JsonElement jsonEmail = gson.fromJson(data, JsonObject.class).get("email");
+        JsonElement jsonPass = gson.fromJson(data, JsonObject.class).get("password");
+        if (jsonEmail != null && jsonPass != null) {
+            String email = jsonEmail.getAsString();
+            String pass = jsonPass.getAsString();
+            Optional<String> token = accountService.logIn(email, pass);
+            if (token.isPresent()) {
+                response = generateDefaultResponse("success", "null");
+                response.addProperty("token", token.get());
+                return gson.toJson(response);
+            } else {
+                response = generateDefaultResponse("failed", "No matching email and password found");
+                return gson.toJson(response);
+            }
         } else {
-            response = generateDefaultResponse("failed", "No matching email and password found");
-            response.addProperty("token", "null");
+            response = generateDefaultResponse("failed", "Empty email or password");
+            return gson.toJson(response);
         }
-        return gson.toJson(response);
     }
 
     @GetMapping(path = "/auth/signout")
