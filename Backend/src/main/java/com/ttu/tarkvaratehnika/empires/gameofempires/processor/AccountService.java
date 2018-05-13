@@ -28,9 +28,7 @@ public class AccountService {
 
     public void register(String name, String email, String password)
             throws DataIntegrityViolationException, NoSuchAlgorithmException, IllegalArgumentException {
-        if (!email.contains("@")) {
-            throw new IllegalArgumentException("Invalid email");
-        }
+        checkDataIntegrity(name, email, password);
         User user = new User();
         byte[] salt = getSalt().getBytes();
         user.setName(name);
@@ -98,5 +96,22 @@ public class AccountService {
 
     public Optional<String> getUsernameForToken(String token) {
         return tokenService.getUsernameFromToken(token);
+    }
+
+    private void checkDataIntegrity(String username, String email, String password) throws IllegalArgumentException {
+        Optional<User> user = userRepository.getUserByEmail(email);
+        if (user.isPresent()) {
+            throw new IllegalArgumentException("Duplicate email");
+        }
+        user = userRepository.getUserByName(username);
+        if (user.isPresent()) {
+            throw new IllegalArgumentException("Duplicate username");
+        }
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("Password must not be empty");
+        }
+        if (!email.contains("@")) {
+            throw new IllegalArgumentException("Email must contain @ symbol");
+        }
     }
 }
