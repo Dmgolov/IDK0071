@@ -55,7 +55,7 @@ public class AccountService {
 
     private boolean isRegistered(String email, String password) throws UnsupportedEncodingException {
         Optional<User> user = userRepository.getUserByEmail(email);
-        if (user.isPresent()) {
+        if (user.isPresent() && password != null) {
             byte[] salt = user.get().getSalt().getBytes("UTF-8");
             try {
                 String hashedPass = encryptPassword(password, salt);

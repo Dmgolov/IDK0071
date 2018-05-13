@@ -42,7 +42,7 @@ public class SessionService {
         JsonObject response = new JsonObject();
         if (searched.isPresent()) {
             Game game = searched.get();
-            response.addProperty("winner", game.getWinner());
+            response.addProperty("name", game.getWinner());
             response.addProperty("color", game.getWinnerColor());
             response.addProperty("status", "success");
             response.addProperty("message", "null");
