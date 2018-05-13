@@ -27,26 +27,29 @@ public class LobbyController {
 
     private SessionService sessionService;
     private AccountService accountService;
-    private GameRepository gameRepository;
 
     @Autowired
     public LobbyController(AccountService accountService, SessionService sessionService, GameRepository gameRepository) {
         this.accountService = accountService;
         this.sessionService = sessionService;
-        this.gameRepository = gameRepository;
         lastLobbyId = gameRepository.getMaxId().isPresent() ? gameRepository.getMaxId().get() : 0;
     }
 
     @PostMapping(path = "/new", consumes = "application/json")
     public @ResponseBody String createLobby(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+        JsonObject response;
         if (accountService.isLoggedIn(token)) {
             String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
             GameLobby lobby = new GameLobby(sessionService, ++lastLobbyId);
             lobby.enterSession(username);
             sessionService.addLobby(lobby);
-            return "{\"lobbyId\":" + lobby.getLobbyId() + "}";
+            response = generateDefaultResponse("success", "null");
+            response.addProperty("lobbyId", lobby.getLobbyId());
+        } else {
+            response = generateDefaultResponse("failed", "Authentication failed");
+            response.addProperty("lobbyId", 0);
         }
-        return "{\"lobbyId\":0}";
+        return gson.toJson(response);
     }
 
     @GetMapping(path = "/defaultSettings")
@@ -59,6 +62,7 @@ public class LobbyController {
 
     @PostMapping(path = "/mode", consumes = "application/json")
     public @ResponseBody String changeMode(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+        JsonObject response = new JsonObject();
         if (accountService.isLoggedIn(token)) {
             String mode = gson.fromJson(data, JsonObject.class).get("mode").getAsString();
             long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
@@ -69,24 +73,41 @@ public class LobbyController {
                 } else if (mode.equals(SessionSettings.MULTI_PLAYER)) {
                     searchedLobby.get().setSingleMode(false);
                 }
-                return "{\"status\":\"changed\"}";
+                response.addProperty("status", "changed");
+                response.addProperty("message", "null");
+                return gson.toJson(response);
+            } else {
+                response.addProperty("status", "failed");
+                response.addProperty("message", "No lobby with this id found");
+                return gson.toJson(response);
             }
+        } else {
+            response.addProperty("status", "failed");
+            response.addProperty("message", "Authentication failed");
+            return gson.toJson(response);
         }
-        return "{\"status\":\"failed\"}";
     }
 
     @PostMapping(path = "/connect", consumes = "application/json")
     public @ResponseBody String connectToLobby(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+        JsonObject response;
         if (accountService.isLoggedIn(token)) {
             long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
             Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
             String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
             if (searchedLobby.isPresent() && searchedLobby.get().enterSession(username).isPresent()) {
                 String mode = searchedLobby.get().isSingleMode() ? "single" : "multi";
-                return "{\"status\":\"success\", \"gameMode\":\"" + mode + "\"}";
+                response = generateDefaultResponse("success", "null");
+                response.addProperty("gameMode", mode);
+                return gson.toJson(response);
+            } else {
+                response = generateDefaultResponse("failed", "No lobby with this id found");
+                return gson.toJson(response);
             }
+        } else {
+            response = generateDefaultResponse("failed", "Authentication failed");
+            return gson.toJson(response);
         }
-        return "{\"status\":\"failed\"}";
     }
 
     @RequestMapping(path = "/leave")
@@ -100,6 +121,7 @@ public class LobbyController {
 
     @PostMapping(path = "/ready", consumes = "application/json")
     public @ResponseBody String setPlayerReadyState(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+        JsonObject response;
         if (accountService.isLoggedIn(token)) {
             JsonObject json = gson.fromJson(data, JsonObject.class);
             Map<String, Integer> stats = gson
@@ -113,23 +135,40 @@ public class LobbyController {
             if (searchedLobby.isPresent()) {
                 try {
                     searchedLobby.get().readyCheck(username, isReady, stats, mapName);
+                    response = generateDefaultResponse("ready", "null");
+                    return gson.toJson(response);
                 } catch (IOException e) {
-                    return "{\"status\":\"failed\", \"error\":\"" + e.getMessage() + "\"}";
+                    response = generateDefaultResponse("failed", e.getMessage());
+                    response.addProperty("error", e.getMessage());
+                    return gson.toJson(response);
                 }
+            } else {
+                response = generateDefaultResponse("failed", "No lobby with this id found");
+                return gson.toJson(response);
             }
-            return "{\"status\":\"ready\"}";
+        } else {
+            response = generateDefaultResponse("failed", "Authentication failed");
+            return gson.toJson(response);
         }
-        return "{\"status\":\"failed\"}";
     }
 
     @PostMapping(path = "/check", consumes = "application/json")
-    public @ResponseBody String checkPlayerState(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+    public @ResponseBody String checkPlayerState(@RequestHeader(name = "Authorization", required = false) String token,
+                                                 @RequestBody String data) {
+        JsonObject response;
         if (accountService.isLoggedIn(token)) {
             long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
             Optional<GameLobby> gameLobby = sessionService.findLobbyById(lobbyId);
-            return gameLobby.isPresent() ? gson.toJson(gameLobby.get().checkPlayerState()) : "{\"status\":\"notFound\"}";
+            if (gameLobby.isPresent()) {
+                return gson.toJson(gameLobby.get().checkPlayerState());
+            } else {
+                response = generateDefaultResponse("notFound", "No lobby with this id found");
+                return gson.toJson(response);
+            }
+        } else {
+            response = generateDefaultResponse("failed", "Authentication failed");
+            return gson.toJson(response);
         }
-        return "{\"status\":\"notFound\"}";
     }
 
     @ResponseBody
@@ -139,5 +178,12 @@ public class LobbyController {
         String selectedMap = gson.fromJson(imageName, JsonObject.class).get("imageName").getAsString();
         InputStream in = new FileInputStream("uploadFiles/" + selectedMap);
         return IOUtils.toByteArray(in);
+    }
+
+    private JsonObject generateDefaultResponse(String status, String message) {
+        JsonObject response = new JsonObject();
+        response.addProperty("status", status);
+        response.addProperty("message", message);
+        return response;
     }
 }
