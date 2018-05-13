@@ -110,8 +110,12 @@ public class AccountService {
         if (password == null || password.isEmpty()) {
             throw new IllegalArgumentException("Password must not be empty");
         }
+        if (password.length() < Constants.PASSWORD_MIN_LENGTH) {
+            throw new IllegalArgumentException(String.format("Password length must be at least %d symbols",
+                    Constants.PASSWORD_MIN_LENGTH));
+        }
         if (!email.contains("@")) {
-            throw new IllegalArgumentException("Email must contain @ symbol");
+            throw new IllegalArgumentException("Email must contain one @ symbol");
         }
     }
 }
