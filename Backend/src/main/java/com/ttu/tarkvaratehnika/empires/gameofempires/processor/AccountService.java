@@ -107,6 +107,9 @@ public class AccountService {
         if (user.isPresent()) {
             throw new IllegalArgumentException("Duplicate username");
         }
+        if (username.equals("null")) {
+            throw new IllegalArgumentException("Restricted username");
+        }
         if (password == null || password.isEmpty()) {
             throw new IllegalArgumentException("Password must not be empty");
         }
