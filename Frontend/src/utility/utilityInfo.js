@@ -13,9 +13,14 @@ export class UtilityInfo {
 
   requestUsernameUpdate() {
     if (this.authService.isAuthenticated()) {
+
       this.authService.getMe()
       .then(data => {
-        this.username = data.username;
+        if (data.username !== "null") {
+          this.username = data.username;
+        } else {
+          this.authService.logout();
+        }
       })
       .catch(console.error);
     }

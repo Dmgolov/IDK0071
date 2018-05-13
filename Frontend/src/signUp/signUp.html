@@ -4,6 +4,7 @@
     <div class="centered-element sign-up-content-container">
       <logo></logo>
       <div class="sign-up-menu-container">
+        <div show.bind="resultFailed">${message}</div>
         <input class="menu-input menu-element" placeholder="Username" type="text" value.bind="username">
         <input class="menu-input menu-element" placeholder="Email" type="email" value.bind="email">
         <input class="menu-input menu-element" placeholder="Password" type="password" value.bind="password">
