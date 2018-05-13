@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface UserRepository extends CrudRepository<User, Long> {
 
     Optional<User> getUserByEmail(String email);
+
+    Optional<User> getUserByName(String name);
 }

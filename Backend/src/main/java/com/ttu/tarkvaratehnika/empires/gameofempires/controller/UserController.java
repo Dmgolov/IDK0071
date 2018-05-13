@@ -28,13 +28,14 @@ public class UserController {
         String name = gson.fromJson(data, JsonObject.class).get("displayName").getAsString();
         String email = gson.fromJson(data, JsonObject.class).get("email").getAsString();
         String pass = gson.fromJson(data, JsonObject.class).get("password").getAsString();
+        JsonObject response;
         try {
             accountService.register(name, email, pass);
-            return "{\"result\":\"success\"}";
-        } catch (DataIntegrityViolationException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            response = generateDefaultResponse("success", "null");
+        } catch (DataIntegrityViolationException | NoSuchAlgorithmException | IllegalArgumentException e) {
+            response = generateDefaultResponse("failed", e.getMessage());
         }
-        return "{\"result\":\"failed\"}";
+        return gson.toJson(response);
     }
 
     @PostMapping(path = "/auth/signin", consumes = "application/json")
@@ -42,32 +43,53 @@ public class UserController {
         String email = gson.fromJson(data, JsonObject.class).get("email").getAsString();
         String pass = gson.fromJson(data, JsonObject.class).get("password").getAsString();
         Optional<String> token = accountService.logIn(email, pass);
+        JsonObject response;
         if (token.isPresent()) {
-            return "{\"token\":\"" + token.get() + "\", \"result\":\"success\"}";
+            response = generateDefaultResponse("success", "null");
+            response.addProperty("token", token.get());
+        } else {
+            response = generateDefaultResponse("failed", "No matching email and password found");
+            response.addProperty("token", "null");
         }
-        return "{\"token\":null,\"result\":\"failed\"}";
+        return gson.toJson(response);
     }
 
     @GetMapping(path = "/auth/signout")
-    public @ResponseBody String logOut(@RequestHeader(name = "Authorization", required = false) String token) {
-        accountService.logOut(token);
-        return "{\"result\":\"success\"}";
+    public @ResponseBody String logOut() {
+        accountService.logOut();
+        return gson.toJson(generateDefaultResponse("success", "null"));
     }
 
     @GetMapping(path = "/auth/check")
     public @ResponseBody String checkLogIn(@RequestHeader(name = "Authorization", required = false) String token) {
+        JsonObject response;
         if (accountService.isLoggedIn(token)) {
-            return "{\"result\":\"success\"}";
+            response = generateDefaultResponse("success", "null");
+        } else {
+            response = generateDefaultResponse("failed", "User is not logged in");
         }
-        return "{\"result\":\"failed\"}";
+        return gson.toJson(response);
     }
 
     @GetMapping(path = "/auth/user")
     public @ResponseBody String getUsername(@RequestHeader(name = "Authorization", required = false) String token) {
         Optional<String> username = accountService.getUsernameForToken(token);
+        JsonObject response;
         if (username.isPresent()) {
-            return "{\"username\":\"" + username.get() + "\", \"result\":\"success\"}";
+            response = generateDefaultResponse("success", "null");
+            response.addProperty("username", username.get());
+        } else {
+            response = generateDefaultResponse("failed", "Failed to find username");
+            response.addProperty("username", "null");
         }
-        return "{\"username\":null,\"result\":\"failed\"}";
+        return gson.toJson(response);
+    }
+
+    private JsonObject generateDefaultResponse(String result, String message) {
+        JsonObject response = new JsonObject();
+        response.addProperty("result", result);
+        response.addProperty("message", message);
+        return response;
     }
 }
+

@@ -1,6 +1,6 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.user;
 
-import com.ttu.tarkvaratehnika.empires.gameofempires.securityconstants.Constants;
+import com.ttu.tarkvaratehnika.empires.gameofempires.security.Constants;
 
 import javax.persistence.*;
 

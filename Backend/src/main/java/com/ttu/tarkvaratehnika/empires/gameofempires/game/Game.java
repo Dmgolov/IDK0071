@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 public class Game {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private long gameId;
 
     @Column(nullable = false)

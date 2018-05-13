@@ -23,6 +23,7 @@ import java.util.*;
 public class LobbyController {
 
     private Gson gson = new Gson();
+    private static long lastLobbyId;
 
     private SessionService sessionService;
     private AccountService accountService;
@@ -33,15 +34,14 @@ public class LobbyController {
         this.accountService = accountService;
         this.sessionService = sessionService;
         this.gameRepository = gameRepository;
+        lastLobbyId = gameRepository.getMaxId().isPresent() ? gameRepository.getMaxId().get() : 0;
     }
 
     @PostMapping(path = "/new", consumes = "application/json")
     public @ResponseBody String createLobby(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
         if (accountService.isLoggedIn(token)) {
             String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
-            Optional<Long> lastId = gameRepository.getMaxId();
-            long newId = lastId.isPresent() ? lastId.get() + 1 : 1;
-            GameLobby lobby = new GameLobby(sessionService, newId);
+            GameLobby lobby = new GameLobby(sessionService, ++lastLobbyId);
             lobby.enterSession(username);
             sessionService.addLobby(lobby);
             return "{\"lobbyId\":" + lobby.getLobbyId() + "}";

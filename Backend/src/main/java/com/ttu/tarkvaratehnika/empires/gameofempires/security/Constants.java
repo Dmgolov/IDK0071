@@ -1,4 +1,4 @@
-package com.ttu.tarkvaratehnika.empires.gameofempires.securityconstants;
+package com.ttu.tarkvaratehnika.empires.gameofempires.security;
 
 public class Constants {
 

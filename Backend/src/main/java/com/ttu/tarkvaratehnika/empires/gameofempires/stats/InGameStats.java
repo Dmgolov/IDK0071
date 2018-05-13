@@ -16,6 +16,7 @@ public class InGameStats {
             JsonObject object = new JsonObject();
             object.addProperty("username", nation.getUsername());
             object.addProperty("color", nation.getTeamColor());
+            object.addProperty("nationSize", nation.getNumOfPeople());
             OptionalDouble vitality = nation.getPeople().stream().mapToInt(Person::getVitality).average();
             OptionalDouble strength = nation.getPeople().stream().mapToInt(Person::getStrength).average();
             OptionalDouble dexterity = nation.getPeople().stream().mapToInt(Person::getDexterity).average();
