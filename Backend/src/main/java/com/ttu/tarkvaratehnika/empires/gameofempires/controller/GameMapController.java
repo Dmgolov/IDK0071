@@ -69,7 +69,7 @@ public class GameMapController {
         List<String> names = new ArrayList<>();
         Iterable<GameMap> maps = gameMapService.getMaps();
         for (GameMap map : maps) {
-            names.add(map.getName() + GameMapService.FILE_EXTENSION);
+            names.add(map.getName() + map.getFileExtension());
         }
         System.out.println("MAPS");
         return names;

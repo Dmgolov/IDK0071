@@ -16,6 +16,8 @@ public class GameMap {
     private String author;
     @Column(nullable = false)
     private Date creationDate;
+    @Column(nullable = false)
+    private String fileExtension;
 
     public String getName() {
         return name;
@@ -47,5 +49,13 @@ public class GameMap {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getFileExtension() {
+        return fileExtension;
+    }
+
+    public void setFileExtension(String fileExtension) {
+        this.fileExtension = fileExtension;
     }
 }

@@ -22,7 +22,6 @@ import java.util.Optional;
 public class GameMapService {
 
     public static final String MAP_PATH = "maps/";
-    public static final String FILE_EXTENSION = ".png";
 
     private GameMapRepository gameMapRepository;
 
@@ -36,10 +35,10 @@ public class GameMapService {
     }
 
     public byte[] findMap(String mapName) throws IOException, IllegalArgumentException {
-        Optional<GameMap> requested = gameMapRepository.getGameMapByName(mapName);
+        Optional<GameMap> requested = gameMapRepository.getGameMapByName(mapName.substring(0, mapName.indexOf('.')));
         if (requested.isPresent()) {
             GameMap gameMap = requested.get();
-            String filename = gameMap.getName() + FILE_EXTENSION;
+            String filename = gameMap.getName() + gameMap.getFileExtension();
             InputStream in = new FileInputStream(MAP_PATH + filename);
             return IOUtils.toByteArray(in);
         } else {
@@ -54,17 +53,18 @@ public class GameMapService {
         }
         byte[] bytes = file.getBytes();
         Date creationDate = Date.valueOf(LocalDate.now());
-        String filename = mapName + FILE_EXTENSION;
+        String filename = file.getOriginalFilename();
         Path path = Paths.get(MAP_PATH + filename);
         Files.write(path, bytes);
-        saveToDatabase(mapName, username, creationDate);
+        saveToDatabase(mapName, username, creationDate, filename.substring(filename.indexOf('.')));
     }
 
-    private void saveToDatabase(String mapName, String username, Date creationDate) {
+    private void saveToDatabase(String mapName, String username, Date creationDate, String fileExtension) {
         GameMap map = new GameMap();
         map.setAuthor(username);
         map.setName(mapName);
         map.setCreationDate(creationDate);
+        map.setFileExtension(fileExtension);
         gameMapRepository.save(map);
     }
 }
