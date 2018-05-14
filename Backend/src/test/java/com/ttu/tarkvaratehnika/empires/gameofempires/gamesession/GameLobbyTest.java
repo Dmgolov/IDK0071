@@ -24,18 +24,12 @@ public class GameLobbyTest {
     public void setUp() {
         sessionService = Mockito.mock(SessionService.class);
         field = Mockito.mock(GameField.class);
-        lobby = new GameLobby(sessionService);
+        lobby = new GameLobby(sessionService, 0);
         lobbyMock = Mockito.mock(GameLobby.class);
         Mockito.doCallRealMethod().when(lobbyMock).setGameField(Mockito.any());
         Mockito.doCallRealMethod().when(lobbyMock).setSessionService(Mockito.any());
         lobbyMock.setGameField(field);
         lobbyMock.setSessionService(sessionService);
-    }
-
-    @Test
-    public void testDifferentLobbiesHaveDifferentIDs() {
-        GameLobby another = new GameLobby(sessionService);
-        assertNotEquals(another.getLobbyId(), lobby.getLobbyId());
     }
 
     @Test
@@ -46,12 +40,12 @@ public class GameLobbyTest {
 
     @Test
     public void testEnterLobbyDoesNotAddIfFull() {
-        for (int i = 0; i < SessionSettings.DEFAULT_MAX_USERS; i++) {
+        for (int i = 0; i < lobby.getProperties().getMaxPlayersNumber(); i++) {
             lobby.enterSession("test" + i);
         }
-        assertEquals(SessionSettings.DEFAULT_MAX_USERS, lobby.getNations().size());
+        assertEquals(SessionSettings.DEFAULT_NUM_OF_PLAYERS, lobby.getNations().size());
         lobby.enterSession("test");
-        assertEquals(SessionSettings.DEFAULT_MAX_USERS, lobby.getNations().size());
+        assertEquals(SessionSettings.DEFAULT_NUM_OF_PLAYERS, lobby.getNations().size());
     }
 
     @Test
@@ -152,11 +146,11 @@ public class GameLobbyTest {
         Mockito.doCallRealMethod().when(lobbyMock).setNations(Mockito.anySet());
         try {
             Mockito.doCallRealMethod().when(lobbyMock).readyCheck(Mockito.anyString(),
-                    Mockito.anyBoolean(), Mockito.eq(PersonValues.DEFAULT_STATS), Mockito.anyString());
+                    Mockito.anyBoolean(), Mockito.eq(PersonValues.DEFAULT_STATS));
             Set<Nation> nations = new HashSet<>();
             nations.add(new Nation("test", "#ffffff", lobbyMock));
             lobbyMock.setNations(nations);
-            lobbyMock.readyCheck("test", true, PersonValues.DEFAULT_STATS, "map");
+            lobbyMock.readyCheck("test", true, PersonValues.DEFAULT_STATS);
             Mockito.verify(lobbyMock, Mockito.times(1)).startSession();
         } catch (IOException e) {
             fail(e.getMessage());

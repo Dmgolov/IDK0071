@@ -7,6 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 import static org.junit.Assert.*;
 
 public class SessionServiceTest {
@@ -19,6 +22,7 @@ public class SessionServiceTest {
     public void setUp() {
         gameRepository = Mockito.mock(GameRepository.class);
         lobby = Mockito.mock(GameLobby.class);
+        Mockito.doReturn(LocalDateTime.now()).when(lobby).getStartTime();
         sessionService = new SessionService(gameRepository);
     }
 
@@ -36,18 +40,12 @@ public class SessionServiceTest {
     }
 
     @Test
-    public void testTerminateLobbyAddsEntryToGameResults() {
-        Mockito.doReturn(1L).when(lobby).getLobbyId();
-        sessionService.terminateLobby(lobby, null, null);
-        assertEquals("{\"name\":\"null\", \"color\":\"null\"}", sessionService.getResultForGame(1));
-    }
-
-    @Test
     public void testSaveGameToDatabaseCreatesNewEntryToDatabase() {
         Mockito.doReturn(1L).when(lobby).getLobbyId();
         Mockito.doReturn(null).when(lobby).getStartTime();
         Mockito.doReturn(0).when(lobby).getNumOfTurns();
-        sessionService.saveGameToDatabase(lobby, null);
+        Mockito.doReturn(LocalDateTime.now()).when(lobby).getStartTime();
+        sessionService.saveGameToDatabase(lobby, null, null);
         Mockito.verify(gameRepository, Mockito.times(1)).save(Mockito.any(Game.class));
     }
 }

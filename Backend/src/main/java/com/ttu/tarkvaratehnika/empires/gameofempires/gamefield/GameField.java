@@ -18,6 +18,8 @@ public class GameField {
     private final Set<Coordinates> lastUpdate = new HashSet<>();
     private String mapName;
 
+    GameField() {}
+
     public GameField(String mapName) {
         this.mapName = mapName;
         try {
@@ -160,7 +162,6 @@ public class GameField {
     public void setGameMap(String mapName) {
         this.mapName = mapName;
     }
-
 
     void setField(InGameObject[][] field) {
         this.field = field;

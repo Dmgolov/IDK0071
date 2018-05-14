@@ -23,7 +23,7 @@ public class GameFieldTest {
         field[0][0] = Terrain.PLAINS;
         person = Mockito.mock(Person.class);
         another = Mockito.mock(Person.class);
-        gameField = new GameField(null);
+        gameField = new GameField();
         gameField.setField(field);
     }
 

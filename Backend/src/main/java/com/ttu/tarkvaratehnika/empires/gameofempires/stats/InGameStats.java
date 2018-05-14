@@ -27,12 +27,19 @@ public class InGameStats {
             OptionalDouble reproduction = people.stream().mapToInt(Person::getGrowthRate).average();
             OptionalDouble luck = people.stream().mapToInt(Person::getLuck).average();
 
-            object.addProperty("Vitality", vitality.isPresent() ? vitality.getAsDouble() : 0);
-            object.addProperty("Strength", strength.isPresent() ? strength.getAsDouble() : 0);
-            object.addProperty("Dexterity", dexterity.isPresent() ? dexterity.getAsDouble() : 0);
-            object.addProperty("Intelligence", intelligence.isPresent() ? intelligence.getAsDouble() : 0);
-            object.addProperty("Reproduction", reproduction.isPresent() ? reproduction.getAsDouble() : 0);
-            object.addProperty("Luck", luck.isPresent() ? luck.getAsDouble() : 0);
+            String vitalityS = String.format("%.2f", vitality.isPresent() ? vitality.getAsDouble() : 0);
+            String strengthS = String.format("%.2f", strength.isPresent() ? strength.getAsDouble() : 0);
+            String dexterityS = String.format("%.2f", dexterity.isPresent() ? dexterity.getAsDouble() : 0);
+            String intelligenceS = String.format("%.2f", intelligence.isPresent() ? intelligence.getAsDouble() : 0);
+            String reproductionS = String.format("%.2f", reproduction.isPresent() ? reproduction.getAsDouble() : 0);
+            String luckS = String.format("%.2f", luck.isPresent() ? luck.getAsDouble() : 0);
+
+            object.addProperty("Vitality", vitalityS);
+            object.addProperty("Strength", strengthS);
+            object.addProperty("Dexterity", dexterityS);
+            object.addProperty("Intelligence", intelligenceS);
+            object.addProperty("Reproduction", reproductionS);
+            object.addProperty("Luck", luckS);
             array.add(object);
         }
         return array;
