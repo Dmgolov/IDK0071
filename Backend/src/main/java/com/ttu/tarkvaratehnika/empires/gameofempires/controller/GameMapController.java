@@ -57,8 +57,10 @@ public class GameMapController {
 
     @PostMapping(value = "/map/browse", consumes = {"application/json"})
     public @ResponseBody
-    String getAvailableMapsFromMaps() {
-        return gson.toJson(getMaps(""));
+    String getAvailableMapsFromMaps(@RequestBody String data) {
+        JsonElement filter = gson.fromJson(data, JsonObject.class).get("name");
+        String name = filter == null ? "" : filter.getAsString();
+        return gson.toJson(getMaps(name));
     }
 
     @PostMapping(value = "/lobby/browse", consumes = {"application/json"})
