@@ -16,7 +16,7 @@ public class GameField {
     private InGameObject[][] field = new InGameObject[][]{};
     private Set<Coordinates> currentUpdate = new HashSet<>();
     private final Set<Coordinates> lastUpdate = new HashSet<>();
-    private String mapName = "gameMap5.png";
+    private String mapName;
 
     public GameField(String mapName) {
         this.mapName = mapName;
@@ -33,8 +33,6 @@ public class GameField {
 
     public JsonArray getInitialMap() {
         JsonArray array = new JsonArray();
-        System.out.println("Width " + getMapWidth());
-        System.out.println("Height " + getMapHeight());
         for (int y = 0; y < getMapHeight(); y++) {
             for (int x = 0; x < getMapWidth(); x++) {
                 JsonObject object = new JsonObject();

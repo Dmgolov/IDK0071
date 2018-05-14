@@ -3,11 +3,8 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
-import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
-import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameRepository;
 import com.ttu.tarkvaratehnika.empires.gameofempires.stats.InGameStats;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -23,12 +20,11 @@ public class GameLobby {
 
     private Properties properties;
 
-    private GameField gameField = new GameField("gameMap5.png");
+    private GameField gameField = new GameField(SessionSettings.DEFAULT_MAP);
 
     private Set<Nation> nations = new HashSet<>();
     private final List<String> receivedUpdate = new ArrayList<>();
-    private List<String> usedColors = new ArrayList<>(5);
-    private List<String> availableColors = new ArrayList<>(Arrays.asList(generateNationColor(), generateNationColor(), generateNationColor(), generateNationColor()));
+    private List<String> availableColors;
     private volatile int waiting = 0;
     private int botsPlayersCount = 0;
     private boolean singleMode;
@@ -38,12 +34,12 @@ public class GameLobby {
     public GameLobby(SessionService sessionService, long id) {
         this.sessionService = sessionService;
         properties = new Properties();
+        availableColors = new ArrayList<>(Arrays.asList(SessionSettings.NATION_COLORS));
         lobbyId = id;
     }
 
     void startSession() throws IOException {
         nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
-        nations.forEach(nation -> System.out.println(nation.getUsername()));
         gameField.loadField();
         nations.forEach(Nation::setStartingLocation);
         try {
@@ -83,7 +79,7 @@ public class GameLobby {
         singleMode = true;
         int i;
         for (i = 0; hasFreeSpaces(); i++) {
-            Optional<Nation> bot = enterSession("Bot " + i);
+            Optional<Nation> bot = enterSession("Bot " + (i + 1));
             bot.ifPresent(nation -> nation.setReady(true));
         }
         botsPlayersCount = i;
@@ -213,17 +209,6 @@ public class GameLobby {
 
     public void setSingleMode(boolean singleMode) {
         this.singleMode = singleMode;
-    }
-
-    private String generateNationColor() {
-        Random random = new Random();
-        String nationColor = SessionSettings.NATION_COLORS[random.nextInt(SessionSettings.DEFAULT_MAX_USERS)];
-        if (!usedColors.contains(nationColor)){
-            usedColors.add(nationColor);
-            return nationColor;
-        } else {
-            return generateNationColor();
-        }
     }
 
     public List<Map<String, Object>> checkPlayerState() {
