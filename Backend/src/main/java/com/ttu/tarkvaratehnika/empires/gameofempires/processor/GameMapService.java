@@ -33,6 +33,10 @@ public class GameMapService {
         return gameMapRepository.findAll();
     }
 
+    public Iterable<GameMap> getMaps(String filter) {
+        return gameMapRepository.getGameMapsByNameIsLike("%" + filter + "%");
+    }
+
     public byte[] findMap(String mapName) throws IOException, IllegalArgumentException {
         Optional<GameMap> requested = gameMapRepository.getGameMapByName(mapName.substring(0, mapName.indexOf('.')));
         if (requested.isPresent()) {

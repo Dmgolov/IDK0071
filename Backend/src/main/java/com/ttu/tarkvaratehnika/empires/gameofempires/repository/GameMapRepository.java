@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface GameMapRepository extends CrudRepository<GameMap, Long> {
 
     Optional<GameMap> getGameMapByName(String name);
+
+    Iterable<GameMap> getGameMapsByNameIsLike(String name);
 }

@@ -1,6 +1,7 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.GameMapService;
@@ -57,18 +58,20 @@ public class GameMapController {
     @PostMapping(value = "/map/browse", consumes = {"application/json"})
     public @ResponseBody
     String getAvailableMapsFromMaps() {
-        return gson.toJson(getMaps());
+        return gson.toJson(getMaps(""));
     }
 
     @PostMapping(value = "/lobby/browse", consumes = {"application/json"})
     public @ResponseBody
-    String getAvailableMapsFromLobby() {
-        return gson.toJson(getMaps());
+    String getAvailableMapsFromLobby(@RequestBody String data) {
+        JsonElement filter = gson.fromJson(data, JsonObject.class).get("name");
+        String name = filter == null ? "" : filter.getAsString();
+        return gson.toJson(getMaps(name));
     }
 
-    private List<String> getMaps() {
+    private List<String> getMaps(String filter) {
         List<String> names = new ArrayList<>();
-        Iterable<GameMap> maps = gameMapService.getMaps();
+        Iterable<GameMap> maps = gameMapService.getMaps(filter);
         for (GameMap map : maps) {
             names.add(map.getName() + map.getFileExtension());
         }
