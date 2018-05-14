@@ -334,24 +334,36 @@ body {
   z-index: 4;
   opacity: 1;
 }
-.game-playersTable {
+.game-players-table {
+  width: 660px;
   text-align: center;
   border-spacing: 0;
   border-collapse: collapse;
+  background-color: rgba(255, 255, 255, 0.75);
 }
-.game-playersTable tr td {
+.game-players-table tr td {
   height: 30px;
   padding: 0px 10px;
   border: 2px dashed rgba(0, 0, 0, 0.25);
 }
-.game-playersTable tr td:first-child {
-  background-color: rgba(255, 255, 255, 0.75);
+.game-players-table tr td {
 }
-.game-playersTable tr:first-child td:first-child {
+.game-players-table tr td:first-child {
+}
+.game-players-table tr:first-child td:first-child {
   font-size: 20px;
 }
-.game-playersTable tr:nth-child(n+1) td:last-child {
-  width: 30px;
+.game-players-table tr:nth-child(n+1) td {
+  width: 80px;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.game-players-table tr:nth-child(n+1) td:first-child {
+}
+.game-players-table tr:nth-child(n+1) td:nth-child(2) {
+  width: 0px;
 }
 .game-winner-container {
   position: absolute;

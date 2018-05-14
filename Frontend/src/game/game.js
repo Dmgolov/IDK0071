@@ -128,7 +128,7 @@ export class Game {
         'name': this.utilityInfo.username
       })
       .then(data => {
-        if(data.status === "finished") {
+        if (data.status === "finished") {
           this.requestWinnerData();
         } else if (data.status === "received") {
           setTimeout(() => {}, 200);
@@ -137,6 +137,19 @@ export class Game {
           this.stepCounter = data.turnNr === -1 ? 0 : data.turnNr;
           for (let cell of data.update) {
             this.drawUpdatedCell(cell);
+          }
+          for (let nationStats of data.stats) {
+            for (let player of this.players) {
+              if (nationStats.username === player.name) {
+                player.nation.vitality = nationStats.Vitality ;
+                player.nation.reproduction = nationStats.Reproduction;
+                player.nation.strength = nationStats.Strength;
+                player.nation.intelligence = nationStats.Intelligence;
+                player.nation.dexterity = nationStats.Dexterity;
+                player.nation.luck = nationStats.Luck;
+                player.nation.population = nationStats.nationSize;
+              }
+            }
           }
           setTimeout(() => {}, 200);
           this.updateMap();
@@ -176,6 +189,20 @@ class Player {
     this.name = name;
     this.color = color;
     this.playerScore = Math.floor(Math.random() * 100);
+    this.nation = new Nation(color);
+  }
+}
+
+class Nation {
+  constructor(color) {
+    this.color = color;
+    this.vitality = 0;
+    this.reproduction = 0;
+    this.strength = 0;
+    this.intelligence = 0;
+    this.dexterity = 0;
+    this.luck = 0;
+    this.population = 0;
   }
 }
 
