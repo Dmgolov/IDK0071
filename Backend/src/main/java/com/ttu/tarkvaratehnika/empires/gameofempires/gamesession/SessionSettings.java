@@ -3,7 +3,9 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 
 public class SessionSettings {
 
-    public static final String[] NATION_COLORS = new String[]{"#B4110F", "#A40FA6", "#663300", "#7587db"};
+    public static final String[] NATION_COLORS = new String[]{"#B4110F", "#A40FA6", "#663300", "#7587db", "#24253d",
+            "#c7002d", "#82638c", "#134444", "#7c007d", "#c70000", "##c700b1", "#c700b1", "#581e21", "#006461",
+            "#b0aeab", "#b0ae28"};
 
     public static final int DEFAULT_MAX_USERS = NATION_COLORS.length;
     public static final int DEFAULT_NUM_OF_PLAYERS = 4;
