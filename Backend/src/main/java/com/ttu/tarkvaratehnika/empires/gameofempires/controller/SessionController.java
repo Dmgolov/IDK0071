@@ -8,6 +8,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.*;
 
 @RestController
@@ -27,9 +28,9 @@ public class SessionController {
 
     @PostMapping(path = "/mapSettings", consumes = "application/json")
     public @ResponseBody
-    String getMapSettings(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+    String getMapSettings(Principal principal, @RequestBody String data) {
         JsonObject response;
-        if (accountService.isLoggedIn(token)) {
+        if (principal != null) {
             long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
             Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
             if (searchedLobby.isPresent()) {
@@ -52,9 +53,9 @@ public class SessionController {
     }
 
     @PostMapping(path = "/initialMap", consumes = "application/json")
-    public @ResponseBody String getInitialMap(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+    public @ResponseBody String getInitialMap(Principal principal, @RequestBody String data) {
         JsonObject response;
-        if (accountService.isLoggedIn(token)) {
+        if (principal != null) {
             long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
             Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
             if (searchedLobby.isPresent()) {
@@ -70,9 +71,9 @@ public class SessionController {
     }
 
     @PostMapping(path = "/state", consumes = "application/json")
-    public @ResponseBody String getGameState(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+    public @ResponseBody String getGameState(Principal principal, @RequestBody String data) {
         JsonObject response;
-        if (accountService.isLoggedIn(token)) {
+        if (principal != null) {
             long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
             Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
             if (!searchedLobby.isPresent()) {
@@ -102,9 +103,9 @@ public class SessionController {
     }
 
     @PostMapping(path = "/players", consumes = "application/json")
-    public @ResponseBody String getPlayerColors(@RequestHeader(name = "Authorization", required = false) String token, @RequestBody String data) {
+    public @ResponseBody String getPlayerColors(Principal principal, @RequestBody String data) {
         JsonObject response;
-        if (accountService.isLoggedIn(token)) {
+        if (principal != null) {
             long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
             Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
             if (searchedLobby.isPresent()) {

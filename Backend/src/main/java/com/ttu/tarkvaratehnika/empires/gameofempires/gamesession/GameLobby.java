@@ -264,12 +264,6 @@ public class GameLobby {
         this.properties = properties;
         gameField = new GameField(properties.getMapName());
         if (singleMode) {
-            for (Nation bot : bots) {
-                botsPlayersCount--;
-                leaveSession(bot.getUsername());
-            }
-            bots.clear();
-            botsPlayersCount = 0;
             changeToSinglePlayer();
         }
     }

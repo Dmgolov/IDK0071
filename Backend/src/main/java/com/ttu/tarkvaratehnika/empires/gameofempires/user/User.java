@@ -1,11 +1,16 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ttu.tarkvaratehnika.empires.gameofempires.security.Constants;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
 
 @Entity
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,6 +33,8 @@ public class User {
         this.name = name;
     }
 
+    @JsonIgnore
+    @Override
     public String getPassword() {
         return password;
     }
@@ -58,5 +65,47 @@ public class User {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Transient
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList();
+    }
+
+    @Transient
+    @JsonIgnore
+    @Override
+    public String getUsername() {
+        return getName();
+    }
+
+    @Transient
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Transient
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Transient
+    @JsonIgnore
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Transient
+    @JsonIgnore
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
