@@ -25,8 +25,6 @@ export class SignUp {
     let email = this.utilityInfo.htmlEscape(this.email);
     let password = this.utilityInfo.htmlEscape(this.password);
 
-    console.log(username, email, password);
-
     this.authEndpoint.post('signup', {
       "displayName": username,
       "email": email,

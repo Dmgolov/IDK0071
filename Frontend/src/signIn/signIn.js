@@ -23,8 +23,6 @@ export class SignIn {
     let email = this.utilityInfo.htmlEscape(this.email);
     let password = this.utilityInfo.htmlEscape(this.password);
 
-    console.log(email, password);
-
     return this.authService.login(email, password)
       .then(data => {
       })
