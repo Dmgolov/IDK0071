@@ -107,6 +107,12 @@ public class AccountService {
         if (user.isPresent()) {
             throw new IllegalArgumentException("Duplicate username");
         }
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("Username must not be empty");
+        }
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email must not be empty");
+        }
         if (username.equals("null")) {
             throw new IllegalArgumentException("Restricted username");
         }
