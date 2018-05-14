@@ -101,7 +101,6 @@ public class GameLobby {
 
     public Optional<JsonObject> sendUpdateToUser(String username, int turnNr) {
         if (!receivedUpdate.contains(username) && allNationsWaiting() && gameField.hasLastUpdate()) {
-            System.out.println(username + " received update");
             receivedUpdate.add(username);
             Optional<JsonObject> update = Optional.of(gameField.getLastMapUpdate(turnNr));
             if (update.isPresent()) {
@@ -124,7 +123,6 @@ public class GameLobby {
     public synchronized void endTurn() {
         waiting++;
         if (allNationsWaiting()) {
-            System.out.println("Updating game map");
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -147,7 +145,6 @@ public class GameLobby {
                 }
                 return;
             }
-            System.out.println("Waking nations");
             synchronized (this) {
                 notifyAll();
             }

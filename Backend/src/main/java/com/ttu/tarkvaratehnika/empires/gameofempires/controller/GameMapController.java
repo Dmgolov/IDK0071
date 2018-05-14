@@ -41,8 +41,9 @@ public class GameMapController {
                                    @RequestParam(value = "mapName", required = false) String mapName) {
         JsonObject response = new JsonObject();
         try {
-            String filename= file.getOriginalFilename();
-            mapName = mapName == null ? filename.substring(0, filename.indexOf(".")) : mapName;
+            String filename = file.getOriginalFilename();
+            if (filename.equals("EMPTY_FILE") || !filename.contains(".")) throw new IllegalArgumentException("No file found");
+            mapName = (mapName == null || mapName.isEmpty()) ? filename.substring(0, filename.indexOf(".")) : mapName;
             gameMapService.saveFile(file, mapName, username);
             response.addProperty("status", "success");
             response.addProperty("message", "Upload successful");

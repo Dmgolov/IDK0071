@@ -94,6 +94,12 @@ public class Nation implements Runnable {
         }
     }
 
+    public Set<Person> getPeopleCopy() {
+        synchronized (people) {
+            return new HashSet<>(people);
+        }
+    }
+
     public String getUsername() {
         return username;
     }
@@ -125,12 +131,10 @@ public class Nation implements Runnable {
     @Override
     public void run() {
         while (isActive()) {
-            System.out.println(username + " has " + people.size() + " people");
             spread();
             synchronized (session) {
                 session.endTurn();
                 try {
-                    System.out.println("Waiting " + username);
                     session.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();

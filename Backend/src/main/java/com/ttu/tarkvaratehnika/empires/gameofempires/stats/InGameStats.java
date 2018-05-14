@@ -19,7 +19,7 @@ public class InGameStats {
             object.addProperty("color", nation.getTeamColor());
             object.addProperty("nationSize", nation.getNumOfPeople());
 
-            Set<Person> people = new HashSet<>(nation.getPeople());
+            Set<Person> people = nation.getPeopleCopy();
             OptionalDouble vitality = people.stream().mapToInt(Person::getVitality).average();
             OptionalDouble strength = people.stream().mapToInt(Person::getStrength).average();
             OptionalDouble dexterity = people.stream().mapToInt(Person::getDexterity).average();

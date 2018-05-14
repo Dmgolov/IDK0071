@@ -1,6 +1,7 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.processor;
 
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
 import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameMapRepository;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,6 @@ import java.util.Optional;
 @Service
 public class GameMapService {
 
-    public static final String MAP_PATH = "maps/";
-
     private GameMapRepository gameMapRepository;
 
     @Autowired
@@ -39,7 +38,7 @@ public class GameMapService {
         if (requested.isPresent()) {
             GameMap gameMap = requested.get();
             String filename = gameMap.getName() + gameMap.getFileExtension();
-            InputStream in = new FileInputStream(MAP_PATH + filename);
+            InputStream in = new FileInputStream(ImageConverter.MAP_FOLDER + filename);
             return IOUtils.toByteArray(in);
         } else {
             throw new IllegalArgumentException("No such map found");
@@ -55,7 +54,7 @@ public class GameMapService {
         Date creationDate = Date.valueOf(LocalDate.now());
         String filename = file.getOriginalFilename();
         saveToDatabase(mapName, username, creationDate, filename.substring(filename.indexOf('.')));
-        Path path = Paths.get(MAP_PATH + mapName + filename.substring(filename.indexOf('.')));
+        Path path = Paths.get(ImageConverter.MAP_FOLDER + mapName + filename.substring(filename.indexOf('.')));
         Files.write(path, bytes);
     }
 

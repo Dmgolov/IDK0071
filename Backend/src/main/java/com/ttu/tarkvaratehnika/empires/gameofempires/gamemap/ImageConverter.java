@@ -11,7 +11,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ImageConverter {
-    private static final String MAP_FOLDER = "maps\\";
+
+    public static final String MAP_FOLDER = "maps\\";
 
     public static InGameObject[][] createField(String mapName) throws IOException {
         Path path = Paths.get(MAP_FOLDER + mapName);
@@ -19,8 +20,6 @@ public class ImageConverter {
         int width = image.getWidth();
         int height = image.getHeight();
         InGameObject[][] field = new InGameObject[height][width];
-        System.out.println("IMAGE CONVERTER width " + width);
-        System.out.println("IMAGE CONVERTER height " + height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Color color = new Color(image.getRGB(x, y));
