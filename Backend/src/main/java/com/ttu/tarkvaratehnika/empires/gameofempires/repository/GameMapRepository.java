@@ -9,5 +9,5 @@ public interface GameMapRepository extends CrudRepository<GameMap, Long> {
 
     Optional<GameMap> getGameMapByName(String name);
 
-    Iterable<GameMap> getGameMapsByAuthorIsLike(String name);
+    Iterable<GameMap> getGameMapsByAuthor(String author);
 }

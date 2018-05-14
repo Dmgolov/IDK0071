@@ -34,7 +34,7 @@ public class GameMapService {
     }
 
     public Iterable<GameMap> getMaps(String filter) {
-        return gameMapRepository.getGameMapsByAuthorIsLike("%" + filter + "%");
+        return gameMapRepository.getGameMapsByAuthor(filter);
     }
 
     public byte[] findMap(String mapName) throws IOException, IllegalArgumentException {
