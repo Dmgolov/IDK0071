@@ -47,7 +47,9 @@ export class Lobby {
 
   attached() {
     this.setPlayers();
-    // this.setDefaultSettings();
+    if (this.canDisplayNationOptions) {
+      this.getCustomSettings();
+    }
     this.setGameStartMessage(false);
     this.setMapsArray();
     this.timerId = setInterval(this.update.bind(this), 1000);
