@@ -15,15 +15,20 @@ export class Lobby {
     this.lobbyEndpoint = lobbyEndpoint;
     this.mapEndpoint = mapEndpoint;
 
-    this.canDisplayNationOptions = this.utilityInfo.gameMode !== '';
-
-    this.players = [];
-    this.authPlayer;
-
-    this.nationPoints;
+    this.canDisplayGameModeOptions = this.utilityInfo.gameMode === '';
+    this.canDisplayHostOptions = this.utilityInfo.gameMode !== '' &&
+                                  this.utilityInfo.lobbyMode === 'create';
+    this.canDisplayNationOptions = this.utilityInfo.gameMode !== '' &&
+                                  this.utilityInfo.lobbyMode === 'connect';
 
     this.maps = [];
     this.mapName = 'gameMap5.png';  // name of image, which is choosen by user
+    this.iterationsNumber = "";
+    this.nationPoints = "";
+    this.maxPlayersNumber = "";
+
+    this.players = [];
+    this.authPlayer;
 
     this.nationAttributes = [
       [new Attribute("Vitality", 0)],
@@ -42,7 +47,7 @@ export class Lobby {
 
   attached() {
     this.setPlayers();
-    this.setDefaultSettings();
+    // this.setDefaultSettings();
     this.setGameStartMessage(false);
     this.setMapsArray();
     this.timerId = setInterval(this.update.bind(this), 1000);
@@ -144,7 +149,10 @@ export class Lobby {
     if (this.authService.isAuthenticated()) {
       this.lobbyEndpoint.find('defaultSettings')
       .then(data => {
+        this.mapName = data.mapName;
+        this.iterationsNumber = data.iterationsNumber;
         this.nationPoints = data.nationPoints;
+        this.maxPlayersNumber = data.maxPlayersNumber;
       })
       .catch(console.error);
     }
@@ -152,7 +160,8 @@ export class Lobby {
 
   sendGameMode(mode) {
     this.utilityInfo.gameMode = mode;
-    this.canDisplayNationOptions = this.utilityInfo.gameMode !== "";
+    this.canDisplayHostOptions = this.utilityInfo.gameMode !== '';
+    this.canDisplayGameModeOptions = this.utilityInfo.gameMode.length === 0;
 
     if (this.authService.isAuthenticated()) {
       this.lobbyEndpoint.post('mode', {
@@ -189,6 +198,39 @@ export class Lobby {
   selectMap(){
     let selectedMapIndex = this.mapSelector.selectedIndex;
     this.mapName = this.mapSelector.options[selectedMapIndex].text;
+  }
+
+  sendHostOptions() {
+    this.canDisplayHostOptions = false;
+    this.canDisplayNationOptions = true;
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.post('setCustomSettings', {
+        "lobbyId": this.utilityInfo.lobbyId,
+        "mapName": this.mapName,
+        "iterationsNumber": this.iterationsNumber,
+        "nationPoints": this.nationPoints,
+        "maxPlayersNumber": this.maxPlayersNumber
+      })
+      .then()
+      .catch(console.error);
+    }
+    console.log(this.canDisplayHostOptions, this.canDisplayNationOptions);
+  }
+
+  getCustomSettings() {
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.post('getCustomSettings', {
+        "lobbyId": this.utilityInfo.lobbyId
+      })
+      .then(data => {
+        this.mapName = data.mapName;
+        this.iterationsNumber = data.iterationsNumber;
+        this.nationPoints = data.nationPoints;
+        this.maxPlayersNumber = data.maxPlayersNumber;
+      })
+      .catch(console.error);
+    }
+    console.log(this.canDisplayHostOptions, this.canDisplayNationOptions);
   }
 
 }
