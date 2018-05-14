@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.game.Game;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.Properties;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
 import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,32 @@ public class SessionService {
 
     public boolean isGameFinished(long lobbyId) {
         return gameRepository.getGameByGameId(lobbyId).isPresent();
+    }
+
+    public Properties getLobbySettings(long lobbyId) throws IllegalArgumentException {
+        Optional<GameLobby> searched = findLobbyById(lobbyId);
+        if (searched.isPresent()) {
+            return searched.get().getProperties();
+        } else {
+            throw new IllegalArgumentException("No lobby with this id found");
+        }
+    }
+
+    public void setLobbySettings(Properties properties) throws IllegalArgumentException {
+        Optional<GameLobby> searched = findLobbyById(properties.getLobbyId());
+        if (searched.isPresent()) {
+            GameLobby lobby = searched.get();
+            if (properties.getMaxPlayersNumber() > SessionSettings.DEFAULT_MAX_USERS) {
+                throw new IllegalArgumentException(String.format("Maximum allowed number of players is %d",
+                        SessionSettings.DEFAULT_MAX_USERS));
+            } else if (properties.getIterationsNumber() > SessionSettings.MAX_TURNS) {
+                throw new IllegalArgumentException(String.format("Maximum allowed number of iterations is %d",
+                        SessionSettings.MAX_TURNS));
+            }
+            lobby.setProperties(properties);
+        } else {
+            throw new IllegalArgumentException("No lobby with this id found");
+        }
     }
 
     public String getResultForGame(long lobbyId) {

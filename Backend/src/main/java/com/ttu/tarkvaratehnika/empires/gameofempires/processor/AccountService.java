@@ -98,6 +98,10 @@ public class AccountService {
         return tokenService.getUsernameFromToken(token);
     }
 
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.getUserByName(username);
+    }
+
     private void checkDataIntegrity(String username, String email, String password) throws IllegalArgumentException {
         Optional<User> user = userRepository.getUserByEmail(email);
         if (user.isPresent()) {

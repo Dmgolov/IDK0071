@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.Properties;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
@@ -55,9 +56,43 @@ public class LobbyController {
     @GetMapping(path = "/defaultSettings")
     public @ResponseBody String getDefaultOptions(@RequestHeader(name = "Authorization", required = false) String token) {
         if (accountService.isLoggedIn(token)) {
-            return "{\"nationPoints\":" + SessionSettings.NATION_POINTS + "}";
+            return gson.toJson(new Properties());
+        } else {
+            JsonObject response = generateDefaultResponse("failed", "Authorization failed");
+            return gson.toJson(response);
         }
-        return "{\"nationPoints\":0}";
+    }
+
+    @PostMapping(path = "/getCustomSettings", consumes = "application/json")
+    public @ResponseBody String getCustomSettings(@RequestHeader(name = "Authorization", required = false) String token,
+                                                  @RequestBody String data) {
+        if (accountService.isLoggedIn(token)) {
+            long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
+            Properties properties = sessionService.getLobbySettings(lobbyId);
+            return gson.toJson(properties);
+        } else {
+            JsonObject response = generateDefaultResponse("failed", "Authorization failed");
+            return gson.toJson(response);
+        }
+    }
+
+    @PostMapping(path = "/setCustomSettings", consumes = "application/json")
+    public @ResponseBody String setCustomSettings(@RequestHeader(name = "Authorization", required = false) String token,
+                                                @RequestBody Properties properties) {
+        JsonObject response;
+        if (accountService.isLoggedIn(token)) {
+            try {
+                sessionService.setLobbySettings(properties);
+                response = generateDefaultResponse("success", "null");
+                return gson.toJson(response);
+            } catch (IllegalArgumentException e) {
+                response = generateDefaultResponse("failed", e.getMessage());
+                return gson.toJson(response);
+            }
+        } else {
+            response = generateDefaultResponse("failed", "Authorization failed");
+            return gson.toJson(response);
+        }
     }
 
     @PostMapping(path = "/mode", consumes = "application/json")
@@ -176,7 +211,7 @@ public class LobbyController {
     public byte[] sendImageToLobby(@RequestBody String imageName) throws IOException {
         System.out.println(imageName);
         String selectedMap = gson.fromJson(imageName, JsonObject.class).get("imageName").getAsString();
-        InputStream in = new FileInputStream("uploadFiles/" + selectedMap);
+        InputStream in = new FileInputStream("maps/" + selectedMap);
         return IOUtils.toByteArray(in);
     }
 

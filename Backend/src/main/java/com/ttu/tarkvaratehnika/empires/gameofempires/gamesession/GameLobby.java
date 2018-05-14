@@ -20,9 +20,12 @@ public class GameLobby {
     private SessionService sessionService;
     private final long lobbyId;
 
+    private Properties properties;
+
     private GameField gameField = new GameField("gameMap5.png");
 
     private Set<Nation> nations = new HashSet<>();
+    private Set<Nation> bots = new HashSet<>();
     private final List<String> receivedUpdate = new ArrayList<>();
     private List<String> usedColors = new ArrayList<>(5);
     private List<String> availableColors = new ArrayList<>(Arrays.asList(generateNationColor(), generateNationColor(), generateNationColor(), generateNationColor()));
@@ -34,6 +37,7 @@ public class GameLobby {
 
     public GameLobby(SessionService sessionService, long id) {
         this.sessionService = sessionService;
+        properties = new Properties();
         lobbyId = id;
     }
 
@@ -66,7 +70,7 @@ public class GameLobby {
         if (nation.isPresent()) {
             availableColors.add(nation.get().getTeamColor());
             nations.remove(nation.get());
-            if (nations.size() == 0) {
+            if (nations.size() - botsPlayersCount == 0) {
                 sessionService.terminateLobby(this, null, null);
             }
             return true;
@@ -77,8 +81,10 @@ public class GameLobby {
     public void changeToSinglePlayer() {
         singleMode = true;
         int i;
-        for (i = 0; hasFreeSpaces(); i++) {
-            enterSession("Bot " + i).ifPresent(nation -> nation.setReady(true));
+        for (i = botsPlayersCount; hasFreeSpaces(); i++) {
+            Optional<Nation> bot = enterSession("Bot " + i);
+            bot.ifPresent(nation -> nation.setReady(true));
+            bot.ifPresent(nation -> bots.add(nation));
         }
         botsPlayersCount = i;
     }
@@ -155,7 +161,7 @@ public class GameLobby {
             return nations.stream().filter(Nation::isActive).findFirst();
         } else if (active == 0) {
             return Optional.of(new Nation("none", null, this));
-        } else if (numOfTurns >= SessionSettings.MAX_TURNS) {
+        } else if (numOfTurns >= properties.getIterationsNumber()) {
             return nations.stream().max(Comparator.comparingInt(Nation::getNumOfPeople));
         }
         return Optional.empty();
@@ -166,7 +172,7 @@ public class GameLobby {
     }
 
     private boolean hasFreeSpaces() {
-        return nations.size() < SessionSettings.DEFAULT_MAX_USERS;
+        return nations.size() < properties.getMaxPlayersNumber();
     }
 
     public GameField getGameField() {
@@ -248,5 +254,23 @@ public class GameLobby {
 
     void setStartDelay(int timeInMilliseconds) {
         startDelay = timeInMilliseconds;
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+        gameField = new GameField(properties.getMapName());
+        if (singleMode) {
+            for (Nation bot : bots) {
+                botsPlayersCount--;
+                leaveSession(bot.getUsername());
+            }
+            bots.clear();
+            botsPlayersCount = 0;
+            changeToSinglePlayer();
+        }
     }
 }
