@@ -6,10 +6,8 @@ import com.google.gson.reflect.TypeToken;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.Properties;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
-import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameRepository;
-import com.ttu.tarkvaratehnika.empires.gameofempires.security.AuthenticationData;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,11 +27,9 @@ public class LobbyController {
     private static long lastLobbyId;
 
     private SessionService sessionService;
-    private AccountService accountService;
 
     @Autowired
-    public LobbyController(AccountService accountService, SessionService sessionService, GameRepository gameRepository) {
-        this.accountService = accountService;
+    public LobbyController(SessionService sessionService, GameRepository gameRepository) {
         this.sessionService = sessionService;
         lastLobbyId = gameRepository.getMaxId().isPresent() ? gameRepository.getMaxId().get() : 0;
     }
@@ -165,11 +161,10 @@ public class LobbyController {
             long lobbyId = json.get("lobbyId").getAsLong();
             String username = jsonObject.get("name").getAsString();
             boolean isReady = jsonObject.get("isReady").getAsBoolean();
-            String mapName = gson.fromJson(data, JsonObject.class).get("mapName").getAsString();
             Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
             if (searchedLobby.isPresent()) {
                 try {
-                    searchedLobby.get().readyCheck(username, isReady, stats, mapName);
+                    searchedLobby.get().readyCheck(username, isReady, stats);
                     response = generateDefaultResponse("ready", "null");
                     return gson.toJson(response);
                 } catch (IOException e) {

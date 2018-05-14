@@ -46,7 +46,7 @@ public class GameMapService {
         }
     }
 
-    public void saveFile(MultipartFile file, String mapName, String username) throws IOException {
+    public void saveFile(MultipartFile file, String mapName, String username) throws IOException, IllegalArgumentException {
         File local = new File("maps");
         if  (!local.exists()) {
             if (!local.mkdir()) throw new IOException("Failed to create directory");
@@ -54,12 +54,15 @@ public class GameMapService {
         byte[] bytes = file.getBytes();
         Date creationDate = Date.valueOf(LocalDate.now());
         String filename = file.getOriginalFilename();
-        Path path = Paths.get(MAP_PATH + filename);
-        Files.write(path, bytes);
         saveToDatabase(mapName, username, creationDate, filename.substring(filename.indexOf('.')));
+        Path path = Paths.get(MAP_PATH + mapName + filename.substring(filename.indexOf('.')));
+        Files.write(path, bytes);
     }
 
     private void saveToDatabase(String mapName, String username, Date creationDate, String fileExtension) {
+        if (gameMapRepository.getGameMapByName(mapName).isPresent()) {
+            throw new IllegalArgumentException("Duplicate map name");
+        }
         GameMap map = new GameMap();
         map.setAuthor(username);
         map.setName(mapName);

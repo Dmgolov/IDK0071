@@ -23,8 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AuthTokenFilter authTokenFilterBean() throws Exception {
-        AuthTokenFilter authTokenFilter = new AuthTokenFilter(tokenService, accountService);
-        return authTokenFilter;
+        return new AuthTokenFilter(tokenService, accountService);
     }
 
     @Override

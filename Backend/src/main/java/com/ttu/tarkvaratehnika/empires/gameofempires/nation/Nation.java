@@ -53,9 +53,11 @@ public class Nation implements Runnable {
     }
 
     private void addFirstPersonToField(int x, int y) {
-        Person person = new Person(this.person);
-        people.add(person);
-        field.addPersonToCell(person, x, y);
+        synchronized (people) {
+            Person person = new Person(this.person);
+            people.add(person);
+            field.addPersonToCell(person, x, y);
+        }
     }
 
     public boolean isActive() {
@@ -87,7 +89,9 @@ public class Nation implements Runnable {
     }
 
     public Set<Person> getPeople() {
-        return people;
+        synchronized (people) {
+            return people;
+        }
     }
 
     public String getUsername() {

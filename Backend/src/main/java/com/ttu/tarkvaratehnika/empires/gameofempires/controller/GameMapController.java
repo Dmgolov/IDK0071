@@ -45,8 +45,8 @@ public class GameMapController {
             mapName = mapName == null ? filename.substring(0, filename.indexOf(".")) : mapName;
             gameMapService.saveFile(file, mapName, username);
             response.addProperty("status", "success");
-            response.addProperty("message", "null");
-        } catch (IOException e) {
+            response.addProperty("message", "Upload successful");
+        } catch (IOException | IllegalArgumentException e) {
             response.addProperty("status", "failed");
             response.addProperty("message", e.getMessage());
         }
@@ -71,7 +71,6 @@ public class GameMapController {
         for (GameMap map : maps) {
             names.add(map.getName() + map.getFileExtension());
         }
-        System.out.println("MAPS");
         return names;
     }
 }

@@ -17,12 +17,10 @@ public class SessionController {
 
     private Gson gson = new Gson();
 
-    private AccountService accountService;
     private SessionService sessionService;
 
     @Autowired
-    public SessionController(AccountService accountService, SessionService sessionService) {
-        this.accountService = accountService;
+    public SessionController(SessionService sessionService) {
         this.sessionService = sessionService;
     }
 

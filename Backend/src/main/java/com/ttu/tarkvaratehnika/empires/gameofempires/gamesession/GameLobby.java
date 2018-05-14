@@ -3,6 +3,7 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.gamesession;
 import com.google.gson.JsonObject;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamefield.GameField;
 import com.ttu.tarkvaratehnika.empires.gameofempires.nation.Nation;
+import com.ttu.tarkvaratehnika.empires.gameofempires.person.Person;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameRepository;
 import com.ttu.tarkvaratehnika.empires.gameofempires.stats.InGameStats;
@@ -25,7 +26,6 @@ public class GameLobby {
     private GameField gameField = new GameField("gameMap5.png");
 
     private Set<Nation> nations = new HashSet<>();
-    private Set<Nation> bots = new HashSet<>();
     private final List<String> receivedUpdate = new ArrayList<>();
     private List<String> usedColors = new ArrayList<>(5);
     private List<String> availableColors = new ArrayList<>(Arrays.asList(generateNationColor(), generateNationColor(), generateNationColor(), generateNationColor()));
@@ -43,6 +43,7 @@ public class GameLobby {
 
     void startSession() throws IOException {
         nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
+        nations.forEach(nation -> System.out.println(nation.getUsername()));
         gameField.loadField();
         nations.forEach(Nation::setStartingLocation);
         try {
@@ -81,21 +82,19 @@ public class GameLobby {
     public void changeToSinglePlayer() {
         singleMode = true;
         int i;
-        for (i = botsPlayersCount; hasFreeSpaces(); i++) {
+        for (i = 0; hasFreeSpaces(); i++) {
             Optional<Nation> bot = enterSession("Bot " + i);
             bot.ifPresent(nation -> nation.setReady(true));
-            bot.ifPresent(nation -> bots.add(nation));
         }
         botsPlayersCount = i;
     }
 
-    public void readyCheck(String username, boolean ready, Map<String, Integer> stats, String mapName) throws IOException {
+    public void readyCheck(String username, boolean ready, Map<String, Integer> stats) throws IOException {
         nations.stream()
                 .filter(nation -> nation.getUsername().equals(username))
                 .findFirst().ifPresent(nation -> {
             nation.setReady(ready);
             nation.setPersonWithStats(stats);
-            gameField.setGameMap(mapName);
         });
         if (nations.stream().filter(Nation::isReady).count() == nations.size()) startSession();
     }
@@ -262,7 +261,7 @@ public class GameLobby {
 
     public void setProperties(Properties properties) {
         this.properties = properties;
-        gameField = new GameField(properties.getMapName());
+        gameField.setGameMap(properties.getMapName());
         if (singleMode) {
             changeToSinglePlayer();
         }
