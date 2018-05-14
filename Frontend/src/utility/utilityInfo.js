@@ -35,7 +35,7 @@ export class UtilityInfo {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/\//g, '&#x2F;')
-      .replace(/;/g), '&#59;');
+      .replace(/;/g, '&#59;');
   }
 
 }

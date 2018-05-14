@@ -145,7 +145,7 @@ export class Lobby {
     }
   }
 
-  setDefaultSettings() {
+  getDefaultSettings() {
     if (this.authService.isAuthenticated()) {
       this.lobbyEndpoint.find('defaultSettings')
       .then(data => {
@@ -211,7 +211,7 @@ export class Lobby {
         "nationPoints": this.nationPoints,
         "maxPlayersNumber": this.maxPlayersNumber
       })
-      .then()
+      .then(data => this.getCustomSettings())
       .catch(console.error);
     }
     console.log(this.canDisplayHostOptions, this.canDisplayNationOptions);

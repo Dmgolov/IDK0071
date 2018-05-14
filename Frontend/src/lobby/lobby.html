@@ -14,7 +14,7 @@
         <input class="menu-input menu-element" placeholder="Iterations number" value.bind="iterationsNumber">
         <input class="menu-input menu-element" placeholder="Nation points" value.bind="nationPoints">
         <input class="menu-input menu-element" placeholder="Maximum players number" value.bind="maxPlayersNumber">
-        <button class="menu-button menu-element" click.delegate="setDefaultSettings()">Set default settings</button>
+        <button class="menu-button menu-element" click.delegate="getDefaultSettings()">Set default settings</button>
         <button class="menu-button menu-element" click.delegate="sendHostOptions()">Send host options</button>
       </div>
       <div class="lobby-prelaunch-container" if.bind="canDisplayNationOptions">
@@ -48,10 +48,9 @@
         <div class="lobby-game-options-container">
           <div>
             <p>Lobby id is ${utilityInfo.lobbyId}</p>
-            <select ref="mapSelector" class="menu-select menu-button menu-element" change.delegate="selectMap()">
-              <option selected disabled hidden>${mapName}</option>
-              <option repeat.for="mapTitle of maps">${mapTitle}</option>
-            </select>
+            <p>Map: ${mapName}</p>
+            <p>Iterations: ${iterationsNumber}</p>
+            <p>Max players number: ${maxPlayersNumber}</p>
             <p>${gameStartMessage}</p>
           </div>
         </div>
