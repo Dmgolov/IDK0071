@@ -163,7 +163,11 @@ body {
 .lobby-gamemode-container {
   width: 300px;
 }
+.lobby-host-options-container {
+  width: 300px;
+}
 .lobby-prelaunch-container {
+  width: 910px;
   font-family: 'Unibody-pixel';
   font-size: 12px;
 }
@@ -172,21 +176,27 @@ body {
   vertical-align: top;
 }
 .lobby-players-container table {
-  width: 200px;
+  width: 275px;
   margin-left: 25px;
   float: left;
+  border-spacing: 0px;
+}
+.lobby-players-container table tr td {
+  padding: 16px 5px 16px 0px;
 }
 .lobby-players-container table tr td:first-child {
-  padding: 16px 0px;
   text-align: center;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lobby-players-container table tr td:last-child {
+  padding: 16px 10px 16px 0px;
 }
 .lobby-player-cell {
-  width: 140px;
-  padding: 0px;
-  padding-left: 10px;
 }
 .lobby-ready-button-cell {
-  padding: 0px 4px;
 }
 .lobby-ready-button-cell button {
   font-family: 'Unibody-pixel';
@@ -216,26 +226,27 @@ body {
   padding: 25px 0px 10px 0px;
 }
 .lobby-nation-options-container {
-  width: 300px;
+  width: 280px;
+  margin: 0px 10px;
   padding-bottom: 16px;
   text-align: center;
   vertical-align: top;
 }
 .lobby-nation-options-container table {
-  width: 300px;
+  width: 280px;
 }
 .lobby-nation-options-container table tr td {
   height: 50px;
   padding: 0px 0px 10px 0px;
 }
 .lobby-nation-options-container table tr td div {
-  width: 200px;
+  width: 180px;
   display: inline-block;
   vertical-align: top;
 }
 .lobby-nation-options-container table tr td div p {
   height: 20px;
-  width: 200px;
+  width: 180px;
   margin: 0px;
   padding-top: 8px;
   display: inline-block;
@@ -262,13 +273,17 @@ body {
   padding: 0px;
 }
 .lobby-game-options-container {
-  width: 300px;
+  width: 280px;
+  margin: 0px 10px;
   text-align: center;
   vertical-align: top;
 }
 .lobby-game-options-container div {
-  width: 250px;
+  width: 280px;
   float: right;
+}
+.lobby-game-options-container div select {
+  width: 280px;
 }
 .lobby-game-options-container div p {
   padding: 16px 0px;

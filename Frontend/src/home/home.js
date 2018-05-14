@@ -29,6 +29,7 @@ export class Home {
       })
       .then(data => {
         this.utilityInfo.lobbyId = data.lobbyId;
+        this.utilityInfo.lobbyMode = "create";
         this.router.navigate('lobby');
       })
       .catch(console.error);
@@ -45,6 +46,7 @@ export class Home {
         console.log(data);
         if (data.status !== 'failed') {
           this.utilityInfo.gameMode = data.gameMode;
+          this.utilityInfo.lobbyMode = "connect";
           this.router.navigate('lobby');
         }
       })

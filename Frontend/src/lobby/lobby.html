@@ -1,12 +1,23 @@
 <template>
   <div class="lobby-main-container">
-    <div class="centered-element lobby-content-container" css="${canDisplayNationOptions ? 'width: 920px;' : ''}">
-      <div class="lobby-gamemode-container" if.bind="!canDisplayNationOptions">
+    <div class="centered-element lobby-content-container">
+      <div class="lobby-gamemode-container" if.bind="canDisplayGameModeOptions">
         <p class="menu-element">Game mode</p>
         <button class="menu-button menu-element" click.delegate="sendGameMode('single')">Single</button>
         <button class="menu-button menu-element" click.delegate="sendGameMode('multi')">Multiplayer</button>
       </div>
-      <div class="lobby-prelaunch-container" show.bind="canDisplayNationOptions">
+      <div class="lobby-host-options-container" if.bind="canDisplayHostOptions">
+        <select ref="mapSelector" class="menu-select menu-button menu-element" change.delegate="selectMap()">
+          <option selected disabled hidden>${mapName}</option>
+          <option repeat.for="mapTitle of maps">${mapTitle}</option>
+        </select>
+        <input class="menu-input menu-element" placeholder="Iterations number" value.bind="iterationsNumber">
+        <input class="menu-input menu-element" placeholder="Nation points" value.bind="nationPoints">
+        <input class="menu-input menu-element" placeholder="Maximum players number" value.bind="maxPlayersNumber">
+        <button class="menu-button menu-element" click.delegate="setDefaultSettings()">Set default settings</button>
+        <button class="menu-button menu-element" click.delegate="sendHostOptions()">Send host options</button>
+      </div>
+      <div class="lobby-prelaunch-container" if.bind="canDisplayNationOptions">
         <div class="lobby-players-container">
           <table>
             <tr>

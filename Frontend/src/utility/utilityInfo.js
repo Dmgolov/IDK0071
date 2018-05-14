@@ -9,6 +9,7 @@ export class UtilityInfo {
     this.username = "";
     this.lobbyId = null;
     this.gameMode = "";
+    this.lobbyMode = ""
   }
 
   requestUsernameUpdate() {
