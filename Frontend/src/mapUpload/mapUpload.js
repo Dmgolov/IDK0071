@@ -50,4 +50,8 @@ export class MapTool {
       .catch(console.error);
     }
   }
+
+  goBack() {
+    this.router.navigate("home");
+  }
 }
