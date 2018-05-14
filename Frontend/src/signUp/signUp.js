@@ -21,21 +21,16 @@ export class SignUp {
   }
 
   signUp() {
-    // this.authService.signup(this.username, this.email, this.password)
-    //   .then(data => {
-    //     console.log(data);
-    //     if (data.status === "failed") {
-    //       console.log(data.message);
-    //     }
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
+    let username = this.utilityInfo.htmlEscape(this.username);
+    let email = this.utilityInfo.htmlEscape(this.email);
+    let password = this.utilityInfo.htmlEscape(this.password);
+
+    console.log(username, email, password);
 
     this.authEndpoint.post('signup', {
-      "displayName": this.username,
-      "email": this.email,
-      "password": this.password
+      "displayName": username,
+      "email": email,
+      "password": password
     })
     .then(data => {
       if (data.result === "failed") {

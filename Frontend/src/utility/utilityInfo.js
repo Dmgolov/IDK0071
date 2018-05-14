@@ -26,4 +26,15 @@ export class UtilityInfo {
     }
   }
 
+  htmlEscape(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\//g, '&#x2F;')
+      .replace(/;/g), '&#59;');
+  }
+
 }

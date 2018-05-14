@@ -124,6 +124,10 @@ body {
 .home-menu-container p span:last-child {
   float: right;
   padding: 5px 20px 5px 10px;
+  width: 182px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 

@@ -20,13 +20,18 @@ export class SignIn {
   }
 
   signIn() {
-    return this.authService.login(this.email, this.password)
+    let email = this.utilityInfo.htmlEscape(this.email);
+    let password = this.utilityInfo.htmlEscape(this.password);
+
+    console.log(email, password);
+
+    return this.authService.login(email, password)
       .then(data => {
       })
       .catch(err => {
         this.authEndpoint.post('signin', {
-          "email": this.email,
-          "password": this.password
+          "email": email,
+          "password": password
         })
         .then(data => {
           if (data.result === "failed") {
