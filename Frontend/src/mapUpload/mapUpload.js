@@ -3,6 +3,7 @@ import {Router} from 'aurelia-router';
 import {UtilityInfo} from "../utility/utilityInfo";
 import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
+import {json} from 'aurelia-fetch-client';
 
 @inject(UtilityInfo, Router, AuthService, Endpoint.of('map'))
 export class MapTool {
@@ -14,6 +15,9 @@ export class MapTool {
     this.mapEndpoint = mapEndpoint;
 
     this.fileName = 'Choose file';
+    this.mapName = '';
+    this.uplaodMessage = '';
+    this.canShowUploadMessage = false;
   }
 
   showFileName() {
@@ -24,17 +28,25 @@ export class MapTool {
   sendMapImage() {
     if (this.authService.isAuthenticated()) {
 
+      let escapedMapName = this.utilityInfo.htmlEscape(this.mapName);
+
       let mapImage = this.mapInput.files[0];
       mapImage = mapImage === undefined ? new File([""], "EMPTY_FILE") : mapImage;
       let formData = new FormData();
       formData.append('username', this.utilityInfo.username);
       formData.append('mapImage', mapImage);
+      formData.append('mapName', escapedMapName);
 
       this.mapEndpoint.client.fetch('upload', {
         method: 'POST',
         body: formData
       })
-      .then()
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        this.canShowUploadMessage = true;
+        this.uplaodMessage = data.message;
+      })
       .catch(console.error);
     }
   }

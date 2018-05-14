@@ -1,11 +1,12 @@
 <template>
   <div class="map-uplaod-main-container">
       <div class="centered-element map-upload-content-container">
+        <div class="menu-element" if.bind="canShowUploadMessage">${uplaodMessage}</div>
         <label class="menu-choose-file-label menu-input menu-element">
           ${fileName}
           <input ref="mapInput" class="menu-choose-file" accept="image/png,image/jpeg" type="file" change.delegate="showFileName()">
         </label>
-        <br><br>
+        <input class="menu-input menu-element" placeholder="Map name" value.bind="mapName">
         <button class="menu-button menu-element" click.delegate="sendMapImage()">Send</button>
       </div>
   </div>
