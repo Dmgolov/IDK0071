@@ -4,13 +4,27 @@
       <div ref="playfieldContainer" class="game-playfield-container">
         <canvas ref="gameCanvas" class="game-canvas" width="1200" height="600"></canvas>
         <div ref="gameStatsContainer" class="game-stats-container">
-          <table class="game-playersTable">
+          <table class="game-players-table">
             <tr>
               <td colspan="2">Age ${stepCounter}</td>
+              <td>Vit</td>
+              <td>Pro</td>
+              <td>Str</td>
+              <td>Int</td>
+              <td>Dex</td>
+              <td>Luc</td>
+              <td>Pop</td>
             </tr>
             <tr repeat.for="player of players">
               <td>${player.name}</td>
               <td css="background-color: ${player.color};"></td>
+              <td>${player.nation.vitality}</td>
+              <td>${player.nation.reproduction}</td>
+              <td>${player.nation.strength}</td>
+              <td>${player.nation.intelligence}</td>
+              <td>${player.nation.dexterity}</td>
+              <td>${player.nation.luck}</td>
+              <td>${player.nation.population}</td>
             </tr>
           </table>
         </div>

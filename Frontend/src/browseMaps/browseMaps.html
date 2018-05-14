@@ -7,6 +7,9 @@
           <option selected disabled hidden>Choose map</option>
           <option repeat.for="mapTitle of maps">${mapTitle}</option>
         </select>
+        <input class="menu-input menu-element" placeholder="Username" value.bind="usernameForSorting">
+        <button class="menu-button menu-element" click.delegate="searchByUsername()">Search</button>
+        <button class="menu-button menu-element" click.delegate="goBack()">Back</button>
       </div>
     </div>
   </div>

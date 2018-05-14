@@ -14,15 +14,21 @@ export class BrowseMaps{
     this.authService = authService;
     this.mapEndpoint = mapEndpoint;
 
+    this.usernameForSorting = "";
+    this.canShowMaps = true;
+
     this.mapName = '';  // name of image, which is choosen by user
     this.maps = [];
     this.setMapsArray();
   }
 
   setMapsArray() {
+    let escapedUsername = this.utilityInfo.htmlEscape(this.usernameForSorting);
+
     if (this.authService.isAuthenticated()) {
       this.mapEndpoint.post('browse', {
-        "startIndex" : 0
+        "startIndex": 0,
+        "username": escapedUsername
       })
       .then(data => {
         for (let mapName of data) {
@@ -109,4 +115,37 @@ export class BrowseMaps{
   }
   */
 
+  searchByUsername() {
+    let escapedUsername = this.utilityInfo.htmlEscape(this.usernameForSorting);
+
+    if (this.authService.isAuthenticated()) {
+      this.mapEndpoint.post('browse', {
+        "startIndex": 0,
+        "username": escapedUsername
+      })
+      .then(data => {
+        this.canShowMaps = false;
+        this.maps.length = 0;
+        while (this.imageContainer.firstChild) {
+          this.imageContainer.removeChild(this.imageContainer.firstChild);
+        }
+        let optionElements = this.mapSelector.childNodes;
+        while (optionElements.length > 2) {
+          this.mapSelector.removeChild(this.mapSelector.lastChild);
+        }
+        for (let mapName of data) {
+          this.maps.push(mapName);
+          let optionElement = document.createElement("OPTION");
+          optionElement.text = mapName;
+          this.mapSelector.appendChild(optionElement);
+        }
+        this.canShowMaps = true;
+      })
+      .catch(console.error);
+    }
+  }
+
+  goBack() {
+    this.router.navigate("home");
+  }
 }
