@@ -16,6 +16,7 @@
         <input class="menu-input menu-element" placeholder="Maximum players number" value.bind="maxPlayersNumber">
         <button class="menu-button menu-element" click.delegate="getDefaultSettings()">Set default settings</button>
         <button class="menu-button menu-element" click.delegate="sendHostOptions()">Send host options</button>
+        <div class="lobby-warning-message menu-element">In case of incorrect settings input will be used default settings</div>
       </div>
       <div class="lobby-prelaunch-container" if.bind="canDisplayNationOptions">
         <div class="lobby-players-container">

@@ -166,6 +166,9 @@ body {
 .lobby-host-options-container {
   width: 300px;
 }
+.lobby-warning-message {
+  font-size: 12px;
+}
 .lobby-prelaunch-container {
   width: 910px;
   font-family: 'Unibody-pixel';
