@@ -52,12 +52,14 @@ public class SessionService {
         Optional<GameLobby> searched = findLobbyById(properties.getLobbyId());
         if (searched.isPresent()) {
             GameLobby lobby = searched.get();
-            if (properties.getMaxPlayersNumber() > SessionSettings.DEFAULT_MAX_USERS) {
-                throw new IllegalArgumentException(String.format("Maximum allowed number of players is %d",
-                        SessionSettings.DEFAULT_MAX_USERS));
-            } else if (properties.getIterationsNumber() > SessionSettings.MAX_TURNS) {
-                throw new IllegalArgumentException(String.format("Maximum allowed number of iterations is %d",
-                        SessionSettings.MAX_TURNS));
+            if (properties.getMaxPlayersNumber() > SessionSettings.DEFAULT_MAX_USERS || properties.getMaxPlayersNumber() <= 1) {
+                properties.setMaxPlayersNumber(SessionSettings.DEFAULT_NUM_OF_PLAYERS);
+            }
+            if (properties.getIterationsNumber() > SessionSettings.MAX_TURNS && properties.getIterationsNumber() < 1) {
+                properties.setIterationsNumber(SessionSettings.DEFAULT_NUM_OF_TURNS);
+            }
+            if (properties.getMapName() == null || properties.getMapName().isEmpty()) {
+                properties.setMapName(SessionSettings.DEFAULT_MAP);
             }
             lobby.setProperties(properties);
         } else {
