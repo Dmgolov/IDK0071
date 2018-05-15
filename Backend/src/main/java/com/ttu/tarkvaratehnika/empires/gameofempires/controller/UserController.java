@@ -3,6 +3,7 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.ttu.tarkvaratehnika.empires.gameofempires.messagekeys.MessageKeys;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.util.Optional;
 
 @RestController
@@ -32,7 +34,7 @@ public class UserController {
         JsonObject response;
         try {
             accountService.register(name, email, pass);
-            response = generateDefaultResponse("success", "null");
+            response = generateDefaultResponse("success", MessageKeys.NULL);
         } catch (DataIntegrityViolationException | NoSuchAlgorithmException | IllegalArgumentException e) {
             response = generateDefaultResponse("failed", e.getMessage());
         }
@@ -49,15 +51,15 @@ public class UserController {
             String pass = jsonPass.getAsString();
             Optional<String> token = accountService.logIn(email, pass);
             if (token.isPresent()) {
-                response = generateDefaultResponse("success", "null");
+                response = generateDefaultResponse("success", MessageKeys.NULL);
                 response.addProperty("token", token.get());
                 return gson.toJson(response);
             } else {
-                response = generateDefaultResponse("failed", "No matching email and password found");
+                response = generateDefaultResponse("failed", MessageKeys.NO_MATCHING_AUTH_DATA);
                 return gson.toJson(response);
             }
         } else {
-            response = generateDefaultResponse("failed", "Empty email or password");
+            response = generateDefaultResponse("failed", MessageKeys.EMPTY_AUTH_DATA);
             return gson.toJson(response);
         }
     }
@@ -65,16 +67,16 @@ public class UserController {
     @GetMapping(path = "/auth/signout")
     public @ResponseBody String logOut() {
         accountService.logOut();
-        return gson.toJson(generateDefaultResponse("success", "null"));
+        return gson.toJson(generateDefaultResponse("success", MessageKeys.NULL));
     }
 
     @GetMapping(path = "/auth/check")
-    public @ResponseBody String checkLogIn(@RequestHeader(name = "Authorization", required = false) String token) {
+    public @ResponseBody String checkLogIn(Principal principal) {
         JsonObject response;
-        if (accountService.isLoggedIn(token)) {
-            response = generateDefaultResponse("success", "null");
+        if (principal != null) {
+            response = generateDefaultResponse("success", MessageKeys.NULL);
         } else {
-            response = generateDefaultResponse("failed", "User is not logged in");
+            response = generateDefaultResponse("failed", MessageKeys.AUTH_FAIL);
         }
         return gson.toJson(response);
     }
@@ -84,10 +86,10 @@ public class UserController {
         Optional<String> username = accountService.getUsernameForToken(token);
         JsonObject response;
         if (username.isPresent()) {
-            response = generateDefaultResponse("success", "null");
+            response = generateDefaultResponse("success", MessageKeys.NULL);
             response.addProperty("username", username.get());
         } else {
-            response = generateDefaultResponse("failed", "Failed to find username");
+            response = generateDefaultResponse("failed", MessageKeys.NO_USERNAME_FOUND);
             response.addProperty("username", "null");
         }
         return gson.toJson(response);

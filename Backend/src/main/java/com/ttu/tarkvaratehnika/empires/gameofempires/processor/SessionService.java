@@ -6,6 +6,7 @@ import com.ttu.tarkvaratehnika.empires.gameofempires.game.Game;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.Properties;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
+import com.ttu.tarkvaratehnika.empires.gameofempires.messagekeys.MessageKeys;
 import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class SessionService {
         if (searched.isPresent()) {
             return searched.get().getProperties();
         } else {
-            throw new IllegalArgumentException("No lobby with this id found");
+            throw new IllegalArgumentException(MessageKeys.LOBBY_NOT_FOUND);
         }
     }
 
@@ -63,7 +64,7 @@ public class SessionService {
             }
             lobby.setProperties(properties);
         } else {
-            throw new IllegalArgumentException("No lobby with this id found");
+            throw new IllegalArgumentException(MessageKeys.LOBBY_NOT_FOUND);
         }
     }
 
@@ -75,12 +76,12 @@ public class SessionService {
             response.addProperty("name", game.getWinner());
             response.addProperty("color", game.getWinnerColor());
             response.addProperty("status", "success");
-            response.addProperty("message", "null");
+            response.addProperty("message", MessageKeys.NULL);
         } else {
-            response.addProperty("winner", "null");
-            response.addProperty("color", "null");
+            response.addProperty("winner", MessageKeys.NULL);
+            response.addProperty("color", MessageKeys.NULL);
             response.addProperty("status", "failed");
-            response.addProperty("message", "game not found");
+            response.addProperty("message", MessageKeys.NO_GAME_FOUND);
         }
         return gson.toJson(response);
     }

@@ -81,7 +81,16 @@ public class Nation implements Runnable {
     }
 
     public void setDefaultPerson() {
-        this.person = new Person(this, field, PersonValues.DEFAULT_STATS);
+        int total = session.getProperties().getNationPoints();
+        Map<String, Integer> stats = new HashMap<>();
+        int points = total / PersonValues.DEFAULT_STATS.size();
+        stats.put(PersonValues.VITALITY, points);
+        stats.put(PersonValues.STRENGTH, points);
+        stats.put(PersonValues.DEXTERITY, points);
+        stats.put(PersonValues.INTELLIGENCE, points);
+        stats.put(PersonValues.LUCK, points);
+        stats.put(PersonValues.REPRODUCTION, total - PersonValues.DEFAULT_STATS.size() * points);
+        this.person = new Person(this, field, stats);
     }
 
     public boolean hasSelectedPersonType() {
