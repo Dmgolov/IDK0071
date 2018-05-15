@@ -259,6 +259,7 @@ export class Lobby {
   }
 
   detached() {
+    this.exitLobby();
     clearInterval(this.timerId);
   }
 
