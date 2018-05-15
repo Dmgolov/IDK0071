@@ -306,7 +306,8 @@ body {
   padding-bottom: 28px;
 }
 .lobby-game-options-container div button {
-  width: 200px;
+  margin-top: 117px;
+  width: 280px;
 }
 .lobby-players-container, .lobby-nation-options-container, .lobby-game-options-container {
   display: inline-block;
@@ -326,7 +327,7 @@ body {
 }
 .game-canvas {
   position: absolute;
-  z-index: 3;
+  z-index: 5;
   margin: auto;
 }
 .game-canvas:hover {
@@ -341,7 +342,7 @@ body {
   display: none;
 }
 .game-stats-container:hover {
-  z-index: 4;
+  z-index: 6;
   opacity: 1;
 }
 .game-players-table {
@@ -389,10 +390,6 @@ body {
   background-color: rgba(255, 255, 255, 0.5);
   display: none;
 }
-.game-winner-container .menu-element {
-  border-top: 2px dashed rgba(0, 0, 0, 0.25);
-  border-bottom: 2px dashed rgba(0, 0, 0, 0.25);
-}
 .game-winner-container:hover {
   background-color: rgba(255, 255, 255, 0.75);
 }
@@ -423,6 +420,14 @@ body {
   width: 40px;
   height: 40px;
   margin: 5px;
+}
+.game-winner-container .menu-element {
+  border-top: 2px dashed rgba(0, 0, 0, 0.25);
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.25);
+}
+.game-winner-container .menu-element:hover {
+  border-top: 2px dashed rgba(0, 0, 0, 0.4);
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.4);
 }
 
 

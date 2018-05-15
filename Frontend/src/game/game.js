@@ -45,7 +45,6 @@ export class Game {
           }
           this.players.push(player);
         }
-        console.log(this.players);
       })
       .catch(console.error);
     }
@@ -176,7 +175,7 @@ export class Game {
         this.winner = new Player(data.name, data.color);
         this.gameCanvas.style.zIndex = '1';
         this.winnerContainer.style.display = "initial";
-        this.winnerContainer.style.zIndex = '3';
+        this.winnerContainer.style.zIndex = '7';
       })
       .catch(console.error);
     }

@@ -78,10 +78,10 @@ export class Lobby {
   }
 
   sendReadyStateInfo() {
-    this.authPlayer.isReady = !this.authPlayer.isReady;
-    let info = this.getReadyStateInfo();
-
     if (this.authService.isAuthenticated()) {
+      this.authPlayer.isReady = !this.authPlayer.isReady;
+      let info = this.getReadyStateInfo();
+
       this.lobbyEndpoint.post('ready', info)
       .then()
       .catch(console.error);
@@ -95,19 +95,28 @@ export class Lobby {
       })
       .then(data => {
         this.playersAreReady = true;
+        // for(let updatedPlayer of data) {
+        //   let addNewPlayer = true;
+        //   for(let player of this.players) {
+        //     if (updatedPlayer.name === player.name) {
+        //       player.isReady = updatedPlayer.isReady;
+        //       addNewPlayer = false;
+        //     }
+        //   }
+        //   if(addNewPlayer) {
+        //     let newPlayer = new Player(updatedPlayer.name, updatedPlayer.isReady);
+        //     this.players.push(newPlayer);
+        //   }
+        //   if(updatedPlayer.isReady === false) {
+        //     this.playersAreReady = false;
+        //   }
+        // }
+        this.players = [];
+        this.playersAreReady = true;
         for(let updatedPlayer of data) {
-          let addNewPlayer = true;
-          for(let player of this.players) {
-            if (updatedPlayer.name === player.name) {
-              player.isReady = updatedPlayer.isReady;
-              addNewPlayer = false;
-            }
-          }
-          if(addNewPlayer) {
-            let newPlayer = new Player(updatedPlayer.name, updatedPlayer.isReady);
-            this.players.push(newPlayer);
-          }
-          if(updatedPlayer.isReady === false) {
+          let newPlayer = new Player(updatedPlayer.name, updatedPlayer.isReady);
+          this.players.push(newPlayer);
+          if (newPlayer.isReady === false) {
             this.playersAreReady = false;
           }
         }
@@ -161,11 +170,11 @@ export class Lobby {
   }
 
   sendGameMode(mode) {
-    this.utilityInfo.gameMode = mode;
-    this.canDisplayHostOptions = this.utilityInfo.gameMode !== '';
-    this.canDisplayGameModeOptions = this.utilityInfo.gameMode.length === 0;
-
     if (this.authService.isAuthenticated()) {
+      this.utilityInfo.gameMode = mode;
+      this.canDisplayHostOptions = this.utilityInfo.gameMode !== '';
+      this.canDisplayGameModeOptions = this.utilityInfo.gameMode.length === 0;
+
       this.lobbyEndpoint.post('mode', {
         "mode": mode,
         "lobbyId": this.utilityInfo.lobbyId
@@ -203,9 +212,10 @@ export class Lobby {
   }
 
   sendHostOptions() {
-    this.canDisplayHostOptions = false;
-    this.canDisplayNationOptions = true;
     if (this.authService.isAuthenticated()) {
+      this.canDisplayHostOptions = false;
+      this.canDisplayNationOptions = true;
+
       this.lobbyEndpoint.post('setCustomSettings', {
         "lobbyId": this.utilityInfo.lobbyId,
         "mapName": this.mapName,
@@ -216,7 +226,6 @@ export class Lobby {
       .then(data => this.getCustomSettings())
       .catch(console.error);
     }
-    console.log(this.canDisplayHostOptions, this.canDisplayNationOptions);
   }
 
   getCustomSettings() {
@@ -232,7 +241,25 @@ export class Lobby {
       })
       .catch(console.error);
     }
-    console.log(this.canDisplayHostOptions, this.canDisplayNationOptions);
+  }
+
+  exitLobby() {
+    if (this.authService.isAuthenticated()) {
+      this.lobbyEndpoint.post('leave', {
+        "username": this.utilityInfo.username,
+        "lobbyId": this.utilityInfo.lobbyId
+      })
+      .then(data => {
+        this.utilityInfo.resetLobbyInfo();
+        clearInterval(this.timerId);
+        this.router.navigate("home");
+      })
+      .catch(console.error);
+    }
+  }
+
+  detached() {
+    clearInterval(this.timerId);
   }
 
 }

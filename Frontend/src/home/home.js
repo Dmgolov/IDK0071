@@ -15,6 +15,7 @@ export class Home {
   }
 
   attached() {
+    this.utilityInfo.resetLobbyInfo();
     this.utilityInfo.requestUsernameUpdate();
   }
 
