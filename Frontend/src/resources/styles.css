@@ -56,6 +56,9 @@ body {
   background-color: rgba(255, 255, 255, 0.6);
   box-shadow: 0px 0px 300px 200px rgba(255, 255, 255, 0.6);
 }
+_:-moz-tree-row(hover), .centered-element {
+    background: radial-gradient(rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.508));
+}
 
 
 /* menu elements CSS (used in index.html, signIn.html, signUp.html, lobby.html) */
@@ -101,6 +104,14 @@ body {
 }
 .menu-select {
   text-align-last: center;
+  /* for Firefox */
+  -moz-appearance: none;
+  /* for Chrome */
+  -webkit-appearance: none;
+}
+/* For IE10 */
+.menu-select::-ms-expand {
+  display: none;
 }
 
 
@@ -185,9 +196,8 @@ body {
   height: 450px;
   overflow: auto;
   display: block;
-  padding-right: 17px;
 
-  width: 275px;
+  width: 305px;
   margin-left: 25px;
   float: left;
   border-spacing: 0px;
