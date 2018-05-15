@@ -14,6 +14,8 @@ public class Person implements InGameObject {
     private Nation nation;
     private GameField field;
 
+    private transient int turn = 1;
+
     private transient int positionX, positionY;
 
     private int vitality;
@@ -34,12 +36,12 @@ public class Person implements InGameObject {
 
     public Person(Nation nation, GameField field, Map<String, Integer> stats) {
         this(nation, field);
-        vitality = stats.get("Vitality");
-        strength = stats.get("Strength");
-        dexterity = stats.get("Dexterity");
-        intelligence = stats.get("Intelligence");
-        growthRate = stats.get("Reproduction");
-        luck = stats.get("Luck");
+        vitality = stats.get(PersonValues.VITALITY);
+        strength = stats.get(PersonValues.STRENGTH);
+        dexterity = stats.get(PersonValues.DEXTERITY);
+        intelligence = stats.get(PersonValues.INTELLIGENCE);
+        growthRate = stats.get(PersonValues.REPRODUCTION);
+        luck = stats.get(PersonValues.LUCK);
     }
 
     public Person(Person another) {
@@ -67,6 +69,7 @@ public class Person implements InGameObject {
                 move(newLocation.getX(), newLocation.getY());
             }
         }
+        turn++;
     }
 
     void move(int newX, int newY) {
@@ -151,7 +154,8 @@ public class Person implements InGameObject {
     }
 
     boolean resistDisease() {
-        return random.nextInt(Math.max(PersonValues.DISEASE_CHANCE - luck, 1)) == 0;
+        return random.nextInt(Math.max(PersonValues.DISEASE_CHANCE - luck, 1)) == 0
+                || turn < PersonValues.IMMORTAL_TILL_TURN;
     }
 
     public boolean captureCell(Person another) {

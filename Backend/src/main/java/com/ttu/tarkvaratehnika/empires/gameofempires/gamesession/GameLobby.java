@@ -152,7 +152,7 @@ public class GameLobby {
         if (active == 1) {
             return nations.stream().filter(Nation::isActive).findFirst();
         } else if (active == 0) {
-            return Optional.of(new Nation("none", null, this));
+            return Optional.of(new Nation("none", "transparent", this));
         } else if (numOfTurns >= properties.getIterationsNumber()) {
             return nations.stream().max(Comparator.comparingInt(Nation::getNumOfPeople));
         }

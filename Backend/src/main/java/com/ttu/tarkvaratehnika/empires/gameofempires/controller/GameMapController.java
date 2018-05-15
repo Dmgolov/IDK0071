@@ -3,6 +3,7 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.ttu.tarkvaratehnika.empires.gameofempires.messagekeys.MessageKeys;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.GameMapService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class GameMapController {
             mapName = (mapName == null || mapName.isEmpty()) ? filename.substring(0, filename.indexOf(".")) : mapName;
             gameMapService.saveFile(file, mapName, username);
             response.addProperty("status", "success");
-            response.addProperty("message", "Upload successful");
+            response.addProperty("message", MessageKeys.UPLOAD_SUCCESS);
         } catch (IOException | IllegalArgumentException e) {
             response.addProperty("status", "failed");
             response.addProperty("message", e.getMessage());

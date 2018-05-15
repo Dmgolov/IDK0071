@@ -2,6 +2,7 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.processor;
 
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
+import com.ttu.tarkvaratehnika.empires.gameofempires.messagekeys.MessageKeys;
 import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameMapRepository;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,14 +46,14 @@ public class GameMapService {
             InputStream in = new FileInputStream(ImageConverter.MAP_FOLDER + filename);
             return IOUtils.toByteArray(in);
         } else {
-            throw new IllegalArgumentException("No such map found");
+            throw new IllegalArgumentException(MessageKeys.NO_MAP_FOUND);
         }
     }
 
     public void saveFile(MultipartFile file, String mapName, String username) throws IOException, IllegalArgumentException {
         File local = new File("maps");
         if  (!local.exists()) {
-            if (!local.mkdir()) throw new IOException("Failed to create directory");
+            if (!local.mkdir()) throw new IOException(MessageKeys.NEW_DIR_CREATION_FAIL);
         }
         byte[] bytes = file.getBytes();
         Date creationDate = Date.valueOf(LocalDate.now());
@@ -64,7 +65,7 @@ public class GameMapService {
 
     private void saveToDatabase(String mapName, String username, Date creationDate, String fileExtension) {
         if (gameMapRepository.getGameMapByName(mapName).isPresent()) {
-            throw new IllegalArgumentException("Duplicate map name");
+            throw new IllegalArgumentException(MessageKeys.DUPLICATE_MAP_NAME);
         }
         GameMap map = new GameMap();
         map.setAuthor(username);

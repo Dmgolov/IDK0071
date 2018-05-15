@@ -3,6 +3,8 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.ttu.tarkvaratehnika.empires.gameofempires.messagekeys.MessageKeys;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.Properties;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
@@ -42,10 +44,10 @@ public class LobbyController {
             GameLobby lobby = new GameLobby(sessionService, ++lastLobbyId);
             lobby.enterSession(username);
             sessionService.addLobby(lobby);
-            response = generateDefaultResponse("success", "null");
+            response = generateDefaultResponse("success", MessageKeys.NULL);
             response.addProperty("lobbyId", lobby.getLobbyId());
         } else {
-            response = generateDefaultResponse("failed", "Authentication failed");
+            response = generateDefaultResponse("failed", MessageKeys.AUTH_FAIL);
             response.addProperty("lobbyId", 0);
         }
         return gson.toJson(response);
@@ -56,7 +58,7 @@ public class LobbyController {
         if (principal != null) {
             return gson.toJson(new Properties());
         } else {
-            JsonObject response = generateDefaultResponse("failed", "Authorization failed");
+            JsonObject response = generateDefaultResponse("failed", MessageKeys.AUTH_FAIL);
             return gson.toJson(response);
         }
     }
@@ -68,7 +70,7 @@ public class LobbyController {
             Properties properties = sessionService.getLobbySettings(lobbyId);
             return gson.toJson(properties);
         } else {
-            JsonObject response = generateDefaultResponse("failed", "Authorization failed");
+            JsonObject response = generateDefaultResponse("failed", MessageKeys.AUTH_FAIL);
             return gson.toJson(response);
         }
     }
@@ -79,14 +81,14 @@ public class LobbyController {
         if (principal != null) {
             try {
                 sessionService.setLobbySettings(properties);
-                response = generateDefaultResponse("success", "null");
+                response = generateDefaultResponse("success", MessageKeys.NULL);
                 return gson.toJson(response);
             } catch (IllegalArgumentException e) {
                 response = generateDefaultResponse("failed", e.getMessage());
                 return gson.toJson(response);
             }
         } else {
-            response = generateDefaultResponse("failed", "Authorization failed");
+            response = generateDefaultResponse("failed", MessageKeys.AUTH_FAIL);
             return gson.toJson(response);
         }
     }
@@ -105,16 +107,16 @@ public class LobbyController {
                     searchedLobby.get().setSingleMode(false);
                 }
                 response.addProperty("status", "changed");
-                response.addProperty("message", "null");
+                response.addProperty("message", MessageKeys.NULL);
                 return gson.toJson(response);
             } else {
                 response.addProperty("status", "failed");
-                response.addProperty("message", "No lobby with this id found");
+                response.addProperty("message", MessageKeys.LOBBY_NOT_FOUND);
                 return gson.toJson(response);
             }
         } else {
             response.addProperty("status", "failed");
-            response.addProperty("message", "Authentication failed");
+            response.addProperty("message", MessageKeys.AUTH_FAIL);
             return gson.toJson(response);
         }
     }
@@ -127,16 +129,19 @@ public class LobbyController {
             Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
             String username = gson.fromJson(data, JsonObject.class).get("playerName").getAsString();
             if (searchedLobby.isPresent() && searchedLobby.get().enterSession(username).isPresent()) {
-                String mode = searchedLobby.get().isSingleMode() ? "single" : "multi";
-                response = generateDefaultResponse("success", "null");
+
+                String mode = searchedLobby.get().isSingleMode() ?
+                        SessionSettings.SINGLE_PLAYER : SessionSettings.MULTI_PLAYER;
+
+                response = generateDefaultResponse("success", MessageKeys.NULL);
                 response.addProperty("gameMode", mode);
                 return gson.toJson(response);
             } else {
-                response = generateDefaultResponse("failed", "No lobby with this id found");
+                response = generateDefaultResponse("failed", MessageKeys.LOBBY_NOT_FOUND);
                 return gson.toJson(response);
             }
         } else {
-            response = generateDefaultResponse("failed", "Authentication failed");
+            response = generateDefaultResponse("failed", MessageKeys.AUTH_FAIL);
             return gson.toJson(response);
         }
     }
@@ -151,18 +156,18 @@ public class LobbyController {
             if (searchedLobby.isPresent() && searchedLobby.get().leaveSession(username)) {
                 boolean left = searchedLobby.get().leaveSession(username);
                 if (left) {
-                    response = generateDefaultResponse("success", "null");
+                    response = generateDefaultResponse("success", MessageKeys.NULL);
                     return gson.toJson(response);
                 } else {
-                    response = generateDefaultResponse("failed", "No player with this username");
+                    response = generateDefaultResponse("failed", MessageKeys.NO_PLAYER_FOUND);
                     return gson.toJson(response);
                 }
             } else {
-                response = generateDefaultResponse("failed", "No lobby with this id found");
+                response = generateDefaultResponse("failed", MessageKeys.LOBBY_NOT_FOUND);
                 return gson.toJson(response);
             }
         } else {
-            response = generateDefaultResponse("failed", "Authorization failed");
+            response = generateDefaultResponse("failed", MessageKeys.AUTH_FAIL);
             return gson.toJson(response);
         }
     }
@@ -182,7 +187,7 @@ public class LobbyController {
             if (searchedLobby.isPresent()) {
                 try {
                     searchedLobby.get().readyCheck(username, isReady, stats);
-                    response = generateDefaultResponse("ready", "null");
+                    response = generateDefaultResponse("ready", MessageKeys.NULL);
                     return gson.toJson(response);
                 } catch (IOException e) {
                     response = generateDefaultResponse("failed", e.getMessage());
@@ -190,11 +195,11 @@ public class LobbyController {
                     return gson.toJson(response);
                 }
             } else {
-                response = generateDefaultResponse("failed", "No lobby with this id found");
+                response = generateDefaultResponse("failed", MessageKeys.LOBBY_NOT_FOUND);
                 return gson.toJson(response);
             }
         } else {
-            response = generateDefaultResponse("failed", "Authentication failed");
+            response = generateDefaultResponse("failed", MessageKeys.AUTH_FAIL);
             return gson.toJson(response);
         }
     }
@@ -208,11 +213,11 @@ public class LobbyController {
             if (gameLobby.isPresent()) {
                 return gson.toJson(gameLobby.get().checkPlayerState());
             } else {
-                response = generateDefaultResponse("notFound", "No lobby with this id found");
+                response = generateDefaultResponse("notFound", MessageKeys.LOBBY_NOT_FOUND);
                 return gson.toJson(response);
             }
         } else {
-            response = generateDefaultResponse("failed", "Authentication failed");
+            response = generateDefaultResponse("failed", MessageKeys.AUTH_FAIL);
             return gson.toJson(response);
         }
     }
@@ -222,7 +227,7 @@ public class LobbyController {
     public byte[] sendImageToLobby(@RequestBody String imageName) throws IOException {
         System.out.println(imageName);
         String selectedMap = gson.fromJson(imageName, JsonObject.class).get("imageName").getAsString();
-        InputStream in = new FileInputStream("maps/" + selectedMap);
+        InputStream in = new FileInputStream(ImageConverter.MAP_FOLDER + selectedMap);
         return IOUtils.toByteArray(in);
     }
 

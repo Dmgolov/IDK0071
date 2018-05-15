@@ -1,5 +1,6 @@
 package com.ttu.tarkvaratehnika.empires.gameofempires.processor;
 
+import com.ttu.tarkvaratehnika.empires.gameofempires.messagekeys.MessageKeys;
 import com.ttu.tarkvaratehnika.empires.gameofempires.repository.UserRepository;
 import com.ttu.tarkvaratehnika.empires.gameofempires.security.Constants;
 import com.ttu.tarkvaratehnika.empires.gameofempires.security.TokenService;
@@ -67,15 +68,6 @@ public class AccountService {
         return false;
     }
 
-    public boolean isLoggedIn(String token) {
-        Optional<String> username = tokenService.getUsernameFromToken(token);
-        if (username.isPresent()) {
-            Optional<User> user = userRepository.getUserByName(username.get());
-            return user.isPresent() && tokenService.isActive(token);
-        }
-        return false;
-    }
-
     private String encryptPassword(String password, byte[] salt) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-512");
         md.update(salt);
@@ -105,30 +97,29 @@ public class AccountService {
     private void checkDataIntegrity(String username, String email, String password) throws IllegalArgumentException {
         Optional<User> user = userRepository.getUserByEmail(email);
         if (user.isPresent()) {
-            throw new IllegalArgumentException("Duplicate email");
+            throw new IllegalArgumentException(MessageKeys.DUPLICATE_EMAIL);
         }
         user = userRepository.getUserByName(username);
         if (user.isPresent()) {
-            throw new IllegalArgumentException("Duplicate username");
+            throw new IllegalArgumentException(MessageKeys.DUPLICATE_NAME);
         }
         if (username == null || username.isEmpty()) {
-            throw new IllegalArgumentException("Username must not be empty");
+            throw new IllegalArgumentException(MessageKeys.EMPTY_NAME);
         }
         if (email == null || email.isEmpty()) {
-            throw new IllegalArgumentException("Email must not be empty");
+            throw new IllegalArgumentException(MessageKeys.EMPTY_EMAIL);
         }
-        if (username.equals("null")) {
-            throw new IllegalArgumentException("Restricted username");
+        if (username.equals("null") || username.startsWith("Bot ")) {
+            throw new IllegalArgumentException(MessageKeys.RESTRICTED_NAME);
         }
         if (password == null || password.isEmpty()) {
-            throw new IllegalArgumentException("Password must not be empty");
+            throw new IllegalArgumentException(MessageKeys.EMPTY_PASS);
         }
         if (password.length() < Constants.PASSWORD_MIN_LENGTH) {
-            throw new IllegalArgumentException(String.format("Password length must be at least %d symbols",
-                    Constants.PASSWORD_MIN_LENGTH));
+            throw new IllegalArgumentException(MessageKeys.SHORT_PASS);
         }
         if (!email.contains("@")) {
-            throw new IllegalArgumentException("Email must contain one @ symbol");
+            throw new IllegalArgumentException(MessageKeys.INVALID_EMAIL);
         }
     }
 }
