@@ -49,8 +49,8 @@ export class Lobby {
     this.removePlayerFromLobby = function (event) {
       clearInterval(this.timerId);
       if (!this.playersAreReady) {
-        this.utilityInfo.resetLobbyInfo();
         this.exitLobby();
+        this.utilityInfo.resetLobbyInfo();
       }
     }
 
@@ -258,8 +258,8 @@ export class Lobby {
   detached() {
     clearInterval(this.timerId);
     if (!this.playersAreReady) {
-      this.utilityInfo.resetLobbyInfo();
       this.exitLobby();
+      this.utilityInfo.resetLobbyInfo();
     }
     window.removeEventListener("beforeunload", this.removePlayerFromLobby);
   }
