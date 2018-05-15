@@ -252,10 +252,13 @@ export class Lobby {
       .then(data => {
         this.utilityInfo.resetLobbyInfo();
         clearInterval(this.timerId);
-        this.router.navigate("home");
       })
       .catch(console.error);
     }
+  }
+
+  goBack() {
+    this.router.navigate("home");
   }
 
   detached() {
