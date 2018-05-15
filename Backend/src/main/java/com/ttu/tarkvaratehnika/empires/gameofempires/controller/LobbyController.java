@@ -141,13 +141,30 @@ public class LobbyController {
         }
     }
 
-    @RequestMapping(path = "/leave")
-    public @ResponseBody boolean leaveLobby(Principal principal, @RequestParam String username, @RequestParam long lobbyId) {
+    @PostMapping(path = "/leave", consumes = "application/json")
+    public @ResponseBody String leaveLobby(Principal principal, @RequestBody String data) {
+        JsonObject response;
         if (principal != null) {
+            String username = gson.fromJson(data, JsonObject.class).get("username").getAsString();
+            long lobbyId = gson.fromJson(data, JsonObject.class).get("lobbyId").getAsLong();
             Optional<GameLobby> searchedLobby = sessionService.findLobbyById(lobbyId);
-            return searchedLobby.isPresent() && searchedLobby.get().leaveSession(username);
+            if (searchedLobby.isPresent() && searchedLobby.get().leaveSession(username)) {
+                boolean left = searchedLobby.get().leaveSession(username);
+                if (left) {
+                    response = generateDefaultResponse("success", "null");
+                    return gson.toJson(response);
+                } else {
+                    response = generateDefaultResponse("failed", "No player with this username");
+                    return gson.toJson(response);
+                }
+            } else {
+                response = generateDefaultResponse("failed", "No lobby with this id found");
+                return gson.toJson(response);
+            }
+        } else {
+            response = generateDefaultResponse("failed", "Authorization failed");
+            return gson.toJson(response);
         }
-        return false;
     }
 
     @PostMapping(path = "/ready", consumes = "application/json")
