@@ -5,8 +5,10 @@ import {AuthService} from 'aurelia-authentication';
 import {Endpoint} from 'aurelia-api';
 import {json} from 'aurelia-fetch-client';
 
+
 @inject(UtilityInfo, Router, AuthService, Endpoint.of('lobby'), Endpoint.of('map'))
 export class Lobby {
+
   constructor(utilityInfo, router, authService, lobbyEndpoint, mapEndpoint) {
     this.utilityInfo = utilityInfo;
     this.utilityInfo.requestUsernameUpdate();
@@ -43,6 +45,15 @@ export class Lobby {
     this.playersAreReady = false;
 
     this.timerId;
+
+    this.removePlayerFromLobby = function (event) {
+      clearInterval(this.timerId);
+      if (!this.playersAreReady) {
+        this.utilityInfo.resetLobbyInfo();
+        this.exitLobby();
+      }
+    }
+
   }
 
   attached() {
@@ -53,6 +64,8 @@ export class Lobby {
     this.setGameStartMessage(false);
     this.setMapsArray();
     this.timerId = setInterval(this.update.bind(this), 1000);
+
+    window.addEventListener("beforeunload", this.removePlayerFromLobby.bind(this));
   }
 
   changeNationAttributeValue(name, points) {
@@ -94,23 +107,6 @@ export class Lobby {
         "lobbyId": this.utilityInfo.lobbyId
       })
       .then(data => {
-        this.playersAreReady = true;
-        // for(let updatedPlayer of data) {
-        //   let addNewPlayer = true;
-        //   for(let player of this.players) {
-        //     if (updatedPlayer.name === player.name) {
-        //       player.isReady = updatedPlayer.isReady;
-        //       addNewPlayer = false;
-        //     }
-        //   }
-        //   if(addNewPlayer) {
-        //     let newPlayer = new Player(updatedPlayer.name, updatedPlayer.isReady);
-        //     this.players.push(newPlayer);
-        //   }
-        //   if(updatedPlayer.isReady === false) {
-        //     this.playersAreReady = false;
-        //   }
-        // }
         this.players = [];
         this.playersAreReady = true;
         for(let updatedPlayer of data) {
@@ -250,8 +246,6 @@ export class Lobby {
         "lobbyId": this.utilityInfo.lobbyId
       })
       .then(data => {
-        // this.utilityInfo.resetLobbyInfo();
-        // clearInterval(this.timerId);
       })
       .catch(console.error);
     }
@@ -262,11 +256,12 @@ export class Lobby {
   }
 
   detached() {
+    clearInterval(this.timerId);
     if (!this.playersAreReady) {
       this.utilityInfo.resetLobbyInfo();
       this.exitLobby();
     }
-    clearInterval(this.timerId);
+    window.removeEventListener("beforeunload", this.removePlayerFromLobby);
   }
 
 }

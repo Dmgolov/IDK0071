@@ -44,7 +44,6 @@ export class Home {
         "lobbyId": this.utilityInfo.lobbyId
       })
       .then(data => {
-        console.log(data);
         if (data.status !== 'failed') {
           this.utilityInfo.gameMode = data.gameMode;
           this.utilityInfo.lobbyMode = "connect";
