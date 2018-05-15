@@ -250,8 +250,8 @@ export class Lobby {
         "lobbyId": this.utilityInfo.lobbyId
       })
       .then(data => {
-        this.utilityInfo.resetLobbyInfo();
-        clearInterval(this.timerId);
+        // this.utilityInfo.resetLobbyInfo();
+        // clearInterval(this.timerId);
       })
       .catch(console.error);
     }
@@ -262,7 +262,10 @@ export class Lobby {
   }
 
   detached() {
-    this.exitLobby();
+    if (!this.playersAreReady) {
+      this.utilityInfo.resetLobbyInfo();
+      this.exitLobby();
+    }
     clearInterval(this.timerId);
   }
 
