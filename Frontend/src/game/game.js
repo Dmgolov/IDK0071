@@ -182,6 +182,11 @@ export class Game {
     }
   }
 
+  goBack() {
+    this.utilityInfo.resetLobbyInfo();
+    this.router.navigate("home");
+  }
+
 }
 
 class Player {

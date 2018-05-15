@@ -9,7 +9,7 @@ export class UtilityInfo {
     this.username = "";
     this.lobbyId = null;
     this.gameMode = "";
-    this.lobbyMode = ""
+    this.lobbyMode = "";
   }
 
   requestUsernameUpdate() {
@@ -36,6 +36,12 @@ export class UtilityInfo {
       .replace(/>/g, '&gt;')
       .replace(/\//g, '&#x2F;')
       .replace(/;/g, '&#59;');
+  }
+
+  resetLobbyInfo() {
+    this.lobbyId = null;
+    this.gameMode = "";
+    this.lobbyMode = "";
   }
 
 }

@@ -151,7 +151,7 @@ export class Lobby {
     if (this.authService.isAuthenticated()) {
       this.lobbyEndpoint.find('defaultSettings')
       .then(data => {
-        this.mapName = data.mapName;
+        // this.mapName = data.mapName;
         this.iterationsNumber = data.iterationsNumber;
         this.nationPoints = data.nationPoints;
         this.maxPlayersNumber = data.maxPlayersNumber;
