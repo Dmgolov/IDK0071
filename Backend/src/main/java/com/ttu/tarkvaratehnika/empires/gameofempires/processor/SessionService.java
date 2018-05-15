@@ -90,6 +90,10 @@ public class SessionService {
         saveGameToDatabase(lobby, winner, color);
     }
 
+    public void terminateLobbyWithoutSave(GameLobby lobby) {
+        lobbies.remove(lobby);
+    }
+
     void saveGameToDatabase(GameLobby lobby, String winner, String color) {
         Game game = new Game();
         game.setGameId(lobby.getLobbyId());

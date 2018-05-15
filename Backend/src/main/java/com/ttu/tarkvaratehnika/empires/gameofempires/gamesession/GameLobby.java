@@ -68,7 +68,7 @@ public class GameLobby {
             availableColors.add(nation.get().getTeamColor());
             nations.remove(nation.get());
             if (nations.size() - botsPlayersCount == 0) {
-                sessionService.terminateLobby(this, null, null);
+                sessionService.terminateLobbyWithoutSave(this);
             }
             return true;
         }
