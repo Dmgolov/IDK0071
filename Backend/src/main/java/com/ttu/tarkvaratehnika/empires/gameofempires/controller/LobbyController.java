@@ -84,13 +84,7 @@ public class LobbyController {
         JsonObject response;
         if (principal != null) {
             try {
-                String mapName;
-                Optional<GameMap> map = gameMapService.getGameMap(properties.getMapName());
-                if (map.isPresent()) {
-                    mapName = map.get().getName() + map.get().getFileExtension();
-                } else {
-                    mapName = SessionSettings.DEFAULT_MAP;
-                }
+                String mapName = gameMapService.getGameMap(properties.getMapName());
                 properties.setMapName(mapName);
                 sessionService.setLobbySettings(properties);
                 response = generateDefaultResponse("success", MessageKeys.NULL);

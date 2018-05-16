@@ -2,6 +2,7 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.processor;
 
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
 import com.ttu.tarkvaratehnika.empires.gameofempires.messagekeys.MessageKeys;
 import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameMapRepository;
 import org.apache.commons.io.IOUtils;
@@ -75,7 +76,12 @@ public class GameMapService {
         gameMapRepository.save(map);
     }
 
-    public Optional<GameMap> getGameMap(String mapName) {
-        return gameMapRepository.getGameMapByName(mapName);
+    public String getGameMap(String mapName) {
+        Optional<GameMap> map = gameMapRepository.getGameMapByName(mapName);
+        if (map.isPresent()) {
+            return map.get().getName() + map.get().getFileExtension();
+        } else {
+            return SessionSettings.DEFAULT_MAP;
+        }
     }
 }
