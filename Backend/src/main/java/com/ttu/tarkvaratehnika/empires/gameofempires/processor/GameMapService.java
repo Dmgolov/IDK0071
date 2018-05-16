@@ -74,4 +74,8 @@ public class GameMapService {
         map.setFileExtension(fileExtension);
         gameMapRepository.save(map);
     }
+
+    public Optional<GameMap> getGameMap(String mapName) {
+        return gameMapRepository.getGameMapByName(mapName);
+    }
 }

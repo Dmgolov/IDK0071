@@ -3,11 +3,13 @@ package com.ttu.tarkvaratehnika.empires.gameofempires.controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.GameMap;
 import com.ttu.tarkvaratehnika.empires.gameofempires.messagekeys.MessageKeys;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamemap.ImageConverter;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.GameLobby;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.Properties;
 import com.ttu.tarkvaratehnika.empires.gameofempires.gamesession.SessionSettings;
+import com.ttu.tarkvaratehnika.empires.gameofempires.processor.GameMapService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.processor.SessionService;
 import com.ttu.tarkvaratehnika.empires.gameofempires.repository.GameRepository;
 import org.apache.commons.io.IOUtils;
@@ -29,10 +31,12 @@ public class LobbyController {
     private static long lastLobbyId;
 
     private SessionService sessionService;
+    private GameMapService gameMapService;
 
     @Autowired
-    public LobbyController(SessionService sessionService, GameRepository gameRepository) {
+    public LobbyController(SessionService sessionService, GameRepository gameRepository, GameMapService gameMapService) {
         this.sessionService = sessionService;
+        this.gameMapService = gameMapService;
         lastLobbyId = gameRepository.getMaxId().isPresent() ? gameRepository.getMaxId().get() : 0;
     }
 
@@ -80,6 +84,14 @@ public class LobbyController {
         JsonObject response;
         if (principal != null) {
             try {
+                String mapName;
+                Optional<GameMap> map = gameMapService.getGameMap(properties.getMapName());
+                if (map.isPresent()) {
+                    mapName = map.get().getName() + map.get().getFileExtension();
+                } else {
+                    mapName = SessionSettings.DEFAULT_MAP;
+                }
+                properties.setMapName(mapName);
                 sessionService.setLobbySettings(properties);
                 response = generateDefaultResponse("success", MessageKeys.NULL);
                 return gson.toJson(response);

@@ -160,6 +160,7 @@ public class GameField {
     }
 
     public void setGameMap(String mapName) {
+
         this.mapName = mapName;
     }
 

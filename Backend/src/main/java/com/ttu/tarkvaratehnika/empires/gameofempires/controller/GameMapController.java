@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class GameMapController {
@@ -76,7 +77,7 @@ public class GameMapController {
         List<String> names = new ArrayList<>();
         Iterable<GameMap> maps = gameMapService.getMaps(filter);
         for (GameMap map : maps) {
-            names.add(map.getName() + map.getFileExtension());
+            names.add(map.getName());
         }
         return names;
     }
