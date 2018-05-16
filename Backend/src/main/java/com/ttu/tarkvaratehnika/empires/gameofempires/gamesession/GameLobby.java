@@ -40,7 +40,6 @@ public class GameLobby {
 
     void startSession() throws IOException {
         nations.stream().filter(nation -> !nation.hasSelectedPersonType()).forEach(Nation::setDefaultPerson);
-        gameField.loadField();
         nations.forEach(Nation::setStartingLocation);
         try {
             Thread.sleep(startDelay);
@@ -244,6 +243,11 @@ public class GameLobby {
     public void setProperties(Properties properties) {
         this.properties = properties;
         gameField.setGameMap(properties.getMapName());
+        try {
+            gameField.loadField();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
         if (singleMode) {
             changeToSinglePlayer();
         }
